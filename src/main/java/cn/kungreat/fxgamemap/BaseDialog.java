@@ -12,10 +12,18 @@ import javafx.scene.control.TextField;
  * */
 public class BaseDialog {
 
+    public static final ButtonType APPLY_WORLD = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType CANCEL_WORLD = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-    public static final ButtonType APPLY_BUTTON = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
-    public static final ButtonType CANCEL_BUTTON = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-    public static final TextField TEXT_FIELD = BaseDialog.getTextField("请输入名称");
+    public static final ButtonType APPLY_AREA = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType CANCEL_AREA = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+    public static final ButtonType APPLY_MAP = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType CANCEL_MAP = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+    public static final TextField TEXT_WORLD = BaseDialog.getTextField("请输入名称");
+    public static final TextField TEXT_AREA = BaseDialog.getTextField("请输入名称");
+    public static final TextField TEXT_MAP = BaseDialog.getTextField("请输入名称");
 
     public static Dialog<String> getDialog(String title, String header, String content, Node graphic, ButtonType... buttonType) {
         Dialog<String> dialog = new Dialog<>();

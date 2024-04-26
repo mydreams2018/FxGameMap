@@ -1,12 +1,12 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeWorld;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -20,7 +20,13 @@ import java.util.UUID;
 public class RootController implements Initializable {
 
     private Dialog<String> worldDialog = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
-            , BaseDialog.TEXT_FIELD, BaseDialog.APPLY_BUTTON, BaseDialog.CANCEL_BUTTON);
+            , BaseDialog.TEXT_WORLD, BaseDialog.APPLY_WORLD, BaseDialog.CANCEL_WORLD);
+
+    private Dialog<String> areaDialog = BaseDialog.getDialog("区域地图", "请输入区域地图名称:", "是否需要添加区域地图层级"
+            , BaseDialog.TEXT_AREA, BaseDialog.APPLY_AREA, BaseDialog.CANCEL_AREA);
+
+    private Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图名称:", "是否需要添加分块地图"
+            , BaseDialog.TEXT_MAP, BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
 
     @FXML
     private HBox hBox;
@@ -44,18 +50,33 @@ public class RootController implements Initializable {
 //        treeView.setCellFactory(TreeWorld.treeCallback());
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftText.prefHeight(-1)));
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem = new MenuItem("add world");
-        menuItem.setGraphic(new FontIcon("fas-globe"));
-        menuItem.setOnAction(event -> worldDialog.showAndWait());
-        contextMenu.getItems().addAll(menuItem);
-        treeView.setContextMenu(contextMenu);
-        worldDialog.setOnShowing(event -> BaseDialog.TEXT_FIELD.clear());
+        treeView.setContextMenu(getTreeContextMenu());
+        worldDialog.setOnShowing(event -> BaseDialog.TEXT_WORLD.clear());
+        areaDialog.setOnShowing(event -> BaseDialog.TEXT_AREA.clear());
+        mapDialog.setOnShowing(event -> BaseDialog.TEXT_MAP.clear());
+        addTreeEvent();
+    }
 
-        //树节点数据添加
-        Button applyButton = (Button) worldDialog.getDialogPane().lookupButton(BaseDialog.APPLY_BUTTON);
-        applyButton.setOnAction(event -> {
-            String newWorld = BaseDialog.TEXT_FIELD.getText();
+    public ContextMenu getTreeContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuWorld = new MenuItem("add world");
+        menuWorld.setGraphic(new FontIcon("fas-globe"));
+        menuWorld.setOnAction(event -> worldDialog.showAndWait());
+        MenuItem menuArea = new MenuItem("add Area");
+        menuArea.setGraphic(new FontIcon("fas-chart-area"));
+        menuArea.setOnAction(event -> areaDialog.showAndWait());
+        MenuItem menuMap = new MenuItem("add Map");
+        menuMap.setGraphic(new FontIcon("fas-map"));
+        menuMap.setOnAction(event -> mapDialog.showAndWait());
+        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap);
+        return contextMenu;
+    }
+
+    public void addTreeEvent() {
+        //世界地图事件添加
+        Button applyWorld = (Button) worldDialog.getDialogPane().lookupButton(BaseDialog.APPLY_WORLD);
+        applyWorld.setOnAction(event -> {
+            String newWorld = BaseDialog.TEXT_WORLD.getText();
             if (!newWorld.isBlank()) {
                 TreeItem<Object> root = treeView.getRoot();
                 TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), null);
@@ -64,6 +85,31 @@ public class RootController implements Initializable {
                 root.getChildren().add(treeItem);
             }
         });
+        //区域地图事件添加
+        Button applyArea = (Button) areaDialog.getDialogPane().lookupButton(BaseDialog.APPLY_AREA);
+        applyArea.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String newArea = BaseDialog.TEXT_AREA.getText();
+                if (!newArea.isBlank()) {
+                    System.out.println("newArea=" + newArea);
+                }
+            }
+        });
+        //地图事件添加
+        Button applyMap = (Button) mapDialog.getDialogPane().lookupButton(BaseDialog.APPLY_MAP);
+        applyMap.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String newMap = BaseDialog.TEXT_MAP.getText();
+                if (!newMap.isBlank()) {
+                    System.out.println("newMap=" + newMap);
+                }
+            }
+        });
+    }
 
+    public void showTreeBookDialog(MouseEvent mouseEvent) {
+        System.out.println(mouseEvent);
     }
 }

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.TreeItem?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController" styleClass="customBgColor">
     <top>
         <HBox fx:id="hBox" alignment="CENTER_LEFT" spacing="20.0">
@@ -23,7 +24,10 @@
         <SplitPane fx:id="splitPane" dividerPositions="0.2f,0.7f,1.0f">
             <StackPane minWidth="200" maxWidth="300" fx:id="stackPaneLeft" alignment="TOP_LEFT">
                 <VBox styleClass="customBgColor" alignment="TOP_CENTER">
-                    <Text fx:id="stackPaneLeftText" text="项目"></Text>
+                    <HBox alignment="CENTER">
+                        <Text fx:id="stackPaneLeftText" text="项目-查看说明"/>
+                        <FontIcon onMouseClicked="#showTreeBookDialog" iconLiteral="fas-book" iconSize="18"/>
+                    </HBox>
                     <TreeView fx:id="treeView" showRoot="false">
                         <root>
                             <TreeItem value="Root Node"></TreeItem>

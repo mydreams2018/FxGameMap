@@ -1,9 +1,9 @@
-module cn.kungreat.fxgamemap {
+open module cn.kungreat.fxgamemap {
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
-
+    requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
-
-    opens cn.kungreat.fxgamemap to javafx.fxml;
-    exports cn.kungreat.fxgamemap;
+    requires org.kordamp.ikonli.fontawesome5;
+    requires static lombok;
 }

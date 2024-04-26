@@ -1,0 +1,14 @@
+stage.setOnShown(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                BorderPane borderPane = fxmlLoader.getRoot();
+                System.out.println(borderPane.getWidth() + " " + borderPane.getHeight());
+            }
+        });
+
+        treeView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                    @Override
+                    public void handle(ContextMenuEvent event) {
+                        System.out.println("右键点击");
+                    }
+                });

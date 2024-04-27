@@ -26,7 +26,7 @@
                 <VBox styleClass="customBgColor" alignment="TOP_CENTER">
                     <HBox alignment="CENTER">
                         <Text fx:id="stackPaneLeftText" text="项目-查看说明"/>
-                        <FontIcon onMouseClicked="#showTreeBookDialog" iconLiteral="fas-book" iconSize="18"/>
+                        <FontIcon onMouseClicked="#showTreeBookDialog" iconColor="olive" iconLiteral="fas-book" iconSize="18"/>
                     </HBox>
                     <TreeView fx:id="treeView" showRoot="false">
                         <root>

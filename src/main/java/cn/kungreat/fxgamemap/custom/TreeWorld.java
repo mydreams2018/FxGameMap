@@ -3,8 +3,6 @@ package cn.kungreat.fxgamemap.custom;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -44,7 +42,9 @@ public class TreeWorld {
             }
         };
     }
-
+    /*
+    *  根据树结构提供的功能,自定义组件显示太麻烦放弃
+    * */
     public static Callback<TreeView<Object>, TreeCell<Object>> treeCallback() {
         System.out.println("test-treeCallback");
         return new Callback<>() {

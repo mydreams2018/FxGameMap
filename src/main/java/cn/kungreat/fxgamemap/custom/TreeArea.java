@@ -12,5 +12,11 @@ import java.util.List;
 public class TreeArea {
     private String title;
     private String id;
+    /*
+    * xNumber x坐标有几个地图
+    * yNumber y坐标有几个地图
+    * */
+    private Integer xNumber;
+    private Integer yNumber;
     private List<TreeGameMap> childrenMap;
 }

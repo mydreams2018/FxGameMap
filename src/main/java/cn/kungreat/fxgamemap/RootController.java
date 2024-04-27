@@ -3,8 +3,7 @@ package cn.kungreat.fxgamemap;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import cn.kungreat.fxgamemap.util.PatternUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -18,17 +17,18 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class RootController implements Initializable {
 
     private Dialog<String> worldDialog = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
             , BaseDialog.TEXT_WORLD, BaseDialog.APPLY_WORLD, BaseDialog.CANCEL_WORLD);
 
-    private Dialog<String> areaDialog = BaseDialog.getDialog("区域地图", "请输入区域地图名称:", "是否需要添加区域地图层级"
-            , BaseDialog.TEXT_AREA, BaseDialog.APPLY_AREA, BaseDialog.CANCEL_AREA);
+    private Dialog<String> areaDialog = BaseDialog.getDialog("区域地图", "请输入区域地图信息:", "是否需要添加区域地图层级"
+            , BaseDialog.getAreaRectangular(), BaseDialog.APPLY_AREA, BaseDialog.CANCEL_AREA);
 
-    private Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图名称:", "是否需要添加分块地图"
-            , BaseDialog.TEXT_MAP, BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
+    private Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图信息:", "是否需要添加分块地图"
+            , BaseDialog.getMapRectangular(), BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
 
     private Dialog<String> linkMapBookDialog = BaseDialog.getDialog("使用说明", "地图完整的使用说明",
             """
@@ -102,38 +102,39 @@ public class RootController implements Initializable {
         });
         //区域地图事件添加
         Button applyArea = (Button) areaDialog.getDialogPane().lookupButton(BaseDialog.APPLY_AREA);
-        applyArea.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                String newArea = BaseDialog.TEXT_AREA.getText();
-                if (!newArea.isBlank()) {
-                    TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-                    if (item != null && item.getValue() instanceof TreeWorld) {
-                        TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(), null);
-                        TreeItem<Object> treeItem = new TreeItem<>(treeArea);
-                        treeItem.setGraphic(new FontIcon("fas-chart-area"));
-                        item.getChildren().add(treeItem);
-                        item.setExpanded(true);
-                    }
+        applyArea.setOnAction(event -> {
+            String newArea = BaseDialog.TEXT_AREA.getText();
+            String areaXText = BaseDialog.TEXT_AREAX.getText();
+            String areaYText = BaseDialog.TEXT_AREAY.getText();
+            if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank()
+                    && Pattern.matches(PatternUtils.NumberRegex, areaXText) && Pattern.matches(PatternUtils.NumberRegex, areaYText)) {
+                TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+                if (item != null && item.getValue() instanceof TreeWorld) {
+                    TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
+                            Integer.parseInt(areaXText), Integer.parseInt(areaYText), null);
+                    TreeItem<Object> treeItem = new TreeItem<>(treeArea);
+                    treeItem.setGraphic(new FontIcon("fas-chart-area"));
+                    item.getChildren().add(treeItem);
+                    item.setExpanded(true);
                 }
             }
         });
         //地图事件添加
         Button applyMap = (Button) mapDialog.getDialogPane().lookupButton(BaseDialog.APPLY_MAP);
-        applyMap.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                String newMap = BaseDialog.TEXT_MAP.getText();
-                if (!newMap.isBlank()) {
-                    TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-                    if (item != null && item.getValue() instanceof TreeArea) {
-                        TreeGameMap treeGameMap = new TreeGameMap();
-                        treeGameMap.setTitle(newMap);
-                        TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
-                        treeItem.setGraphic(new FontIcon("fas-map"));
-                        item.getChildren().add(treeItem);
-                        item.setExpanded(true);
-                    }
+        applyMap.setOnAction(event -> {
+            String title = BaseDialog.TEXT_MAP.getText();
+            String mapWidth = BaseDialog.TEXT_MAP_WIDTH.getText();
+            String mapHeight = BaseDialog.TEXT_MAP_HEIGHT.getText();
+            if (!title.isBlank() && !mapWidth.isBlank() && !mapHeight.isBlank()
+                    && Pattern.matches(PatternUtils.NumberRegex, mapWidth) && Pattern.matches(PatternUtils.NumberRegex, mapHeight)) {
+                TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+                if (item != null && item.getValue() instanceof TreeArea) {
+                    TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
+                            Integer.parseInt(mapWidth), Integer.parseInt(mapHeight));
+                    TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
+                    treeItem.setGraphic(new FontIcon("fas-map"));
+                    item.getChildren().add(treeItem);
+                    item.setExpanded(true);
                 }
             }
         });

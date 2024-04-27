@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class TreeGameMap {
     private String title;
-    private Integer id;
+    private String id;
     private Integer width;
     private Integer height;
     private TreeGameMap left;
@@ -18,4 +18,12 @@ public class TreeGameMap {
     private TreeGameMap leftBottom;
     private TreeGameMap rightTop;
     private TreeGameMap rightBottom;
+
+    public TreeGameMap(String id, String title, Integer width, Integer height) {
+        this.id = id;
+        this.title = title;
+        this.width = width;
+        this.height = height;
+    }
+
 }

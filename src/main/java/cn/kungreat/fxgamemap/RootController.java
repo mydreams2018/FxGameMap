@@ -1,5 +1,7 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.TreeArea;
+import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -105,7 +107,14 @@ public class RootController implements Initializable {
             public void handle(ActionEvent event) {
                 String newArea = BaseDialog.TEXT_AREA.getText();
                 if (!newArea.isBlank()) {
-                    System.out.println("newArea=" + newArea);
+                    TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+                    if (item != null && item.getValue() instanceof TreeWorld) {
+                        TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(), null);
+                        TreeItem<Object> treeItem = new TreeItem<>(treeArea);
+                        treeItem.setGraphic(new FontIcon("fas-chart-area"));
+                        item.getChildren().add(treeItem);
+                        item.setExpanded(true);
+                    }
                 }
             }
         });
@@ -116,7 +125,15 @@ public class RootController implements Initializable {
             public void handle(ActionEvent event) {
                 String newMap = BaseDialog.TEXT_MAP.getText();
                 if (!newMap.isBlank()) {
-                    System.out.println("newMap=" + newMap);
+                    TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+                    if (item != null && item.getValue() instanceof TreeArea) {
+                        TreeGameMap treeGameMap = new TreeGameMap();
+                        treeGameMap.setTitle(newMap);
+                        TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
+                        treeItem.setGraphic(new FontIcon("fas-map"));
+                        item.getChildren().add(treeItem);
+                        item.setExpanded(true);
+                    }
                 }
             }
         });

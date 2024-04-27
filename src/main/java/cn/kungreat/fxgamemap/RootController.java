@@ -28,6 +28,16 @@ public class RootController implements Initializable {
     private Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图名称:", "是否需要添加分块地图"
             , BaseDialog.TEXT_MAP, BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
 
+    private Dialog<String> linkMapBookDialog = BaseDialog.getDialog("使用说明", "地图完整的使用说明",
+            """
+                    1.世界地图是一个完整游戏地图的概念
+                    2.区域地图是世界地图的子级.是一个区域的概念
+                    3.分块地图是区域地图的子级,分块地图是一个个地图的概念
+                        游戏过大时不会把全部地图信息存在一个图片里
+                    4.链接地图是把区域地图下的分块地图链接在一起
+                        一个区域可能会有多个分块地图,组成一个完整的区域地图
+                    """
+            , null, ButtonType.CLOSE);
     @FXML
     private HBox hBox;
     @FXML
@@ -68,7 +78,10 @@ public class RootController implements Initializable {
         MenuItem menuMap = new MenuItem("add Map");
         menuMap.setGraphic(new FontIcon("fas-map"));
         menuMap.setOnAction(event -> mapDialog.showAndWait());
-        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap);
+        MenuItem linkMap = new MenuItem("link Map");
+        linkMap.setGraphic(new FontIcon("fas-link"));
+//        linkMap.setOnAction(event -> mapDialog.showAndWait());
+        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap, new SeparatorMenuItem(), linkMap);
         return contextMenu;
     }
 
@@ -110,6 +123,6 @@ public class RootController implements Initializable {
     }
 
     public void showTreeBookDialog(MouseEvent mouseEvent) {
-        System.out.println(mouseEvent);
+        linkMapBookDialog.showAndWait();
     }
 }

@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 
 public class MainMenuBar extends MenuBar {
     private final FileChooser fileSave = new FileChooser();
+
     {
         Menu file = new Menu("文件");
         MenuItem open = new MenuItem("打开", new FontIcon("far-folder-open"));
@@ -31,18 +32,7 @@ public class MainMenuBar extends MenuBar {
             File saveFile = fileSave.showSaveDialog(RootApplication.mainStage);
             if (saveFile != null && saveFile.toString().endsWith(".json")) {
                 try {
-                    RootController controller = RootApplication.mainFXMLLoader.getController();
-                    ObservableList<TreeItem<Object>> children = controller.getTreeView().getRoot().getChildren();
-                    StringBuilder stringBuilder = new StringBuilder();
-                    children.forEach(objectTreeItem -> {
-                        TreeWorld treeWorld = (TreeWorld) objectTreeItem.getValue();
-                        try {
-                            stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
-                            stringBuilder.append(System.lineSeparator());
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    StringBuilder stringBuilder = getStringBuilder();
                     Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
                             StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                     Configuration.currentProject = saveFile.toURI().toString();
@@ -67,6 +57,18 @@ public class MainMenuBar extends MenuBar {
         this.getMenus().add(file);
         this.getStyleClass().add("customBgColor");
         initFileSave();
+    }
+
+    private static StringBuilder getStringBuilder() throws JsonProcessingException {
+        RootController controller = RootApplication.mainFXMLLoader.getController();
+        ObservableList<TreeItem<Object>> children = controller.getTreeView().getRoot().getChildren();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TreeItem<Object> child : children) {
+            TreeWorld treeWorld = (TreeWorld) child.getValue();
+            stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
+            stringBuilder.append(System.lineSeparator());
+        }
+        return stringBuilder;
     }
 
     public void initFileSave() {

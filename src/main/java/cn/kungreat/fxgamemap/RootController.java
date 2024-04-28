@@ -60,9 +60,8 @@ public class RootController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         hBox.getChildren().add(new MainMenuBar());
-        treeView.setEditable(false);
+        treeView.setEditable(true);
         treeView.setCellFactory(TextFieldTreeCell.forTreeView(TreeWorld.treeConverter()));
-//        treeView.setCellFactory(TreeWorld.treeCallback());
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftText.prefHeight(-1)));
         treeView.setContextMenu(getTreeContextMenu());

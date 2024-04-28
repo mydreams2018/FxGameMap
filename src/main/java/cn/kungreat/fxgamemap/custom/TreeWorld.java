@@ -1,5 +1,7 @@
 package cn.kungreat.fxgamemap.custom;
 
+import cn.kungreat.fxgamemap.RootApplication;
+import cn.kungreat.fxgamemap.RootController;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -37,8 +39,17 @@ public class TreeWorld {
 
             //可以修改才有用
             @Override
-            public Object fromString(String string) {
-                return null;
+            public Object fromString(String title) {
+                RootController controller = RootApplication.mainFXMLLoader.getController();
+                TreeItem<Object> item = controller.getTreeView().getFocusModel().getFocusedItem();
+                Object treeValue = item.getValue();
+                switch (treeValue) {
+                    case TreeWorld treeWorld -> treeWorld.setTitle(title);
+                    case TreeArea treeArea -> treeArea.setTitle(title);
+                    case TreeGameMap treeGameApp -> treeGameApp.setTitle(title);
+                    case null, default -> throw new RuntimeException("TreeWorld-treeConverter-类型错误");
+                }
+                return treeValue;
             }
         };
     }

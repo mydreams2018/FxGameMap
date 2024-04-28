@@ -49,7 +49,16 @@ public class MainMenuBar extends MenuBar {
             Configuration.historyProject.forEach(s -> {
                 Matcher matcher = PatternUtils.findFileName.matcher(s);
                 if (matcher.find()) {
-                    history.getItems().add(new MenuItem(matcher.group().substring(1, matcher.group().length() - 5)));
+                    MenuItem historyItem = new MenuItem(matcher.group().substring(1, matcher.group().length() - 5));
+                    historyItem.setUserData(s);
+                    historyItem.setOnAction(event -> {
+                        MenuItem historyItemHandler = (MenuItem) event.getSource();
+                        if (!Configuration.currentProject.equals(historyItemHandler.getUserData())) {
+                            Configuration.currentProject = (String) historyItemHandler.getUserData();
+                            Configuration.loadTreeMenu();
+                        }
+                    });
+                    history.getItems().add(historyItem);
                 }
             });
         }

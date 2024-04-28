@@ -2,6 +2,7 @@ package cn.kungreat.fxgamemap.custom;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TreeArea {
     private String title;
     private String id;

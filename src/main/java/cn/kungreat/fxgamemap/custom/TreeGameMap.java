@@ -1,10 +1,12 @@
 package cn.kungreat.fxgamemap.custom;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class TreeGameMap {
     private String title;
     private String id;

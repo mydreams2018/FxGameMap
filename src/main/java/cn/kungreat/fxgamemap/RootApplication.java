@@ -35,6 +35,7 @@ public class RootApplication extends Application {
         stage.show();
         mainStage = stage;
         mainFXMLLoader = fxmlLoader;
+        Configuration.loadTreeMenu();
     }
 
     public static void main(String[] args) {

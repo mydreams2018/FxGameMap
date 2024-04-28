@@ -10,6 +10,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TreeWorld {
     private String title;
     private String id;

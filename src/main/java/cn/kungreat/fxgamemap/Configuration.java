@@ -1,5 +1,11 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.TreeArea;
+import cn.kungreat.fxgamemap.custom.TreeGameMap;
+import cn.kungreat.fxgamemap.custom.TreeWorld;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import javafx.scene.control.TreeItem;
+import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,7 +20,7 @@ import java.util.function.Consumer;
 
 
 public class Configuration {
-    public static String currentProject;
+    public static volatile String currentProject;
     public static List<String> historyProject = new ArrayList<>();
 
     static {
@@ -50,6 +56,48 @@ public class Configuration {
         String stringBuilder = "currentProject=" + currentProject + System.lineSeparator() +
                 "historyProject=" + historyProject + System.lineSeparator();
         Files.write(path, stringBuilder.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    /*
+     * 加载当前的项目文件
+     * */
+    public static void loadTreeMenu() {
+        if (currentProject != null) {
+            try (InputStream inputStream = new URI(currentProject).toURL().openStream()) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                RootController controller = RootApplication.mainFXMLLoader.getController();
+                TreeItem<Object> root = controller.getTreeView().getRoot();
+                root.getChildren().clear();
+                in.lines().forEach(s -> {
+                    try {
+                        TreeWorld treeWorld = RootApplication.MAP_JSON.readValue(s, TreeWorld.class);
+                        TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
+                        treeItem.setGraphic(new FontIcon("fas-globe"));
+                        root.getChildren().add(treeItem);
+                        List<TreeArea> childrenArea = treeWorld.getChildrenArea();
+                        if (childrenArea != null && !childrenArea.isEmpty()) {
+                            for (TreeArea treeArea : childrenArea) {
+                                TreeItem<Object> areaTreeItem = new TreeItem<>(treeArea);
+                                areaTreeItem.setGraphic(new FontIcon("fas-chart-area"));
+                                treeItem.getChildren().add(areaTreeItem);
+                                List<TreeGameMap> childrenMap = treeArea.getChildrenMap();
+                                if (childrenMap != null && !childrenMap.isEmpty()) {
+                                    for (TreeGameMap treeGameMap : childrenMap) {
+                                        TreeItem<Object> gameMapTreeItem = new TreeItem<>(treeGameMap);
+                                        gameMapTreeItem.setGraphic(new FontIcon("fas-map"));
+                                        areaTreeItem.getChildren().add(gameMapTreeItem);
+                                    }
+                                }
+                            }
+                        }
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

@@ -15,6 +15,8 @@ import javafx.stage.FileChooser;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
@@ -29,16 +31,15 @@ public class MainMenuBar extends MenuBar {
         MenuItem save = new MenuItem("保存", new FontIcon("far-save"));
         save.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
         save.setOnAction(event -> {
-            File saveFile = fileSave.showSaveDialog(RootApplication.mainStage);
-            if (saveFile != null && saveFile.toString().endsWith(".json")) {
+            if (Configuration.currentProject == null) {
+                File saveFile = fileSave.showSaveDialog(RootApplication.mainStage);
+                saveProjectFile(saveFile);
+            } else {
                 try {
-                    StringBuilder stringBuilder = getStringBuilder();
-                    Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
-                            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                    Configuration.currentProject = saveFile.toURI().toString();
-                    Configuration.addHistoryProject(saveFile.toURI().toString());
-                    Configuration.writerProperties();
-                } catch (Exception e) {
+                    URI resource = new URI(Configuration.currentProject);
+                    File saveFile = new File(resource.getPath());
+                    saveProjectFile(saveFile);
+                } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
             }
@@ -86,6 +87,21 @@ public class MainMenuBar extends MenuBar {
         fileSave.setInitialFileName("badeDemo");
         fileSave.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Save Files", "*.json"));
+    }
+
+    public void saveProjectFile(File saveFile) {
+        if (saveFile != null && saveFile.toString().endsWith(".json")) {
+            try {
+                StringBuilder stringBuilder = getStringBuilder();
+                Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
+                        StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                Configuration.currentProject = saveFile.toURI().toString();
+                Configuration.addHistoryProject(saveFile.toURI().toString());
+                Configuration.writerProperties();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

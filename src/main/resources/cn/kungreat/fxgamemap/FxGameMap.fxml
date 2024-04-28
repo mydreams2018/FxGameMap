@@ -19,7 +19,7 @@
     </top>
     <center>
         <SplitPane fx:id="splitPane" dividerPositions="0.2f,0.7f,1.0f">
-            <StackPane minWidth="200" maxWidth="300" fx:id="stackPaneLeft" alignment="TOP_LEFT">
+            <StackPane minWidth="260" maxWidth="300" fx:id="stackPaneLeft" alignment="TOP_LEFT">
                 <VBox styleClass="customBgColor" alignment="TOP_CENTER">
                     <HBox alignment="CENTER">
                         <Text fx:id="stackPaneLeftText" text="项目-查看说明"/>

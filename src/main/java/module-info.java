@@ -7,4 +7,5 @@ open module cn.kungreat.fxgamemap {
     requires org.kordamp.ikonli.fontawesome5;
     requires static lombok;
     requires java.sql;
+    requires com.fasterxml.jackson.databind;
 }

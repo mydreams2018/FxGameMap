@@ -12,13 +12,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import lombok.Getter;
+import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
+@Setter
+@Getter
 public class RootController implements Initializable {
 
     private Dialog<String> worldDialog = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
@@ -36,8 +40,6 @@ public class RootController implements Initializable {
                     2.区域地图是世界地图的子级.是一个区域的概念
                     3.分块地图是区域地图的子级,分块地图是一个个地图的概念
                         游戏过大时不会把全部地图信息存在一个图片里
-                    4.链接地图是把区域地图下的分块地图链接在一起
-                        一个区域可能会有多个分块地图,组成一个完整的区域地图
                     """
             , null, ButtonType.CLOSE);
     @FXML
@@ -57,6 +59,7 @@ public class RootController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        hBox.getChildren().add(new MainMenuBar());
         treeView.setEditable(false);
         treeView.setCellFactory(TextFieldTreeCell.forTreeView(TreeWorld.treeConverter()));
 //        treeView.setCellFactory(TreeWorld.treeCallback());
@@ -80,10 +83,7 @@ public class RootController implements Initializable {
         MenuItem menuMap = new MenuItem("add Map");
         menuMap.setGraphic(new FontIcon("fas-map"));
         menuMap.setOnAction(event -> mapDialog.showAndWait());
-        MenuItem linkMap = new MenuItem("link Map");
-        linkMap.setGraphic(new FontIcon("fas-link"));
-//        linkMap.setOnAction(event -> mapDialog.showAndWait());
-        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap, new SeparatorMenuItem(), linkMap);
+        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap);
         return contextMenu;
     }
 
@@ -94,7 +94,7 @@ public class RootController implements Initializable {
             String newWorld = BaseDialog.TEXT_WORLD.getText();
             if (!newWorld.isBlank()) {
                 TreeItem<Object> root = treeView.getRoot();
-                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), null);
+                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), new ArrayList<>());
                 TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
                 treeItem.setGraphic(new FontIcon("fas-globe"));
                 root.getChildren().add(treeItem);
@@ -109,9 +109,10 @@ public class RootController implements Initializable {
             if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank()
                     && Pattern.matches(PatternUtils.NumberRegex, areaXText) && Pattern.matches(PatternUtils.NumberRegex, areaYText)) {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-                if (item != null && item.getValue() instanceof TreeWorld) {
+                if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
-                            Integer.parseInt(areaXText), Integer.parseInt(areaYText), null);
+                            Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>());
+                    treeWorld.getChildrenArea().add(treeArea);
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
                     item.getChildren().add(treeItem);
@@ -128,9 +129,10 @@ public class RootController implements Initializable {
             if (!title.isBlank() && !mapWidth.isBlank() && !mapHeight.isBlank()
                     && Pattern.matches(PatternUtils.NumberRegex, mapWidth) && Pattern.matches(PatternUtils.NumberRegex, mapHeight)) {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-                if (item != null && item.getValue() instanceof TreeArea) {
+                if (item != null && item.getValue() instanceof TreeArea treeArea) {
                     TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
                             Integer.parseInt(mapWidth), Integer.parseInt(mapHeight));
+                    treeArea.getChildrenMap().add(treeGameMap);
                     TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
                     treeItem.setGraphic(new FontIcon("fas-map"));
                     item.getChildren().add(treeItem);

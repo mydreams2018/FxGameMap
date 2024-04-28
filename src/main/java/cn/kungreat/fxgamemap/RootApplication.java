@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +13,10 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 public class RootApplication extends Application {
+
+    public static Stage mainStage;
+    public static FXMLLoader mainFXMLLoader;
+    public static final ObjectMapper MAP_JSON = new ObjectMapper();
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -28,9 +33,11 @@ public class RootApplication extends Application {
         stage.setMaxWidth(bounds.getWidth());
         stage.setMaxHeight(bounds.getHeight());
         stage.show();
+        mainStage = stage;
+        mainFXMLLoader = fxmlLoader;
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }

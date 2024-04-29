@@ -24,10 +24,19 @@ import java.util.regex.Matcher;
 
 public class MainMenuBar extends MenuBar {
     private final FileChooser fileSave = new FileChooser();
+    private final FileChooser fileRead = new FileChooser();
 
     {
         Menu file = new Menu("文件");
         MenuItem open = new MenuItem("打开", new FontIcon("far-folder-open"));
+        open.setOnAction(event -> {
+            File readFile = fileRead.showOpenDialog(RootApplication.mainStage);
+            if (readFile != null && readFile.toString().endsWith(".json")) {
+                Configuration.currentProject = readFile.toURI().toString();
+                Configuration.addHistoryProject(readFile.toURI().toString());
+                Configuration.loadTreeMenu();
+            }
+        });
         MenuItem save = new MenuItem("保存", new FontIcon("far-save"));
         save.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
         save.setOnAction(event -> {
@@ -67,6 +76,7 @@ public class MainMenuBar extends MenuBar {
         this.getMenus().add(file);
         this.getStyleClass().add("customBgColor");
         initFileSave();
+        initFileRead();
     }
 
     private static StringBuilder getStringBuilder() throws JsonProcessingException {
@@ -86,7 +96,13 @@ public class MainMenuBar extends MenuBar {
         //默认的文件名称
         fileSave.setInitialFileName("badeDemo");
         fileSave.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Save Files", "*.json"));
+                new FileChooser.ExtensionFilter("Save File", "*.json"));
+    }
+
+    public void initFileRead() {
+        fileRead.setTitle("Read File");
+        fileRead.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Read File", "*.json"));
     }
 
     public void saveProjectFile(File saveFile) {

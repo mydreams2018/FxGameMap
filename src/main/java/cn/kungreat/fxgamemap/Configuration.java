@@ -60,7 +60,9 @@ public class Configuration {
         URI writerStream = ClassLoader.getSystemResource("fxgamemap.properties").toURI();
         Path path = Paths.get(writerStream);
         String stringBuilder = "currentProject=" + currentProject + System.lineSeparator() +
-                "historyProject=" + historyProject + System.lineSeparator();
+                "historyProject=" + historyProject + System.lineSeparator() +
+                "logDirectory=" + logDirectory + System.lineSeparator() +
+                "errorPrint=" + errorPrint + System.lineSeparator();
         Files.write(path, stringBuilder.getBytes(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 

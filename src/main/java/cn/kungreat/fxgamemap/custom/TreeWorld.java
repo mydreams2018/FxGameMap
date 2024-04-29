@@ -26,7 +26,6 @@ public class TreeWorld {
     private List<TreeArea> childrenArea;
 
     public static StringConverter<Object> treeConverter() {
-        System.out.println("test-treeConverter");
         return new StringConverter<>() {
             @Override
             public String toString(Object item) {
@@ -59,7 +58,6 @@ public class TreeWorld {
     *  根据树结构提供的功能,自定义组件显示太麻烦放弃
     * */
     public static Callback<TreeView<Object>, TreeCell<Object>> treeCallback() {
-        System.out.println("test-treeCallback");
         return new Callback<>() {
             @Override
             public TreeCell<Object> call(TreeView<Object> param) {

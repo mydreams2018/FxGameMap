@@ -120,6 +120,7 @@ public class MainMenuBar extends MenuBar {
                     Configuration.currentProject = saveFile.toURI().toString();
                     Configuration.addHistoryProject(saveFile.toURI().toString());
                     Configuration.writerProperties();
+                    LogService.writerLog(LogService.LogLevel.INFO, getClass(), "写出文件数据完成{%s}", saveFile);
                 } catch (Exception e) {
                     LogService.printLog(LogService.LogLevel.ERROR, getClass(), "写出文件数据出错", e);
                 }

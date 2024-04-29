@@ -2,6 +2,7 @@ package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
+import cn.kungreat.fxgamemap.util.WorkThread;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
@@ -105,19 +106,21 @@ public class MainMenuBar extends MenuBar {
                 new FileChooser.ExtensionFilter("Read File", "*.json"));
     }
 
-    public void saveProjectFile(File saveFile) {
-        if (saveFile != null && saveFile.toString().endsWith(".json")) {
-            try {
-                StringBuilder stringBuilder = getStringBuilder();
-                Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
-                        StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                Configuration.currentProject = saveFile.toURI().toString();
-                Configuration.addHistoryProject(saveFile.toURI().toString());
-                Configuration.writerProperties();
-            } catch (Exception e) {
-                e.printStackTrace();
+    public void saveProjectFile(final File saveFile) {
+        WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
+            if (saveFile != null && saveFile.toString().endsWith(".json")) {
+                try {
+                    StringBuilder stringBuilder = getStringBuilder();
+                    Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
+                            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    Configuration.currentProject = saveFile.toURI().toString();
+                    Configuration.addHistoryProject(saveFile.toURI().toString());
+                    Configuration.writerProperties();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        });
     }
 
 }

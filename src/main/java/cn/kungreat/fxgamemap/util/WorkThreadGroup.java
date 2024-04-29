@@ -9,6 +9,6 @@ public class WorkThreadGroup extends ThreadGroup {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-
+        LogService.printLog(LogService.LogLevel.ERROR, getClass(), "线程组异常处理器" + t.getName(), e);
     }
 }

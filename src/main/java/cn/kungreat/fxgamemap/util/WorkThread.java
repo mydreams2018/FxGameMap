@@ -1,7 +1,5 @@
 package cn.kungreat.fxgamemap.util;
 
-import cn.kungreat.fxgamemap.Configuration;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -25,7 +23,7 @@ public class WorkThread {
          * @param e the executor attempting to execute this task
          */
         public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            LogService.writerLog(LogService.LogLevel.WARNING, WorkThread.class, "数据库拒绝处理");
+            LogService.writerLog(LogService.LogLevel.WARNING, WorkThread.class, "线程池拒绝处理");
         }
     }
 }

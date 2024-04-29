@@ -2,6 +2,7 @@ package cn.kungreat.fxgamemap.util;
 
 import cn.kungreat.fxgamemap.Configuration;
 
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/*
+ * 日志服务类 单独的一个线程处理
+ * */
 public class LogService extends Configuration {
 
     private static final BlockingQueue<String> LOG_QUEUE = new LinkedBlockingQueue<>();
@@ -25,9 +29,9 @@ public class LogService extends Configuration {
 
     static {
         try {
-            errorPrint = new PrintWriter(Configuration.errorPrint);
-        } catch (Exception ignored) {
-        }
+            FileOutputStream fileOutputStream = new FileOutputStream(Configuration.errorPrint,true);
+            errorPrint = new PrintWriter(fileOutputStream);
+        } catch (Exception ignored) {}
         Thread thread = new Thread(() -> {
             try {
                 while (true) {
@@ -39,15 +43,10 @@ public class LogService extends Configuration {
                 }
             } catch (Exception e) {
                 e.printStackTrace(errorPrint);
+                errorPrint.flush();
             }
         }, "LogService");
         thread.setDaemon(true);
-        thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                e.printStackTrace(errorPrint);
-            }
-        });
         thread.start();
     }
 

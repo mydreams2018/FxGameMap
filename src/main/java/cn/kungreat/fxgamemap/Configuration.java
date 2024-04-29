@@ -3,12 +3,12 @@ package cn.kungreat.fxgamemap;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
+import cn.kungreat.fxgamemap.util.LogService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.scene.control.TreeItem;
 import org.kordamp.ikonli.javafx.FontIcon;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 public class Configuration {
     public static volatile String currentProject;
     public static List<String> historyProject = new ArrayList<>();
+    public static String logDirectory;
+    public static String errorPrint;
 
     static {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("fxgamemap.properties");
@@ -38,6 +40,10 @@ public class Configuration {
                         for (String history : split[1].split(",")) {
                             historyProject.add(history);
                         }
+                    } else if (split.length == 2 && split[0].equals("logDirectory")) {
+                        logDirectory = split[1];
+                    } else if (split.length == 2 && split[0].equals("errorPrint")) {
+                        errorPrint = split[1];
                     }
                 }
             }
@@ -91,11 +97,11 @@ public class Configuration {
                             }
                         }
                     } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                LogService.printLog(LogService.LogLevel.ERROR, Configuration.class, "加载当前的树项目文件", e);
             }
         }
     }

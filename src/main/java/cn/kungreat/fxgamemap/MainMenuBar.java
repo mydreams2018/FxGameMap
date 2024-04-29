@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeWorld;
+import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.WorkThread;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,7 +51,7 @@ public class MainMenuBar extends MenuBar {
                     File saveFile = new File(resource.getPath());
                     saveProjectFile(saveFile);
                 } catch (URISyntaxException e) {
-                    e.printStackTrace();
+                    LogService.printLog(LogService.LogLevel.ERROR, getClass(), "保存数据事件", e);
                 }
             }
         });
@@ -80,18 +81,6 @@ public class MainMenuBar extends MenuBar {
         initFileRead();
     }
 
-    private static StringBuilder getStringBuilder() throws JsonProcessingException {
-        RootController controller = RootApplication.mainFXMLLoader.getController();
-        ObservableList<TreeItem<Object>> children = controller.getTreeView().getRoot().getChildren();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (TreeItem<Object> child : children) {
-            TreeWorld treeWorld = (TreeWorld) child.getValue();
-            stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
-            stringBuilder.append(System.lineSeparator());
-        }
-        return stringBuilder;
-    }
-
     public void initFileSave() {
         fileSave.setTitle("Save File");
         //默认的文件名称
@@ -106,6 +95,21 @@ public class MainMenuBar extends MenuBar {
                 new FileChooser.ExtensionFilter("Read File", "*.json"));
     }
 
+    /*
+     * Save File
+     * */
+    private static StringBuilder getStringBuilder() throws JsonProcessingException {
+        RootController controller = RootApplication.mainFXMLLoader.getController();
+        ObservableList<TreeItem<Object>> children = controller.getTreeView().getRoot().getChildren();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TreeItem<Object> child : children) {
+            TreeWorld treeWorld = (TreeWorld) child.getValue();
+            stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
+            stringBuilder.append(System.lineSeparator());
+        }
+        return stringBuilder;
+    }
+
     public void saveProjectFile(final File saveFile) {
         WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
             if (saveFile != null && saveFile.toString().endsWith(".json")) {
@@ -117,7 +121,7 @@ public class MainMenuBar extends MenuBar {
                     Configuration.addHistoryProject(saveFile.toURI().toString());
                     Configuration.writerProperties();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogService.printLog(LogService.LogLevel.ERROR, getClass(), "写出文件数据出错", e);
                 }
             }
         });

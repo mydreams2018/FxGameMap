@@ -4,6 +4,7 @@ import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -97,6 +98,7 @@ public class RootController implements Initializable {
                 TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
                 treeItem.setGraphic(new FontIcon("fas-globe"));
                 root.getChildren().add(treeItem);
+                PropertyListener.changeIsSaved(false);
             }
         });
         //区域地图事件添加
@@ -116,6 +118,7 @@ public class RootController implements Initializable {
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
                     item.getChildren().add(treeItem);
                     item.setExpanded(true);
+                    PropertyListener.changeIsSaved(false);
                 }
             }
         });
@@ -136,6 +139,7 @@ public class RootController implements Initializable {
                     treeItem.setGraphic(new FontIcon("fas-map"));
                     item.getChildren().add(treeItem);
                     item.setExpanded(true);
+                    PropertyListener.changeIsSaved(false);
                 }
             }
         });

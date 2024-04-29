@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 
 public class Configuration {
-    public static volatile String currentProject;
+    public static String currentProject;
     public static List<String> historyProject = new ArrayList<>();
     public static String logDirectory;
     public static String errorPrint;

@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.util.LogService;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +38,7 @@ public class RootApplication extends Application {
         mainStage = stage;
         mainFXMLLoader = fxmlLoader;
         Configuration.loadTreeMenu();
+        PropertyListener.initIsSavedListener();
         LogService.writerLog(LogService.LogLevel.INFO,getClass(),"项目启动完成");
     }
 

@@ -3,8 +3,10 @@ package cn.kungreat.fxgamemap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PatternUtils;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import cn.kungreat.fxgamemap.util.WorkThread;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -121,8 +123,10 @@ public class MainMenuBar extends MenuBar {
                     Configuration.addHistoryProject(saveFile.toURI().toString());
                     Configuration.writerProperties();
                     LogService.writerLog(LogService.LogLevel.INFO, getClass(), "写出文件数据完成{%s}", saveFile);
+                    Platform.runLater(() -> PropertyListener.changeIsSaved(true));
                 } catch (Exception e) {
                     LogService.printLog(LogService.LogLevel.ERROR, getClass(), "写出文件数据出错", e);
+                    Platform.runLater(() -> PropertyListener.changeIsSaved(false));
                 }
             }
         });

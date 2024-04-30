@@ -39,6 +39,7 @@ public class RootApplication extends Application {
         mainFXMLLoader = fxmlLoader;
         Configuration.loadTreeMenu();
         PropertyListener.initIsSavedListener();
+        PropertyListener.initChooseResourceImageListener();
         LogService.writerLog(LogService.LogLevel.INFO,getClass(),"项目启动完成");
     }
 

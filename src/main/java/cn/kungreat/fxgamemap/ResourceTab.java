@@ -1,6 +1,6 @@
 package cn.kungreat.fxgamemap;
 
-import javafx.event.EventHandler;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -9,12 +9,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,19 +73,15 @@ public class ResourceTab {
 
     private ImageView getImageView(int x) {
         Image image = new Image(resourceImg.get(x).toURI().toString(), false);
-        WritableImage writableImage = new WritableImage(image.getPixelReader(), image.widthProperty().intValue(), image.heightProperty().intValue());
         ImageView iv = new ImageView();
-        iv.setImage(writableImage);
+        iv.setImage(image);
         iv.setSmooth(true);
         iv.setCache(true);
-        iv.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                MouseButton button = event.getButton();
-                if (button == MouseButton.PRIMARY) {
-                    ImageView source = (ImageView) event.getSource();
-                    source.getImage();
-                }
+        iv.setOnMouseClicked(event -> {
+            MouseButton button = event.getButton();
+            if (button == MouseButton.PRIMARY) {
+                ImageView source = (ImageView) event.getSource();
+                PropertyListener.changeChooseResourceImage(source);
             }
         });
         return iv;

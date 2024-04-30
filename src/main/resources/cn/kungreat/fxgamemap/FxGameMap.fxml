@@ -12,9 +12,13 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.TreeItem?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController" styleClass="customBgColor">
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
-        <HBox fx:id="hBox" alignment="CENTER_LEFT" spacing="20.0">
+        <HBox fx:id="hBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
         </HBox>
     </top>
     <center>
@@ -35,8 +39,23 @@
             <StackPane fx:id="stackPaneCenter">
                 <Button text="two"></Button>
             </StackPane>
-            <StackPane fx:id="stackPaneRight">
-                <Button text="three"></Button>
+            <StackPane minWidth="300">
+                <SplitPane orientation="VERTICAL" dividerPositions="0.5f,1.0f">
+                    <StackPane>
+                        <Button text="three"></Button>
+                    </StackPane>
+                    <StackPane>
+                        <VBox alignment="TOP_CENTER" fx:id="tabPaneRightVbox">
+                            <Button text="添加资源图片" onAction="#addResourceImg" fx:id="tabPaneRightButton">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-plus"/>
+                                </graphic>
+                            </Button>
+                            <TabPane fx:id="tabPaneRight">
+                            </TabPane>
+                        </VBox>
+                    </StackPane>
+                </SplitPane>
             </StackPane>
         </SplitPane>
     </center>

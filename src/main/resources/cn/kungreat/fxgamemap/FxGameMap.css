@@ -1,3 +1,7 @@
 .customBgColor{
     -fx-background-color: #c0c0c0;
 }
+
+.tab-header-background {
+    -fx-background-color: #f4f4f4;
+}

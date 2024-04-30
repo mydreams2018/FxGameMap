@@ -23,8 +23,8 @@ public class LogService extends Configuration {
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static final String logPrefix = "fxgamemap";
-    public static final String logType = ".txt";
+    public static final String LOG_PREFIX = "fxgamemap";
+    public static final String LOG_TYPE = ".txt";
     public static PrintWriter errorPrint;
 
     static {
@@ -36,8 +36,8 @@ public class LogService extends Configuration {
             try {
                 while (true) {
                     String line = LOG_QUEUE.take() + System.lineSeparator();
-                    String currentFileName = Configuration.logDirectory + logPrefix +
-                            LocalDate.now().format(DATE_FORMATTER) + logType;
+                    String currentFileName = Configuration.logDirectory + LOG_PREFIX +
+                            LocalDate.now().format(DATE_FORMATTER) + LOG_TYPE;
                     Path path = Paths.get(currentFileName);
                     Files.writeString(path, line, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 }

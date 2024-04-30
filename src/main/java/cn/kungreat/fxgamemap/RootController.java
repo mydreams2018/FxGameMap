@@ -12,16 +12,20 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 @Setter
 @Getter
 public class RootController implements Initializable {
@@ -54,7 +58,11 @@ public class RootController implements Initializable {
     @FXML
     private StackPane stackPaneCenter;
     @FXML
-    private StackPane stackPaneRight;
+    private VBox tabPaneRightVbox;
+    @FXML
+    private Button tabPaneRightButton;
+    @FXML
+    private TabPane tabPaneRight;
     @FXML
     private TreeView<Object> treeView;
 
@@ -69,6 +77,7 @@ public class RootController implements Initializable {
         worldDialog.setOnShowing(event -> BaseDialog.TEXT_WORLD.clear());
         areaDialog.setOnShowing(event -> BaseDialog.TEXT_AREA.clear());
         mapDialog.setOnShowing(event -> BaseDialog.TEXT_MAP.clear());
+        tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightButton.heightProperty()));
         addTreeEvent();
     }
 
@@ -145,7 +154,18 @@ public class RootController implements Initializable {
         });
     }
 
+    @FXML
     public void showTreeBookDialog(MouseEvent mouseEvent) {
         linkMapBookDialog.showAndWait();
+    }
+
+    @FXML
+    public void addResourceImg() {
+        List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+        if (selectedFiles != null && !selectedFiles.isEmpty()) {
+            ResourceTab resourceTab = new ResourceTab(selectedFiles,UUID.randomUUID().toString());
+            resourceTab.initTab();
+            tabPaneRight.getTabs().add(resourceTab.getTab());
+        }
     }
 }

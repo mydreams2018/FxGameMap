@@ -38,8 +38,10 @@ public class RootApplication extends Application {
         mainStage = stage;
         mainFXMLLoader = fxmlLoader;
         Configuration.loadTreeMenu();
-        PropertyListener.initIsSavedListener();
+        PropertyListener.initIsSavedListener(stage);
         PropertyListener.initChooseResourceImageListener();
+        RootController rootController = fxmlLoader.getController();
+        PropertyListener.initMainMenuHistoryListener(rootController.getMainMenuBar().getHistoryMenu());
         LogService.writerLog(LogService.LogLevel.INFO,getClass(),"项目启动完成");
     }
 

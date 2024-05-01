@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -30,16 +29,16 @@ import java.util.regex.Pattern;
 @Getter
 public class RootController implements Initializable {
 
-    private Dialog<String> worldDialog = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
+    private static final Dialog<String> worldDialog = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
             , BaseDialog.TEXT_WORLD, BaseDialog.APPLY_WORLD, BaseDialog.CANCEL_WORLD);
 
-    private Dialog<String> areaDialog = BaseDialog.getDialog("区域地图", "请输入区域地图信息:", "是否需要添加区域地图层级"
+    private static final Dialog<String> areaDialog = BaseDialog.getDialog("区域地图", "请输入区域地图信息:", "是否需要添加区域地图层级"
             , BaseDialog.getAreaRectangular(), BaseDialog.APPLY_AREA, BaseDialog.CANCEL_AREA);
 
-    private Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图信息:", "是否需要添加分块地图"
+    private static final Dialog<String> mapDialog = BaseDialog.getDialog("分块地图", "请输入分块地图信息:", "是否需要添加分块地图"
             , BaseDialog.getMapRectangular(), BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
 
-    private Dialog<String> linkMapBookDialog = BaseDialog.getDialog("使用说明", "地图完整的使用说明",
+    private static final Dialog<String> linkMapBookDialog = BaseDialog.getDialog("使用说明", "地图完整的使用说明",
             """
                     1.世界地图是一个完整游戏地图的概念
                     2.区域地图是世界地图的子级.是一个区域的概念
@@ -48,36 +47,37 @@ public class RootController implements Initializable {
                     """
             , null, ButtonType.CLOSE);
     @FXML
-    private HBox hBox;
-    @FXML
-    private SplitPane splitPane;
+    private HBox topHBox;
     @FXML
     private StackPane stackPaneLeft;
     @FXML
-    private Text stackPaneLeftText;
+    private HBox stackPaneLeftHBox;
     @FXML
     private StackPane stackPaneCenter;
     @FXML
     private VBox tabPaneRightVbox;
     @FXML
-    private Button tabPaneRightButton;
+    private HBox tabPaneRightHBox;
     @FXML
     private TabPane tabPaneRight;
     @FXML
     private TreeView<Object> treeView;
 
+    private MainMenuBar mainMenuBar;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        hBox.getChildren().add(new MainMenuBar());
+        mainMenuBar = new MainMenuBar();
+        topHBox.getChildren().add(mainMenuBar);
         treeView.setEditable(true);
         treeView.setCellFactory(TextFieldTreeCell.forTreeView(TreeWorld.treeConverter()));
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftText.prefHeight(-1)));
+        treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftHBox.heightProperty()));
         treeView.setContextMenu(getTreeContextMenu());
         worldDialog.setOnShowing(event -> BaseDialog.TEXT_WORLD.clear());
         areaDialog.setOnShowing(event -> BaseDialog.TEXT_AREA.clear());
         mapDialog.setOnShowing(event -> BaseDialog.TEXT_MAP.clear());
-        tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightButton.heightProperty()));
+        tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightHBox.heightProperty()));
         addTreeEvent();
     }
 
@@ -163,7 +163,7 @@ public class RootController implements Initializable {
     public void addResourceImg() {
         List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
         if (selectedFiles != null && !selectedFiles.isEmpty()) {
-            ResourceTab resourceTab = new ResourceTab(selectedFiles,UUID.randomUUID().toString());
+            ResourceTab resourceTab = new ResourceTab(selectedFiles, UUID.randomUUID().toString());
             resourceTab.initTab();
             tabPaneRight.getTabs().add(resourceTab.getTab());
         }

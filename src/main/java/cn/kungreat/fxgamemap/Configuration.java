@@ -4,6 +4,7 @@ import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.LogService;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.scene.control.TreeItem;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -34,11 +35,11 @@ public class Configuration {
                 if (!s.isBlank() && s.contains("=")) {
                     String[] split = s.split("=");
                     if (split.length == 2 && split[0].equals("currentProject")) {
-                        currentProject = split[1];
+                        changeCurrentProject(split[1]);
                     } else if (split.length == 2 && split[0].equals("historyProject")) {
                         split[1] = split[1].substring(1, split[1].length() - 1);
                         for (String history : split[1].split(",")) {
-                            historyProject.add(history);
+                            addHistoryProject(history);
                         }
                     } else if (split.length == 2 && split[0].equals("logDirectory")) {
                         logDirectory = split[1];
@@ -53,7 +54,12 @@ public class Configuration {
     public static void addHistoryProject(String project) {
         if (!historyProject.contains(project)) {
             historyProject.addFirst(project);
+            PropertyListener.setMainMenuHistory(project);
         }
+    }
+
+    public static void changeCurrentProject(String cp) {
+        currentProject = cp;
     }
 
     public static void writerProperties() throws Exception {

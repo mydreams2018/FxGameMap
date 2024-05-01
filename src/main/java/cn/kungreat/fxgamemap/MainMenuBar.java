@@ -2,7 +2,6 @@ package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.LogService;
-import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import cn.kungreat.fxgamemap.util.WorkThread;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
+import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
@@ -23,12 +23,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.regex.Matcher;
 
-
+@Getter
 public class MainMenuBar extends MenuBar {
     private final FileChooser fileSave = new FileChooser();
     private final FileChooser fileRead = new FileChooser();
+    private final Menu historyMenu = new Menu("历史记录", new FontIcon("fas-history"));
 
     {
         Menu file = new Menu("文件");
@@ -36,7 +36,7 @@ public class MainMenuBar extends MenuBar {
         open.setOnAction(event -> {
             File readFile = fileRead.showOpenDialog(RootApplication.mainStage);
             if (readFile != null && readFile.toString().endsWith(".json")) {
-                Configuration.currentProject = readFile.toURI().toString();
+                Configuration.changeCurrentProject(readFile.toURI().toString());
                 Configuration.addHistoryProject(readFile.toURI().toString());
                 Configuration.loadTreeMenu();
             }
@@ -57,26 +57,7 @@ public class MainMenuBar extends MenuBar {
                 }
             }
         });
-
-        Menu history = new Menu("历史记录", new FontIcon("fas-history"));
-        if (Configuration.historyProject != null && !Configuration.historyProject.isEmpty()) {
-            Configuration.historyProject.forEach(s -> {
-                Matcher matcher = PatternUtils.findFileName.matcher(s);
-                if (matcher.find()) {
-                    MenuItem historyItem = new MenuItem(matcher.group().substring(1, matcher.group().length() - 5));
-                    historyItem.setUserData(s);
-                    historyItem.setOnAction(event -> {
-                        MenuItem historyItemHandler = (MenuItem) event.getSource();
-                        if (!Configuration.currentProject.equals(historyItemHandler.getUserData())) {
-                            Configuration.currentProject = (String) historyItemHandler.getUserData();
-                            Configuration.loadTreeMenu();
-                        }
-                    });
-                    history.getItems().add(historyItem);
-                }
-            });
-        }
-        file.getItems().addAll(open, save, history);
+        file.getItems().addAll(open, save, historyMenu);
         this.getMenus().add(file);
         this.getStyleClass().add("customBgColor");
         initFileSave();
@@ -119,7 +100,7 @@ public class MainMenuBar extends MenuBar {
                     StringBuilder stringBuilder = getStringBuilder();
                     Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
                             StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                    Configuration.currentProject = saveFile.toURI().toString();
+                    Configuration.changeCurrentProject(saveFile.toURI().toString());
                     Configuration.addHistoryProject(saveFile.toURI().toString());
                     Configuration.writerProperties();
                     LogService.writerLog(LogService.LogLevel.INFO, getClass(), "写出文件数据完成{%s}", saveFile);

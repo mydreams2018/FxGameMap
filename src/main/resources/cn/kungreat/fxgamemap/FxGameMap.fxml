@@ -14,15 +14,15 @@
 <?import javafx.scene.control.TabPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
-        <HBox fx:id="hBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
+        <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
         </HBox>
     </top>
     <center>
-        <SplitPane fx:id="splitPane" dividerPositions="0.2f,0.7f,1.0f">
+        <SplitPane dividerPositions="0.2f,0.7f,1.0f">
             <StackPane minWidth="260" maxWidth="300" fx:id="stackPaneLeft" alignment="TOP_LEFT">
                 <VBox styleClass="customBgColor" alignment="TOP_CENTER">
-                    <HBox alignment="CENTER">
-                        <Text fx:id="stackPaneLeftText" text="项目-查看说明"/>
+                    <HBox alignment="CENTER" fx:id="stackPaneLeftHBox">
+                        <Text text="项目-查看说明"/>
                         <FontIcon onMouseClicked="#showTreeBookDialog" iconColor="olive" iconLiteral="fas-book" iconSize="18"/>
                     </HBox>
                     <TreeView fx:id="treeView" showRoot="false">
@@ -42,8 +42,8 @@
                     </StackPane>
                     <StackPane>
                         <VBox alignment="TOP_CENTER" fx:id="tabPaneRightVbox">
-                            <HBox alignment="CENTER_RIGHT" spacing="10">
-                                <Button text="多个小资源图片" onAction="#addResourceImg" fx:id="tabPaneRightButton">
+                            <HBox alignment="CENTER_RIGHT" spacing="10" fx:id="tabPaneRightHBox">
+                                <Button text="多个小资源图片" onAction="#addResourceImg">
                                     <graphic>
                                         <FontIcon iconLiteral="fas-plus"/>
                                     </graphic>

@@ -7,6 +7,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -54,7 +55,13 @@ public class ResourceTab {
         ScrollPane scrollPane = new ScrollPane();
         tab.setContent(scrollPane);
         tab.setOnClosed(event -> {
-            System.out.println(tabName + "-close");
+            ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
+            if (chooseResourceImage != null) {
+                Object bindFile = chooseResourceImage.getUserData();
+                if (resourceImg.contains(bindFile)) {
+                    PropertyListener.changeChooseResourceImage(null);
+                }
+            }
         });
         scrollPane.setCursor(Cursor.HAND);
         scrollPane.setFitToWidth(true);
@@ -77,6 +84,8 @@ public class ResourceTab {
         iv.setImage(image);
         iv.setSmooth(true);
         iv.setCache(true);
+        iv.setUserData(resourceImg.get(x));
+        Tooltip.install(iv, new Tooltip("宽" + iv.prefWidth(-1) + "高" + iv.prefHeight(-1)));
         iv.setOnMouseClicked(event -> {
             MouseButton button = event.getButton();
             if (button == MouseButton.PRIMARY) {

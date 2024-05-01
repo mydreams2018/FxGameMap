@@ -5,6 +5,8 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -79,6 +81,7 @@ public class RootController implements Initializable {
         treeView.setContextMenu(getTreeContextMenu());
         tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightHBox.heightProperty()));
         addTreeEvent();
+        addSegmentResourceImgEvent();
     }
 
     public ContextMenu getTreeContextMenu() {
@@ -175,5 +178,20 @@ public class RootController implements Initializable {
     @FXML
     public void addSegmentResourceImg() {
         SEGMENT_RESOURCE_IMAGES_DIALOG.showAndWait();
+    }
+
+    public void addSegmentResourceImgEvent() {
+        SEGMENT_RESOURCE_IMAGES_DIALOG.setOnShowing(event -> {
+            BaseDialog.SRID_NAME.clear();
+            BaseDialog.SRID_PATH.clear();
+        });
+        //资源图片分割事件
+        Button segmentResourceImgOk = (Button) SEGMENT_RESOURCE_IMAGES_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_SRID);
+        segmentResourceImgOk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("segmentResourceImgOk" + event);
+            }
+        });
     }
 }

@@ -88,6 +88,7 @@ public class BaseDialog {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("分割图片");
         dialog.setHeaderText("属性设置");
+        dialog.setContentText("确定分割图片吗");
         dialog.setResizable(false);
         VBox vBox = new VBox(10);
         //只读文本输入框

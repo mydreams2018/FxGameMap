@@ -48,7 +48,7 @@
                                         <FontIcon iconLiteral="fas-plus"/>
                                     </graphic>
                                 </Button>
-                                <Button text="单个大资源图片">
+                                <Button text="单个大资源图片" onAction="#addSegmentResourceImg">
                                     <graphic>
                                         <FontIcon iconLiteral="fas-plus"/>
                                     </graphic>

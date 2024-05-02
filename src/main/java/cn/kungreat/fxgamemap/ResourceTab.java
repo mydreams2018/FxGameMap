@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -34,7 +35,7 @@ public class ResourceTab {
         FILE_CHOOSER.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif", "*.bmp"));
     }
-
+    @JsonIgnore
     private Tab tab;
 
     private List<File> resourceImg;

@@ -99,6 +99,8 @@ public class BaseDialog {
         HBox hBoxInnerTwo = new HBox(10);
         hBoxInnerTwo.getChildren().addAll(SRID_WIDTH, SRID_HEIGHT);
         HBox hBoxInnerThree = new HBox(10);
+        SRID_MARGIN.setText("0");
+        SRID_PADDING.setText("0");
         hBoxInnerThree.getChildren().addAll(SRID_MARGIN, SRID_PADDING);
         vBox.getChildren().addAll(SRID_NAME, hBoxInnerOne, hBoxInnerTwo, hBoxInnerThree);
         dialog.setGraphic(vBox);

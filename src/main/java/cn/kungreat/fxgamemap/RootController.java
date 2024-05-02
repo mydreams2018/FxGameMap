@@ -190,7 +190,22 @@ public class RootController implements Initializable {
         segmentResourceImgOk.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("segmentResourceImgOk" + event);
+                String sridName = BaseDialog.SRID_NAME.getText();
+                String sridPath = BaseDialog.SRID_PATH.getText();
+                String sridWidth = BaseDialog.SRID_WIDTH.getText();
+                String sridHeight = BaseDialog.SRID_HEIGHT.getText();
+                String sridMargin = BaseDialog.SRID_MARGIN.getText();
+                String sridPadding = BaseDialog.SRID_PADDING.getText();
+                if (sridName != null && sridPath != null && sridWidth != null && sridHeight != null
+                        && !sridName.isBlank() && !sridPath.isBlank() && !sridWidth.isBlank() && !sridHeight.isBlank()
+                        && Pattern.matches(PatternUtils.NumberRegex, sridWidth) && Pattern.matches(PatternUtils.NumberRegex, sridHeight)) {
+                    Integer coverSridMargin = sridMargin == null ? 0 : Integer.parseInt(sridMargin);
+                    Integer coverSridPadding = sridPadding == null ? 0 : Integer.parseInt(sridPadding);
+                    SegmentResourceTab segmentResourceTab = new SegmentResourceTab(UUID.randomUUID().toString(),
+                            sridName, sridPath, Integer.parseInt(sridWidth), Integer.parseInt(sridHeight), coverSridMargin, coverSridPadding);
+
+                }
+
             }
         });
     }

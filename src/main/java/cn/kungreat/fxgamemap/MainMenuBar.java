@@ -90,6 +90,8 @@ public class MainMenuBar extends MenuBar {
             stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
             stringBuilder.append(System.lineSeparator());
         }
+        stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(RootApplication.RESOURCES));
+        stringBuilder.append(System.lineSeparator());
         return stringBuilder;
     }
 

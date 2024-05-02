@@ -170,6 +170,7 @@ public class RootController implements Initializable {
             ResourceTab resourceTab = new ResourceTab(selectedFiles, UUID.randomUUID().toString());
             resourceTab.initTab();
             tabPaneRight.getTabs().add(resourceTab.getTab());
+            RootApplication.RESOURCES.getResourceTabList().add(resourceTab);
         }
     }
 
@@ -201,6 +202,7 @@ public class RootController implements Initializable {
                         sridName, sridPath, Integer.parseInt(sridWidth), Integer.parseInt(sridHeight), coverSridMargin, coverSridPadding);
                 segmentResourceTab.initTab();
                 tabPaneRight.getTabs().add(segmentResourceTab.getTab());
+                RootApplication.RESOURCES.getSegmentResourceTabList().add(segmentResourceTab);
             }
         });
     }

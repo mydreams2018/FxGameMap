@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.Resources;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ public class RootApplication extends Application {
     public static Stage mainStage;
     public static FXMLLoader mainFXMLLoader;
     public static final ObjectMapper MAP_JSON = new ObjectMapper();
+    public static final Resources RESOURCES = new Resources();
 
     @Override
     public void start(Stage stage) throws IOException {

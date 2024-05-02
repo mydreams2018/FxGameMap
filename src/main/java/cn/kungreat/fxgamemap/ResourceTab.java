@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class ResourceTab {
 
     public static final FileChooser FILE_CHOOSER = new FileChooser();

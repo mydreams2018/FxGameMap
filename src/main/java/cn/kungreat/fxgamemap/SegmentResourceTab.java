@@ -2,8 +2,6 @@ package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -80,24 +78,29 @@ public class SegmentResourceTab {
         int loopY = imageHeight / (segmentHeight + segmentMargin);
         for (int y = 0; y < loopY; y++) {
             for (int x = 0; x < loopX; x++) {
-                double minX = x * (segmentWidth + segmentMargin);
-                double minY = y * (segmentHeight + segmentMargin);
-                Rectangle2D viewportRect = new Rectangle2D(minX, minY, segmentWidth - segmentPadding, segmentHeight - segmentPadding);
-                ImageView iv = new ImageView();
-                iv.setImage(image);
-                iv.setViewport(viewportRect);
-                iv.setUserData(filePath);
-                iv.setOnMouseClicked(event -> {
-                    MouseButton button = event.getButton();
-                    if (button == MouseButton.PRIMARY) {
-                        ImageView source = (ImageView) event.getSource();
-                        PropertyListener.changeChooseResourceImage(source);
-                    }
-                });
+                ImageView iv = getImageView(x, y, image);
                 Tooltip.install(iv, new Tooltip("宽" + iv.prefWidth(-1) + "高" + iv.prefHeight(-1)));
                 flowPane.getChildren().add(iv);
             }
         }
         scrollPane.setContent(flowPane);
+    }
+
+    private ImageView getImageView(int x, int y, Image image) {
+        double minX = x * (segmentWidth + segmentMargin);
+        double minY = y * (segmentHeight + segmentMargin);
+        Rectangle2D viewportRect = new Rectangle2D(minX, minY, segmentWidth - segmentPadding, segmentHeight - segmentPadding);
+        ImageView iv = new ImageView();
+        iv.setImage(image);
+        iv.setViewport(viewportRect);
+        iv.setUserData(filePath);
+        iv.setOnMouseClicked(event -> {
+            MouseButton button = event.getButton();
+            if (button == MouseButton.PRIMARY) {
+                ImageView source = (ImageView) event.getSource();
+                PropertyListener.changeChooseResourceImage(source);
+            }
+        });
+        return iv;
     }
 }

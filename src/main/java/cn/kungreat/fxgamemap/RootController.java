@@ -5,8 +5,6 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -187,25 +185,22 @@ public class RootController implements Initializable {
         });
         //资源图片分割事件
         Button segmentResourceImgOk = (Button) SEGMENT_RESOURCE_IMAGES_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_SRID);
-        segmentResourceImgOk.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                String sridName = BaseDialog.SRID_NAME.getText();
-                String sridPath = BaseDialog.SRID_PATH.getText();
-                String sridWidth = BaseDialog.SRID_WIDTH.getText();
-                String sridHeight = BaseDialog.SRID_HEIGHT.getText();
-                String sridMargin = BaseDialog.SRID_MARGIN.getText();
-                String sridPadding = BaseDialog.SRID_PADDING.getText();
-                if (sridName != null && sridPath != null && sridWidth != null && sridHeight != null
-                        && !sridName.isBlank() && !sridPath.isBlank() && !sridWidth.isBlank() && !sridHeight.isBlank()
-                        && Pattern.matches(PatternUtils.NumberRegex, sridWidth) && Pattern.matches(PatternUtils.NumberRegex, sridHeight)) {
-                    Integer coverSridMargin = sridMargin == null ? 0 : Integer.parseInt(sridMargin);
-                    Integer coverSridPadding = sridPadding == null ? 0 : Integer.parseInt(sridPadding);
-                    SegmentResourceTab segmentResourceTab = new SegmentResourceTab(UUID.randomUUID().toString(),
-                            sridName, sridPath, Integer.parseInt(sridWidth), Integer.parseInt(sridHeight), coverSridMargin, coverSridPadding);
-
-                }
-
+        segmentResourceImgOk.setOnAction(event -> {
+            String sridName = BaseDialog.SRID_NAME.getText();
+            String sridPath = BaseDialog.SRID_PATH.getText();
+            String sridWidth = BaseDialog.SRID_WIDTH.getText();
+            String sridHeight = BaseDialog.SRID_HEIGHT.getText();
+            String sridMargin = BaseDialog.SRID_MARGIN.getText();
+            String sridPadding = BaseDialog.SRID_PADDING.getText();
+            if (sridName != null && sridPath != null && sridWidth != null && sridHeight != null
+                    && !sridName.isBlank() && !sridPath.isBlank() && !sridWidth.isBlank() && !sridHeight.isBlank()
+                    && Pattern.matches(PatternUtils.NumberRegex, sridWidth) && Pattern.matches(PatternUtils.NumberRegex, sridHeight)) {
+                Integer coverSridMargin = sridMargin == null ? 0 : Integer.parseInt(sridMargin);
+                Integer coverSridPadding = sridPadding == null ? 0 : Integer.parseInt(sridPadding);
+                SegmentResourceTab segmentResourceTab = new SegmentResourceTab(UUID.randomUUID().toString(),
+                        sridName, sridPath, Integer.parseInt(sridWidth), Integer.parseInt(sridHeight), coverSridMargin, coverSridPadding);
+                segmentResourceTab.initTab();
+                tabPaneRight.getTabs().add(segmentResourceTab.getTab());
             }
         });
     }

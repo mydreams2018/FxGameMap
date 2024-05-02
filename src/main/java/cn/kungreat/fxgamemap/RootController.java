@@ -171,6 +171,7 @@ public class RootController implements Initializable {
             resourceTab.initTab();
             tabPaneRight.getTabs().add(resourceTab.getTab());
             RootApplication.RESOURCES.getResourceTabList().add(resourceTab);
+            PropertyListener.changeIsSaved(false);
         }
     }
 
@@ -203,6 +204,7 @@ public class RootController implements Initializable {
                 segmentResourceTab.initTab();
                 tabPaneRight.getTabs().add(segmentResourceTab.getTab());
                 RootApplication.RESOURCES.getSegmentResourceTabList().add(segmentResourceTab);
+                PropertyListener.changeIsSaved(false);
             }
         });
     }

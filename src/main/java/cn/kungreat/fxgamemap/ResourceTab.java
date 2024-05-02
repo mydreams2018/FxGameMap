@@ -37,6 +37,7 @@ public class ResourceTab {
         FILE_CHOOSER.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif", "*.bmp"));
     }
+
     @JsonIgnore
     private Tab tab;
 
@@ -65,6 +66,8 @@ public class ResourceTab {
                     PropertyListener.changeChooseResourceImage(null);
                 }
             }
+            PropertyListener.changeIsSaved(false);
+            RootApplication.RESOURCES.getResourceTabList().remove(ResourceTab.this);
         });
         scrollPane.setCursor(Cursor.HAND);
         scrollPane.setFitToWidth(true);

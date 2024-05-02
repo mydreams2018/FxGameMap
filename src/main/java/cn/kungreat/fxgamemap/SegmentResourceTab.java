@@ -36,7 +36,7 @@ public class SegmentResourceTab {
     private Integer segmentMargin;
     private Integer segmentPadding;
 
-    public SegmentResourceTab(String id, String name, String filePath, Integer segmentWidth,Integer segmentHeight,
+    public SegmentResourceTab(String id, String name, String filePath, Integer segmentWidth, Integer segmentHeight,
                               Integer segmentMargin, Integer segmentPadding) {
         this.id = id;
         this.tabName = name;
@@ -62,6 +62,8 @@ public class SegmentResourceTab {
                     PropertyListener.changeChooseResourceImage(null);
                 }
             }
+            PropertyListener.changeIsSaved(false);
+            RootApplication.RESOURCES.getSegmentResourceTabList().remove(SegmentResourceTab.this);
         });
         scrollPane.setCursor(Cursor.HAND);
         scrollPane.setFitToWidth(true);

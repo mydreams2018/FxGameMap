@@ -42,6 +42,10 @@ public class BaseDialog {
     public static final TextField SRID_PADDING = BaseDialog.getTextField("请输入内边距");
     public static final ButtonType APPLY_SRID = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType CANCEL_SRID = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    //图片对象
+    public static final TextField IMAGE_OBJECT_NAME = BaseDialog.getTextField("请输入图片对象名称");
+    public static final ButtonType APPLY_IMAGE_OBJECT = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType CANCEL_IMAGE_OBJECT = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     static {
         SRID_BTN_CHOOSE.setOnAction(event -> {

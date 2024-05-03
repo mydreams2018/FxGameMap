@@ -12,9 +12,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -51,6 +53,9 @@ public class RootController implements Initializable {
 
     private static final Dialog<String> SEGMENT_RESOURCE_IMAGES_DIALOG = BaseDialog.getSegmentResourceImagesDialog();
 
+    private static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
+            , BaseDialog.IMAGE_OBJECT_NAME, BaseDialog.APPLY_IMAGE_OBJECT, BaseDialog.CANCEL_IMAGE_OBJECT);
+
     @FXML
     private HBox topHBox;
     @FXML
@@ -67,6 +72,8 @@ public class RootController implements Initializable {
     private RadioButton radioButtonIsObject;
     @FXML
     private ScrollPane rightTopScrollPane;
+    @FXML
+    private Accordion rightTopScrollPaneAccordion;
     @FXML
     private VBox tabPaneRightVbox;
     @FXML
@@ -89,8 +96,10 @@ public class RootController implements Initializable {
         treeView.setContextMenu(getTreeContextMenu());
         tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightHBox.heightProperty()));
         rightTopScrollPane.prefHeightProperty().bind(rightTopOutVBox.heightProperty().subtract(rightTopInHbox.heightProperty()));
+        rightTopScrollPaneAccordion.prefWidthProperty().bind(rightTopScrollPane.widthProperty().subtract(3));
         addTreeEvent();
         addSegmentResourceImgEvent();
+        addImageObjectEvent();
     }
 
     public ContextMenu getTreeContextMenu() {
@@ -222,6 +231,26 @@ public class RootController implements Initializable {
                 tabPaneRight.getTabs().add(segmentResourceTab.getTab());
                 RootApplication.RESOURCES.getSegmentResourceTabList().add(segmentResourceTab);
                 PropertyListener.changeIsSaved(false);
+            }
+        });
+    }
+
+    @FXML
+    public void addImageObject() {
+        IMAGE_OBJECT_DIALOG.showAndWait();
+    }
+
+    public void addImageObjectEvent() {
+        IMAGE_OBJECT_DIALOG.setOnShowing(event -> {
+            BaseDialog.IMAGE_OBJECT_NAME.clear();
+        });
+        Button imageObjectOk = (Button) IMAGE_OBJECT_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_IMAGE_OBJECT);
+        imageObjectOk.setOnAction(event -> {
+            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
+            if (objectNameText != null && !objectNameText.isBlank()) {
+                ImageObject imageObject = new ImageObject(UUID.randomUUID().toString(), objectNameText);
+                imageObject.initTitledPane();
+                rightTopScrollPaneAccordion.getPanes().add(imageObject.getTitledPane());
             }
         });
     }

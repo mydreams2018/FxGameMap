@@ -47,11 +47,16 @@
                         </fx:define>
                         <VBox fx:id="rightTopOutVBox">
                             <HBox alignment="CENTER_RIGHT" spacing="10" fx:id="rightTopInHbox">
+                                <Button text="添加图片对象信息" onAction="#addImageObject">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fab-bimobject"/>
+                                    </graphic>
+                                </Button>
                                 <RadioButton text="背景图片" selected="true" toggleGroup="$imgTypeGroup"/>
                                 <RadioButton text="对象图片" fx:id="radioButtonIsObject" toggleGroup="$imgTypeGroup"/>
                             </HBox>
-                            <ScrollPane fx:id="rightTopScrollPane">
-                                <Accordion></Accordion>
+                            <ScrollPane fx:id="rightTopScrollPane" styleClass="customBgColor">
+                                <Accordion fx:id="rightTopScrollPaneAccordion"></Accordion>
                             </ScrollPane>
                         </VBox>
                     </StackPane>

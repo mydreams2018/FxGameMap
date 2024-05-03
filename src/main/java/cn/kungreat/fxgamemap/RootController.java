@@ -5,6 +5,8 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -58,6 +60,14 @@ public class RootController implements Initializable {
     @FXML
     private StackPane stackPaneCenter;
     @FXML
+    private VBox rightTopOutVBox;
+    @FXML
+    private HBox rightTopInHbox;
+    @FXML
+    private RadioButton radioButtonIsObject;
+    @FXML
+    private ScrollPane rightTopScrollPane;
+    @FXML
     private VBox tabPaneRightVbox;
     @FXML
     private HBox tabPaneRightHBox;
@@ -78,6 +88,7 @@ public class RootController implements Initializable {
         treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftHBox.heightProperty()));
         treeView.setContextMenu(getTreeContextMenu());
         tabPaneRight.prefHeightProperty().bind(tabPaneRightVbox.heightProperty().subtract(tabPaneRightHBox.heightProperty()));
+        rightTopScrollPane.prefHeightProperty().bind(rightTopOutVBox.heightProperty().subtract(rightTopInHbox.heightProperty()));
         addTreeEvent();
         addSegmentResourceImgEvent();
     }
@@ -154,6 +165,12 @@ public class RootController implements Initializable {
                     item.setExpanded(true);
                     PropertyListener.changeIsSaved(false);
                 }
+            }
+        });
+        treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Object>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<Object>> observable, TreeItem<Object> oldValue, TreeItem<Object> newValue) {
+                System.out.println("事件触发改中间区域的数据");
             }
         });
     }

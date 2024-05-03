@@ -18,14 +18,13 @@ import java.io.IOException;
 public class RootApplication extends Application {
 
     public static Stage mainStage;
-    public static FXMLLoader mainFXMLLoader;
+    public static FXMLLoader mainFXMLLoader = new FXMLLoader(RootApplication.class.getResource("FxGameMap.fxml"));
     public static final ObjectMapper MAP_JSON = new ObjectMapper();
     public static final Resources RESOURCES = new Resources();
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(RootApplication.class.getResource("FxGameMap.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new Scene(mainFXMLLoader.load());
         scene.getStylesheets().add(RootApplication.class.getResource("FxGameMap.css").toExternalForm());
         stage.setTitle("FxGameMap");
         stage.setScene(scene);
@@ -38,13 +37,12 @@ public class RootApplication extends Application {
         stage.setMaxHeight(bounds.getHeight());
         stage.show();
         mainStage = stage;
-        mainFXMLLoader = fxmlLoader;
         Configuration.loadTreeMenu();
         PropertyListener.initIsSavedListener(stage);
         PropertyListener.initChooseResourceImageListener();
-        RootController rootController = fxmlLoader.getController();
+        RootController rootController = mainFXMLLoader.getController();
         PropertyListener.initMainMenuHistoryListener(rootController.getMainMenuBar().getHistoryMenu());
-        LogService.writerLog(LogService.LogLevel.INFO,getClass(),"项目启动完成");
+        LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }
 
     public static void main(String[] args) {

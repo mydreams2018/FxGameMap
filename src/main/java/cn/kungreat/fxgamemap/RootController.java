@@ -5,28 +5,21 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Setter
@@ -65,6 +58,8 @@ public class RootController implements Initializable {
     @FXML
     private StackPane stackPaneCenter;
     @FXML
+    private ScrollPane scrollPaneCenter;
+    @FXML
     private VBox rightTopOutVBox;
     @FXML
     private HBox rightTopInHbox;
@@ -89,7 +84,7 @@ public class RootController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         mainMenuBar = new MainMenuBar();
         topHBox.getChildren().add(mainMenuBar);
-        treeView.setEditable(true);
+        treeView.setEditable(false);
         treeView.setCellFactory(TextFieldTreeCell.forTreeView(TreeWorld.treeConverter()));
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         treeView.prefHeightProperty().bind(stackPaneLeft.heightProperty().subtract(stackPaneLeftHBox.heightProperty()));
@@ -145,7 +140,8 @@ public class RootController implements Initializable {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
-                            Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>());
+                            Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>(),
+                            treeWorld.getTitle() + File.separator + newArea);
                     treeWorld.getChildrenArea().add(treeArea);
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
@@ -166,7 +162,7 @@ public class RootController implements Initializable {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeArea treeArea) {
                     TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
-                            Integer.parseInt(mapWidth), Integer.parseInt(mapHeight));
+                            Integer.parseInt(mapWidth), Integer.parseInt(mapHeight), treeArea.getImageDirectory() + File.separator + title);
                     treeArea.getChildrenMap().add(treeGameMap);
                     TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
                     treeItem.setGraphic(new FontIcon("fas-map"));
@@ -176,10 +172,17 @@ public class RootController implements Initializable {
                 }
             }
         });
-        treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Object>>() {
-            @Override
-            public void changed(ObservableValue<? extends TreeItem<Object>> observable, TreeItem<Object> oldValue, TreeItem<Object> newValue) {
-                System.out.println("事件触发改中间区域的数据");
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Object value = newValue.getValue();
+                if (value instanceof TreeGameMap treeGameMap) {
+                    treeGameMap.initCanvas();
+                    scrollPaneCenter.setContent(treeGameMap.getCanvas());
+                } else if (value instanceof TreeArea treeArea) {
+                    System.out.println(treeArea.getImageDirectory());
+                } else if (value instanceof TreeWorld treeWorld) {
+                    System.out.println(treeWorld);
+                }
             }
         });
     }

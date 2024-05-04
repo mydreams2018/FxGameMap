@@ -21,4 +21,5 @@ public class TreeArea {
     private Integer xNumber;
     private Integer yNumber;
     private List<TreeGameMap> childrenMap;
+    private String imageDirectory;
 }

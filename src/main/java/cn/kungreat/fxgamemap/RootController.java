@@ -58,7 +58,7 @@ public class RootController implements Initializable {
     @FXML
     private StackPane stackPaneCenter;
     @FXML
-    private ScrollPane scrollPaneCenter;
+    private HBox scrollPaneCenterInHBox;
     @FXML
     private VBox rightTopOutVBox;
     @FXML
@@ -177,7 +177,8 @@ public class RootController implements Initializable {
                 Object value = newValue.getValue();
                 if (value instanceof TreeGameMap treeGameMap) {
                     treeGameMap.initCanvas();
-                    scrollPaneCenter.setContent(treeGameMap.getCanvas());
+                    scrollPaneCenterInHBox.getChildren().clear();
+                    scrollPaneCenterInHBox.getChildren().add(treeGameMap.getCanvas());
                 } else if (value instanceof TreeArea treeArea) {
                     System.out.println(treeArea.getImageDirectory());
                 } else if (value instanceof TreeWorld treeWorld) {

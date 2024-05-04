@@ -37,7 +37,9 @@
                 </VBox>
             </StackPane>
             <StackPane fx:id="stackPaneCenter">
-                <ScrollPane fx:id="scrollPaneCenter" styleClass="customBgColor"></ScrollPane>
+                <ScrollPane styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
+                    <HBox fx:id="scrollPaneCenterInHBox" alignment="CENTER"></HBox>
+                </ScrollPane>
             </StackPane>
             <StackPane minWidth="300">
                 <SplitPane orientation="VERTICAL" dividerPositions="0.5f,1.0f">

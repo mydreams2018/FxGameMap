@@ -4,6 +4,7 @@ import cn.kungreat.fxgamemap.ImageObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,6 +47,9 @@ public class TreeGameMap {
         if (canvas == null) {
             canvas = new Canvas(width, height);
             gc = canvas.getGraphicsContext2D();
+            gc.setStroke(Color.GREENYELLOW);
+            gc.setLineWidth(3);
+            gc.strokePolyline(new double[]{0, width, width, 0, 0}, new double[]{0, 0, height, height, 0}, 5);
             //TODO 根据相关信息恢复画板 先做保存信息
         }
     }

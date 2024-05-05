@@ -14,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
-import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
@@ -22,7 +21,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Setter
 @Getter
 public class RootController implements Initializable {
 

@@ -55,3 +55,7 @@ stage.setOnShown(new EventHandler<WindowEvent>() {
 
 WritableImage writableImage = new WritableImage(image.getPixelReader(), image.widthProperty().intValue(), image.heightProperty().intValue());
 System.out.println(source.getImage().getUrl());
+
+            graphicsContext.setStroke(Color.GREENYELLOW);
+            graphicsContext.setLineWidth(1);
+            graphicsContext.strokePolyline(new double[]{0, width, width, 0, 0}, new double[]{0, 0, height, height, 0}, 5);

@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 public class WorkThread {
 
-    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(1, 3, 3600,
-            TimeUnit.SECONDS, new ArrayBlockingQueue<>(99, false), new WorkThreadFactory(), new DiscardPolicy());
+    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(2, 6, 3600,
+            TimeUnit.SECONDS, new ArrayBlockingQueue<>(999, false), new WorkThreadFactory(), new DiscardPolicy());
 
     static class DiscardPolicy implements RejectedExecutionHandler {
 

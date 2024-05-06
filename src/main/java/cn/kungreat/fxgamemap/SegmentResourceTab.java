@@ -100,17 +100,21 @@ public class SegmentResourceTab {
         WritableImage targetImage = new WritableImage(image.getPixelReader(), (int) minX, (int) minY,
                 segmentWidth - segmentPadding, segmentHeight - segmentPadding);
         ImageView iv = new ImageView();
-        WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
-            try {
-                File targetFile = File.createTempFile("SRT", ".png");
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(targetImage, null);
-                ImageIO.write(bufferedImage, "png", targetFile);
-                iv.setId(targetFile.toURI().toString());
-                targetFile.deleteOnExit();
-            } catch (IOException e) {
-                LogService.printLog(LogService.LogLevel.ERROR, SegmentResourceTab.class, "分割图片资源文件", e);
-            }
-        });
+        try {
+            File targetFile = File.createTempFile("SRT", ".png");
+            iv.setId(targetFile.toURI().toString());
+            WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(targetImage, null);
+                    ImageIO.write(bufferedImage, "png", targetFile);
+                    targetFile.deleteOnExit();
+                } catch (IOException e) {
+                    LogService.printLog(LogService.LogLevel.ERROR, SegmentResourceTab.class, "分割图片资源文件", e);
+                }
+            });
+        } catch (IOException e) {
+            LogService.printLog(LogService.LogLevel.ERROR, SegmentResourceTab.class, "创建临时图片资源文件", e);
+        }
         iv.setImage(targetImage);
         iv.setUserData(filePath);
         iv.setOnMouseClicked(event -> {

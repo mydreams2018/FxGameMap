@@ -1,10 +1,12 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import cn.kungreat.fxgamemap.util.WorkThread;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ScrollPane;
@@ -12,6 +14,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import lombok.Getter;
@@ -19,7 +22,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 @Setter
 @Getter
@@ -91,10 +97,21 @@ public class SegmentResourceTab {
     private ImageView getImageView(int x, int y, Image image) {
         double minX = x * (segmentWidth + segmentMargin);
         double minY = y * (segmentHeight + segmentMargin);
-        Rectangle2D viewportRect = new Rectangle2D(minX, minY, segmentWidth - segmentPadding, segmentHeight - segmentPadding);
+        WritableImage targetImage = new WritableImage(image.getPixelReader(), (int) minX, (int) minY,
+                segmentWidth - segmentPadding, segmentHeight - segmentPadding);
         ImageView iv = new ImageView();
-        iv.setImage(image);
-        iv.setViewport(viewportRect);
+        WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
+            try {
+                File targetFile = File.createTempFile("SRT", ".png");
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(targetImage, null);
+                ImageIO.write(bufferedImage, "png", targetFile);
+                iv.setId(targetFile.toURI().toString());
+                targetFile.deleteOnExit();
+            } catch (IOException e) {
+                LogService.printLog(LogService.LogLevel.ERROR, SegmentResourceTab.class, "分割图片资源文件", e);
+            }
+        });
+        iv.setImage(targetImage);
         iv.setUserData(filePath);
         iv.setOnMouseClicked(event -> {
             MouseButton button = event.getButton();

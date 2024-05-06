@@ -104,8 +104,15 @@ public class TreeGameMap {
                         Image image = chooseResourceImage.getImage();
                         double startX = event.getX() - (image.getWidth() / 2);
                         double startY = event.getY() - (image.getHeight() / 2);
-                        backgroundImages.add(new BackgroundImageData(image, startX, startY, image.getUrl()));
-                        saveImgPaths.add(image.getUrl());
+                        String imagePath;
+                        if (image.getUrl() != null) {
+                            saveImgPaths.add(image.getUrl());
+                            imagePath = image.getUrl();
+                        } else {
+                            saveImgPaths.add(chooseResourceImage.getId());
+                            imagePath = chooseResourceImage.getId();
+                        }
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
                     }
                 }

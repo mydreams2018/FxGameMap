@@ -52,7 +52,7 @@ public class TreeGameMap {
     @JsonIgnore
     private GraphicsContext graphicsContext;
 
-    private List<backgroundImageData> backgroundImages = new ArrayList<>();
+    private List<BackgroundImageData> backgroundImages = new ArrayList<>();
     private Set<String> saveImgPaths = new HashSet<>();
 
     private String backgroundImagePath;
@@ -71,11 +71,11 @@ public class TreeGameMap {
             canvas = new Canvas(width, height);
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
-            if (!backgroundImages.isEmpty()) {
-
-            }
             graphicsContext.setFill(CANVAS_DEFAULT_COLOR);
-            graphicsContext.fillRect(0, 0, width, height);
+            if (!backgroundImages.isEmpty()) {
+                backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));
+            }
+            clearAndDraw();
             canvasEvent();
         }
     }
@@ -104,8 +104,9 @@ public class TreeGameMap {
                         Image image = chooseResourceImage.getImage();
                         double startX = event.getX() - (image.getWidth() / 2);
                         double startY = event.getY() - (image.getHeight() / 2);
-                        backgroundImages.add(new backgroundImageData(image, startX, startY, image.getUrl()));
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, image.getUrl()));
                         saveImgPaths.add(image.getUrl());
+                        PropertyListener.changeIsSaved(false);
                     }
                 }
             }
@@ -119,7 +120,7 @@ public class TreeGameMap {
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
     }
 
-    //序列化保存时回调 线程池调用
+    //序列化保存时回调 - > 线程池调用 - > 保存图片资源文件
     public Set<String> getSaveImgPaths() {
         saveImgPaths.forEach(imageSrcPath -> {
             try {
@@ -139,18 +140,34 @@ public class TreeGameMap {
     @Setter
     @Getter
     @NoArgsConstructor
-    private static final class backgroundImageData {
+    private static final class BackgroundImageData {
         @JsonIgnore
         private Image image;
         private String imagePath;
         private double startX;
         private double startY;
 
-        public backgroundImageData(Image image, double startX, double startY, String imagePath) {
+        public BackgroundImageData(Image image, double startX, double startY, String imagePath) {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
             this.imagePath = imagePath;
+        }
+
+        public void initImage(String backgroundImagePath) {
+            try {
+                String[] split = imagePath.split("/");
+                File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
+                if (outFile.exists() && outFile.isDirectory()) {
+                    for (File file : outFile.listFiles()) {
+                        if (file.getName().equals(split[split.length - 1])) {
+                            this.image = new Image(file.toURI().toString());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LogService.printLog(LogService.LogLevel.ERROR, TreeGameMap.class, "读取图片资源文件", e);
+            }
         }
     }
 }

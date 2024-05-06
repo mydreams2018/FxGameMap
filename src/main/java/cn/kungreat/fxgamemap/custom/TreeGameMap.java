@@ -127,7 +127,10 @@ public class TreeGameMap {
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
     }
 
-    //序列化保存时回调 - > 线程池调用 - > 保存图片资源文件
+    /*
+    如果有分割图片 需要等待图片分割保存完成
+    序列化保存时回调 - > 线程池调用 - > 保存图片资源文件
+    */
     public Set<String> getSaveImgPaths() {
         saveImgPaths.forEach(imageSrcPath -> {
             try {

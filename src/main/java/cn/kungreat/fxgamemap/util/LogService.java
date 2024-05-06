@@ -31,7 +31,7 @@ public class LogService extends Configuration {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(Configuration.errorPrint,true);
             errorPrint = new PrintWriter(fileOutputStream);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {System.exit(1);}
         Thread thread = new Thread(() -> {
             try {
                 while (true) {

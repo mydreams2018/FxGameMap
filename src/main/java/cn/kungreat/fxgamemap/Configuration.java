@@ -19,6 +19,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 
 public class Configuration {
@@ -29,28 +30,32 @@ public class Configuration {
     public static String errorPrint;
 
     static {
-        InputStream inputStream = ClassLoader.getSystemResourceAsStream(MAIN_PROPERTIES);
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        in.lines().forEach(new Consumer<>() {
-            @Override
-            public void accept(String s) {
-                if (!s.isBlank() && s.contains("=")) {
-                    String[] split = s.split("=");
-                    if (split.length == 2 && split[0].equals("currentProject")) {
-                        changeCurrentProject(split[1]);
-                    } else if (split.length == 2 && split[0].equals("historyProject")) {
-                        split[1] = split[1].substring(1, split[1].length() - 1);
-                        for (String history : split[1].split(",")) {
-                            addHistoryProject(history);
+        try (InputStream inputStream = ClassLoader.getSystemResourceAsStream(MAIN_PROPERTIES);
+             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+             Stream<String> stringStream = in.lines()) {
+            stringStream.forEach(new Consumer<>() {
+                @Override
+                public void accept(String s) {
+                    if (!s.isBlank() && s.contains("=")) {
+                        String[] split = s.split("=");
+                        if (split.length == 2 && split[0].equals("currentProject")) {
+                            changeCurrentProject(split[1]);
+                        } else if (split.length == 2 && split[0].equals("historyProject")) {
+                            split[1] = split[1].substring(1, split[1].length() - 1);
+                            for (String history : split[1].split(",")) {
+                                addHistoryProject(history);
+                            }
+                        } else if (split.length == 2 && split[0].equals("logDirectory")) {
+                            logDirectory = split[1];
+                        } else if (split.length == 2 && split[0].equals("errorPrint")) {
+                            errorPrint = split[1];
                         }
-                    } else if (split.length == 2 && split[0].equals("logDirectory")) {
-                        logDirectory = split[1];
-                    } else if (split.length == 2 && split[0].equals("errorPrint")) {
-                        errorPrint = split[1];
                     }
                 }
-            }
-        });
+            });
+        } catch (Exception ignored) {
+            System.exit(1);
+        }
     }
 
     public static void addHistoryProject(String project) {

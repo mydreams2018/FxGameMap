@@ -1,12 +1,15 @@
 package cn.kungreat.fxgamemap.util;
 
 import cn.kungreat.fxgamemap.Configuration;
+import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
@@ -24,6 +27,8 @@ public class PropertyListener {
     private static final Timeline CHOOSE_RESOURCE_TIME = new Timeline();
 
     private static final SimpleStringProperty MAIN_MENU_HISTORY = new SimpleStringProperty();
+
+    private static final SimpleObjectProperty<TreeGameMap.BackgroundImageData> CHOOSE_CANVAS_IMAGE = new SimpleObjectProperty<>();
 
     /*
      * 主程序入口调一次
@@ -102,5 +107,22 @@ public class PropertyListener {
 
     public static void setMainMenuHistory(String newValue) {
         MAIN_MENU_HISTORY.set(newValue);
+    }
+
+    public static void initChooseCanvasImageListener() {
+        CHOOSE_CANVAS_IMAGE.addListener(new ChangeListener<TreeGameMap.BackgroundImageData>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeGameMap.BackgroundImageData> observable, TreeGameMap.BackgroundImageData oldValue, TreeGameMap.BackgroundImageData newValue) {
+                System.out.println("test-" + newValue);
+            }
+        });
+    }
+
+    public static void setChooseCanvasImage(TreeGameMap.BackgroundImageData backgroundImageData) {
+        CHOOSE_CANVAS_IMAGE.setValue(backgroundImageData);
+    }
+
+    public static TreeGameMap.BackgroundImageData getChooseCanvasImage() {
+        return CHOOSE_CANVAS_IMAGE.get();
     }
 }

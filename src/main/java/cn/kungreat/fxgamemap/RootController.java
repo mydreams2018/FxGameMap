@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -56,7 +57,7 @@ public class RootController implements Initializable {
     @FXML
     private HBox stackPaneLeftHBox;
     @FXML
-    private StackPane stackPaneCenter;
+    private ScrollPane ScrollPaneCenter;
     @FXML
     private HBox scrollPaneCenterInHBox;
     @FXML
@@ -95,6 +96,7 @@ public class RootController implements Initializable {
         addTreeEvent();
         addSegmentResourceImgEvent();
         addImageObjectEvent();
+        addScrollPaneCenterEvent();
     }
 
     public ContextMenu getTreeContextMenu() {
@@ -257,5 +259,33 @@ public class RootController implements Initializable {
                 rightTopScrollPaneAccordion.getPanes().add(imageObject.getTitledPane());
             }
         });
+    }
+
+    public void addScrollPaneCenterEvent() {
+        ScrollPaneCenter.setOnKeyPressed(event -> {
+            TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
+            if (!topPaintingMode.isSelected() && chooseCanvasImage != null) {
+                if (event.getCode() == KeyCode.W) {
+                    chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() - 1);
+                    canvasClearAndDraw();
+                } else if (event.getCode() == KeyCode.S) {
+                    chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() + 1);
+                    canvasClearAndDraw();
+                } else if (event.getCode() == KeyCode.D) {
+                    chooseCanvasImage.setStartX(chooseCanvasImage.getStartX() + 1);
+                    canvasClearAndDraw();
+                } else if (event.getCode() == KeyCode.A) {
+                    chooseCanvasImage.setStartX(chooseCanvasImage.getStartX() - 1);
+                    canvasClearAndDraw();
+                }
+            }
+        });
+    }
+
+    private void canvasClearAndDraw() {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+            treeGameMap.clearAndDraw();
+        }
     }
 }

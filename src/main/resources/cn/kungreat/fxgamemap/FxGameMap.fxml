@@ -51,8 +51,8 @@
                     </TreeView>
                 </VBox>
             </StackPane>
-            <StackPane fx:id="stackPaneCenter">
-                <ScrollPane styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
+            <StackPane>
+                <ScrollPane fx:id="ScrollPaneCenter" styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
                     <HBox fx:id="scrollPaneCenterInHBox" alignment="CENTER"></HBox>
                 </ScrollPane>
             </StackPane>

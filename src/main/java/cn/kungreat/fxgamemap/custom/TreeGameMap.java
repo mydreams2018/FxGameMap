@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -112,9 +113,29 @@ public class TreeGameMap {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
                     }
+                } else if (!controller.getTopPaintingMode().isSelected()) {
+                    if (!controller.getRadioButtonIsObject().isSelected()) {
+                        getBackgroundImageData(event);
+                    }
                 }
             }
         });
+        PropertyListener.initChooseCanvasImageListener();
+    }
+
+    //拿到当前选中的对象
+    private void getBackgroundImageData(MouseEvent event) {
+        double currentX = event.getX();
+        double currentY = event.getY();
+        BackgroundImageData chooseBackgroundImageData = null;
+        for (BackgroundImageData backgroundImage : backgroundImages) {
+            if (backgroundImage.getStartX() < currentX && backgroundImage.getStartY() < currentY &&
+                    backgroundImage.getStartX() + backgroundImage.getImage().getWidth() > currentX &&
+                    backgroundImage.getStartY() + backgroundImage.getImage().getHeight() > currentY) {
+                chooseBackgroundImageData = backgroundImage;
+            }
+        }
+        PropertyListener.setChooseCanvasImage(chooseBackgroundImageData);
     }
 
     //全部内容刷新
@@ -143,10 +164,13 @@ public class TreeGameMap {
         return saveImgPaths;
     }
 
+    /*
+     * 画板中的 背景图片对象描述
+     * */
     @Setter
     @Getter
     @NoArgsConstructor
-    private static final class BackgroundImageData {
+    public static final class BackgroundImageData {
         @JsonIgnore
         private Image image;
         private String imagePath;

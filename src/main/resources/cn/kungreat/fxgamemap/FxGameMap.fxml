@@ -19,6 +19,21 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
         <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
+            <HBox alignment="CENTER" spacing="20" HBox.hgrow="ALWAYS">
+                <fx:define>
+                    <ToggleGroup fx:id="handlerTypeGroup"/>
+                </fx:define>
+                <RadioButton fx:id="topPaintingMode" text="绘画模式" selected="true" toggleGroup="$handlerTypeGroup">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-fill" />
+                    </graphic>
+                </RadioButton>
+                <RadioButton text="操作模式" toggleGroup="$handlerTypeGroup">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-edit" />
+                    </graphic>
+                </RadioButton>
+            </HBox>
         </HBox>
     </top>
     <center>

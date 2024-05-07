@@ -74,8 +74,8 @@ public class SegmentResourceTab {
         scrollPane.setCursor(Cursor.HAND);
         scrollPane.setFitToWidth(true);
         FlowPane flowPane = new FlowPane();
-        flowPane.setHgap(3);
-        flowPane.setVgap(3);
+        flowPane.setHgap(1);
+        flowPane.setVgap(1);
         flowPane.setColumnHalignment(HPos.LEFT);
         flowPane.setAlignment(Pos.CENTER_LEFT);
         flowPane.setRowValignment(VPos.CENTER);

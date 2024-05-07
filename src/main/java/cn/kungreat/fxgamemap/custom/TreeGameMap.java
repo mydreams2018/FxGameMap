@@ -9,7 +9,6 @@ import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.RadioButton;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -82,11 +81,10 @@ public class TreeGameMap {
 
     public void canvasEvent() {
         canvas.setOnMouseMoved(event -> {
+            RootController controller = RootApplication.mainFXMLLoader.getController();
             ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
-            if (chooseResourceImage != null) {
-                RootController controller = RootApplication.mainFXMLLoader.getController();
-                RadioButton radioButtonIsObject = controller.getRadioButtonIsObject();
-                if (!radioButtonIsObject.isSelected()) {
+            if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                if (!controller.getRadioButtonIsObject().isSelected()) {
                     clearAndDraw();
                     Image image = chooseResourceImage.getImage();
                     graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
@@ -96,11 +94,10 @@ public class TreeGameMap {
         canvas.setOnMouseExited(event -> clearAndDraw());
         canvas.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
+                RootController controller = RootApplication.mainFXMLLoader.getController();
                 ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
-                if (chooseResourceImage != null) {
-                    RootController controller = RootApplication.mainFXMLLoader.getController();
-                    RadioButton radioButtonIsObject = controller.getRadioButtonIsObject();
-                    if (!radioButtonIsObject.isSelected()) {
+                if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                    if (!controller.getRadioButtonIsObject().isSelected()) {
                         Image image = chooseResourceImage.getImage();
                         double startX = event.getX() - (image.getWidth() / 2);
                         double startY = event.getY() - (image.getHeight() / 2);
@@ -122,7 +119,6 @@ public class TreeGameMap {
 
     //全部内容刷新
     public void clearAndDraw() {
-        graphicsContext.clearRect(0, 0, width, height);
         graphicsContext.fillRect(0, 0, width, height);
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
     }

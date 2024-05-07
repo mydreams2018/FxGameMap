@@ -50,6 +50,8 @@ public class RootController implements Initializable {
     @FXML
     private HBox topHBox;
     @FXML
+    private RadioButton topPaintingMode;
+    @FXML
     private StackPane stackPaneLeft;
     @FXML
     private HBox stackPaneLeftHBox;
@@ -81,7 +83,7 @@ public class RootController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         mainMenuBar = new MainMenuBar();
-        topHBox.getChildren().add(mainMenuBar);
+        topHBox.getChildren().addFirst(mainMenuBar);
         treeView.setEditable(false);
         treeView.setCellFactory(TextFieldTreeCell.forTreeView(TreeWorld.treeConverter()));
         treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);

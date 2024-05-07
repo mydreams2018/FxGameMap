@@ -18,7 +18,7 @@ import java.io.IOException;
 public class RootApplication extends Application {
 
     public static Stage mainStage;
-    public static FXMLLoader mainFXMLLoader = new FXMLLoader(RootApplication.class.getResource("FxGameMap.fxml"));
+    public static final FXMLLoader mainFXMLLoader = new FXMLLoader(RootApplication.class.getResource("FxGameMap.fxml"));
     public static final ObjectMapper MAP_JSON = new ObjectMapper();
     public static final Resources RESOURCES = new Resources();
 

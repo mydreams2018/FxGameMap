@@ -175,6 +175,9 @@ public class TreeGameMap {
     @Getter
     @NoArgsConstructor
     public static final class BackgroundImageData {
+        /*
+        * 图片数据的中转层
+        * */
         @JsonIgnore
         private Image image;
         @JsonIgnore

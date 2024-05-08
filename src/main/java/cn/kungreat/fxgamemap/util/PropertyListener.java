@@ -116,7 +116,7 @@ public class PropertyListener {
             CHOOSE_CANVAS_TIME.getKeyFrames().clear();
             if (newValue != null) {
                 CHOOSE_CANVAS_TIME.getKeyFrames().add(new KeyFrame(Duration.millis(0), new KeyValue(newValue.getImageView().opacityProperty(), 1)));
-                CHOOSE_CANVAS_TIME.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(newValue.getImageView().opacityProperty(), 0)));
+                CHOOSE_CANVAS_TIME.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(newValue.getImageView().opacityProperty(), 0.1)));
                 CHOOSE_CANVAS_TIME.playFromStart();
             }
             if (oldValue != null) {

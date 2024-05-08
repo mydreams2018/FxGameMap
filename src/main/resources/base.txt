@@ -65,3 +65,17 @@ System.out.println(source.getImage().getUrl());
                         graphicsContext.setLineJoin(StrokeLineJoin.ROUND);
                         graphicsContext.setFillRule(FillRule.EVEN_ODD);
                         graphicsContext.setFill(Color.LIGHTBLUE);
+                        /*      int startX = (int) backgroundImageData.getStartX();
+                                int startY = (int) backgroundImageData.getStartY();
+                                int width = (int) image.getWidth();
+                                int height = (int) image.getHeight();
+                                for (int y = 0; y < height; y++) {
+                                    for (int x = 0; x < width; x++) {
+                                        Color color = image.getPixelReader().getColor(x, y);
+                                        if (!color.equals(EMPTY_COLOR)) {
+                                            graphicsContext.getPixelWriter().setColor(startX + x, startY + y,
+                                                    Color.color(color.getRed(), color.getGreen(), color.getBlue(), opacity));
+                                        }
+                                    }
+                                }
+                                */

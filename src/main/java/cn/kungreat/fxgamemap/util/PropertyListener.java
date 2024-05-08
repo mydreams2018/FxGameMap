@@ -8,8 +8,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
@@ -29,6 +27,7 @@ public class PropertyListener {
     private static final SimpleStringProperty MAIN_MENU_HISTORY = new SimpleStringProperty();
 
     private static final SimpleObjectProperty<TreeGameMap.BackgroundImageData> CHOOSE_CANVAS_IMAGE = new SimpleObjectProperty<>();
+    private static final Timeline CHOOSE_CANVAS_TIME = new Timeline();
 
     /*
      * 主程序入口调一次
@@ -110,10 +109,19 @@ public class PropertyListener {
     }
 
     public static void initChooseCanvasImageListener() {
-        CHOOSE_CANVAS_IMAGE.addListener(new ChangeListener<TreeGameMap.BackgroundImageData>() {
-            @Override
-            public void changed(ObservableValue<? extends TreeGameMap.BackgroundImageData> observable, TreeGameMap.BackgroundImageData oldValue, TreeGameMap.BackgroundImageData newValue) {
-                System.out.println("test-" + newValue);
+        CHOOSE_CANVAS_TIME.setCycleCount(Timeline.INDEFINITE);
+        CHOOSE_CANVAS_TIME.setAutoReverse(true);
+        CHOOSE_CANVAS_IMAGE.addListener((observable, oldValue, newValue) -> {
+            CHOOSE_CANVAS_TIME.stop();
+            CHOOSE_CANVAS_TIME.getKeyFrames().clear();
+            if (newValue != null) {
+                CHOOSE_CANVAS_TIME.getKeyFrames().add(new KeyFrame(Duration.millis(0), new KeyValue(newValue.getImageView().opacityProperty(), 1)));
+                CHOOSE_CANVAS_TIME.getKeyFrames().add(new KeyFrame(Duration.millis(100), new KeyValue(newValue.getImageView().opacityProperty(), 0)));
+                CHOOSE_CANVAS_TIME.playFromStart();
+            }
+            if (oldValue != null) {
+                oldValue.getImageView().setOpacity(1);
+                oldValue.setImage(oldValue.getImageView().snapshot(TreeGameMap.CANVAS_SNAPSHOT_PARAMETERS, null));
             }
         });
     }

@@ -7,6 +7,7 @@ import cn.kungreat.fxgamemap.RootController;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
@@ -47,6 +48,8 @@ public class TreeGameMap {
 
     public static final WritablePixelFormat<IntBuffer> PIXEL_INT_FORMAT = PixelFormat.getIntArgbPreInstance();
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
+    public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
+
     @JsonIgnore
     private Canvas canvas;
     @JsonIgnore
@@ -72,6 +75,7 @@ public class TreeGameMap {
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
             graphicsContext.setFill(CANVAS_DEFAULT_COLOR);
+            CANVAS_SNAPSHOT_PARAMETERS.setFill(Color.color(0, 0, 0, 0));
             if (!backgroundImages.isEmpty()) {
                 backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));
             }
@@ -110,7 +114,7 @@ public class TreeGameMap {
                             saveImgPaths.add(chooseResourceImage.getId());
                             imagePath = chooseResourceImage.getId();
                         }
-                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, chooseResourceImage));
                         PropertyListener.changeIsSaved(false);
                     }
                 } else if (!controller.getTopPaintingMode().isSelected()) {
@@ -173,15 +177,18 @@ public class TreeGameMap {
     public static final class BackgroundImageData {
         @JsonIgnore
         private Image image;
+        @JsonIgnore
+        private ImageView imageView;
         private String imagePath;
         private double startX;
         private double startY;
 
-        public BackgroundImageData(Image image, double startX, double startY, String imagePath) {
+        public BackgroundImageData(Image image, double startX, double startY, String imagePath, ImageView imageView) {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
             this.imagePath = imagePath;
+            this.imageView = imageView;
         }
 
         public void initImage(String backgroundImagePath) {
@@ -192,6 +199,7 @@ public class TreeGameMap {
                     for (File file : outFile.listFiles()) {
                         if (file.getName().equals(split[split.length - 1])) {
                             this.image = new Image(file.toURI().toString());
+                            this.imageView = new ImageView(image);
                         }
                     }
                 }

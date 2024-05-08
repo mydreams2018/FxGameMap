@@ -114,7 +114,7 @@ public class TreeGameMap {
                             saveImgPaths.add(chooseResourceImage.getId());
                             imagePath = chooseResourceImage.getId();
                         }
-                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, chooseResourceImage));
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
                     }
                 } else if (!controller.getTopPaintingMode().isSelected()) {
@@ -176,8 +176,8 @@ public class TreeGameMap {
     @NoArgsConstructor
     public static final class BackgroundImageData {
         /*
-        * 图片数据的中转层
-        * */
+         * 图片数据的中转层
+         * */
         @JsonIgnore
         private Image image;
         @JsonIgnore
@@ -186,12 +186,12 @@ public class TreeGameMap {
         private double startX;
         private double startY;
 
-        public BackgroundImageData(Image image, double startX, double startY, String imagePath, ImageView imageView) {
+        public BackgroundImageData(Image image, double startX, double startY, String imagePath) {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
             this.imagePath = imagePath;
-            this.imageView = imageView;
+            this.imageView = new ImageView(image);
         }
 
         public void initImage(String backgroundImagePath) {

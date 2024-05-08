@@ -53,6 +53,10 @@ public class RootController implements Initializable {
     @FXML
     private RadioButton topPaintingMode;
     @FXML
+    private RadioButton topMovingMode;
+    @FXML
+    private RadioButton topDeletingMode;
+    @FXML
     private StackPane stackPaneLeft;
     @FXML
     private HBox stackPaneLeftHBox;
@@ -264,7 +268,7 @@ public class RootController implements Initializable {
     public void addScrollPaneCenterEvent() {
         ScrollPaneCenter.setOnKeyPressed(event -> {
             TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
-            if (!topPaintingMode.isSelected() && chooseCanvasImage != null) {
+            if (topMovingMode.isSelected() && chooseCanvasImage != null) {
                 if (event.getCode() == KeyCode.W) {
                     chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() - 1);
                     canvasClearAndDraw();

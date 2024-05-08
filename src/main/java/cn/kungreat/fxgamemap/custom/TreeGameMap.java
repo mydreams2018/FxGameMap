@@ -20,7 +20,6 @@ import lombok.Setter;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -46,9 +45,9 @@ public class TreeGameMap {
     private TreeGameMap rightTop;
     private TreeGameMap rightBottom;
 
-    public static final WritablePixelFormat<IntBuffer> PIXEL_INT_FORMAT = PixelFormat.getIntArgbPreInstance();
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
+    public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));
 
     @JsonIgnore
     private Canvas canvas;
@@ -94,6 +93,9 @@ public class TreeGameMap {
                     Image image = chooseResourceImage.getImage();
                     graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
                 }
+            } else if (controller.getTopDeletingMode().isSelected()) {
+                clearAndDraw();
+                graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2), event.getY() - (DELETE_IMAGE.getHeight() / 2));
             }
         });
         canvas.setOnMouseExited(event -> clearAndDraw());
@@ -117,9 +119,19 @@ public class TreeGameMap {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
                     }
-                } else if (!controller.getTopPaintingMode().isSelected()) {
+                } else if (controller.getTopMovingMode().isSelected()) {
                     if (!controller.getRadioButtonIsObject().isSelected()) {
-                        getBackgroundImageData(event);
+                        PropertyListener.setChooseCanvasImage(getBackgroundImageData(event));
+                    }
+                } else if (controller.getTopDeletingMode().isSelected()) {
+                    if (!controller.getRadioButtonIsObject().isSelected()) {
+                        BackgroundImageData backgroundImageData = getBackgroundImageData(event);
+                        if (backgroundImageData != null) {
+                            backgroundImages.remove(backgroundImageData);
+                            clearAndDraw();
+                            graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2),
+                                    event.getY() - (DELETE_IMAGE.getHeight() / 2));
+                        }
                     }
                 }
             }
@@ -128,7 +140,7 @@ public class TreeGameMap {
     }
 
     //拿到当前选中的对象
-    private void getBackgroundImageData(MouseEvent event) {
+    private BackgroundImageData getBackgroundImageData(MouseEvent event) {
         double currentX = event.getX();
         double currentY = event.getY();
         BackgroundImageData chooseBackgroundImageData = null;
@@ -139,7 +151,7 @@ public class TreeGameMap {
                 chooseBackgroundImageData = backgroundImage;
             }
         }
-        PropertyListener.setChooseCanvasImage(chooseBackgroundImageData);
+        return chooseBackgroundImageData;
     }
 
     //全部内容刷新

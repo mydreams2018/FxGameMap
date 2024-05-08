@@ -20,7 +20,7 @@ public class FrameTimer extends AnimationTimer {
     @Override
     public void handle(long now) {
         RootController controller = RootApplication.mainFXMLLoader.getController();
-        if (changeOpacity() && !controller.getTopPaintingMode().isSelected()) {
+        if (changeOpacity() && controller.getTopMovingMode().isSelected()) {
             TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
             if (chooseCanvasImage != null) {
                 TreeItem<Object> item = controller.getTreeView().getFocusModel().getFocusedItem();

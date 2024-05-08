@@ -28,9 +28,14 @@
                         <FontIcon iconLiteral="fas-fill" />
                     </graphic>
                 </RadioButton>
-                <RadioButton text="操作模式" toggleGroup="$handlerTypeGroup">
+                <RadioButton text="移动模式" fx:id="topMovingMode" toggleGroup="$handlerTypeGroup">
                     <graphic>
-                        <FontIcon iconLiteral="fas-edit" />
+                        <FontIcon iconLiteral="fas-sitemap" />
+                    </graphic>
+                </RadioButton>
+                <RadioButton text="删除模式" fx:id="topDeletingMode" toggleGroup="$handlerTypeGroup">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-remove-format" />
                     </graphic>
                 </RadioButton>
             </HBox>

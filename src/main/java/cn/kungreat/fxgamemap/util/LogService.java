@@ -29,9 +29,11 @@ public class LogService extends Configuration {
 
     static {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(Configuration.errorPrint,true);
+            FileOutputStream fileOutputStream = new FileOutputStream(Configuration.errorPrint, true);
             errorPrint = new PrintWriter(fileOutputStream);
-        } catch (Exception ignored) {System.exit(1);}
+        } catch (Exception ignored) {
+            System.exit(1);
+        }
         Thread thread = new Thread(() -> {
             try {
                 while (true) {
@@ -61,8 +63,8 @@ public class LogService extends Configuration {
                 + cls.getTypeName() + msg);
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         for (StackTraceElement traceElement : stackTrace) {
-            log.append(traceElement.getClassName()).append(".").append(traceElement.getMethodName()).append("方法第").
-                    append(traceElement.getLineNumber()).append("行出错 ").append(throwable.getClass()).append(" ").append(throwable.getMessage());
+            log.append("{").append(traceElement.getClassName()).append(".").append(traceElement.getMethodName()).append("方法第").
+                    append(traceElement.getLineNumber()).append("行出错 ").append(throwable.getClass()).append(" ").append(throwable.getMessage()).append("}");
         }
         LOG_QUEUE.add(log.toString());
     }

@@ -14,6 +14,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,6 +54,8 @@ public class TreeGameMap {
     private Canvas canvas;
     @JsonIgnore
     private GraphicsContext graphicsContext;
+    @JsonIgnore
+    private MarkLine markLine;
 
     private List<BackgroundImageData> backgroundImages = new ArrayList<>();
     private Set<String> saveImgPaths = new HashSet<>();
@@ -74,6 +77,7 @@ public class TreeGameMap {
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
             graphicsContext.setFill(CANVAS_DEFAULT_COLOR);
+            graphicsContext.setLineWidth(1);
             CANVAS_SNAPSHOT_PARAMETERS.setFill(Color.color(0, 0, 0, 0));
             if (!backgroundImages.isEmpty()) {
                 backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));
@@ -157,7 +161,21 @@ public class TreeGameMap {
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);
+        drawMarkLine();
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
+    }
+
+    private void drawMarkLine() {
+        if (markLine != null) {
+            int forX = width / markLine.getMarkX();
+            int forY = height / markLine.getMarkY();
+            for (int x = 1; x <= forX; x++) {
+                graphicsContext.strokeLine(x * markLine.getMarkX(), 0, x * markLine.getMarkX(), height);
+            }
+            for (int y = 1; y <= forY; y++) {
+                graphicsContext.strokeLine(0, y * markLine.getMarkY(), width, y * markLine.getMarkY());
+            }
+        }
     }
 
     /*
@@ -222,5 +240,13 @@ public class TreeGameMap {
                 LogService.printLog(LogService.LogLevel.ERROR, TreeGameMap.class, "读取图片资源文件", e);
             }
         }
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    public static final class MarkLine {
+        private int markX;
+        private int markY;
     }
 }

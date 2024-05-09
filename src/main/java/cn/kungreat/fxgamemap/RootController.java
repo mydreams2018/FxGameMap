@@ -57,6 +57,10 @@ public class RootController implements Initializable {
     @FXML
     private RadioButton topDeletingMode;
     @FXML
+    private TextField canvasMarkLineWidth;
+    @FXML
+    private TextField canvasMarkLineHeight;
+    @FXML
     private StackPane stackPaneLeft;
     @FXML
     private HBox stackPaneLeftHBox;
@@ -291,6 +295,20 @@ public class RootController implements Initializable {
         if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
             treeGameMap.clearAndDraw();
             PropertyListener.changeIsSaved(false);
+        }
+    }
+
+    @FXML
+    public void addCanvasMarkLine() {
+        String markLineWidth = canvasMarkLineWidth.getText();
+        String markLineHeight = canvasMarkLineHeight.getText();
+        if (markLineWidth != null && markLineHeight != null && Pattern.matches(PatternUtils.NumberRegex, markLineWidth)
+                && Pattern.matches(PatternUtils.NumberRegex, markLineHeight)) {
+            TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+            if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+                treeGameMap.setMarkLine(new TreeGameMap.MarkLine(Integer.parseInt(markLineWidth), Integer.parseInt(markLineHeight)));
+                treeGameMap.clearAndDraw();
+            }
         }
     }
 }

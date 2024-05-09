@@ -16,6 +16,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.TextField?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
         <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
@@ -38,6 +39,13 @@
                         <FontIcon iconLiteral="fas-remove-format" />
                     </graphic>
                 </RadioButton>
+                <TextField fx:id="canvasMarkLineWidth" prefWidth="50"></TextField>
+                <TextField fx:id="canvasMarkLineHeight" prefWidth="50"></TextField>
+                <Button text="添加分割线标记" onAction="#addCanvasMarkLine">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-marker" />
+                    </graphic>
+                </Button>
             </HBox>
         </HBox>
     </top>

@@ -2,10 +2,6 @@ package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -23,16 +19,16 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class ImageObject extends TreeGameMap.BackgroundImageData implements EventHandler<ActionEvent>, ChangeListener<String> {
+public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TitledPane titledPane;
 
     private String id;
     private String title;
     private ImageObjectType type = ImageObjectType.FIXED_BODY;
-    private Integer level;
-    private Boolean physical;
-    private Integer maxActivityScope;
+    private String level;
+    private boolean physical = false;
+    private String maxActivityScope;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -48,33 +44,31 @@ public class ImageObject extends TreeGameMap.BackgroundImageData implements Even
         gridPane.setVgap(10);
         ChoiceBox<String> textType = new ChoiceBox<>();
         textType.getItems().addAll("FIXED_BODY", "BOSS", "ELITE", "MONSTER");
-        textType.setOnAction(this);
+        textType.getSelectionModel().clearAndSelect(type.ordinal());
+        textType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> type = ImageObjectType.valueOf(newValue));
         gridPane.add(new Label("类型"), 0, 0);
         gridPane.add(textType, 1, 0);
         TextField textLevel = new TextField();
-        textLevel.textProperty().addListener(this);
+        textLevel.textProperty().addListener((observable, oldValue, newValue) -> level = newValue);
+        if (level != null && !level.isBlank()) {
+            textLevel.setText(level);
+        }
         gridPane.add(new Label("层级"), 0, 1);
         gridPane.add(textLevel, 1, 1);
         ChoiceBox<String> textPhysical = new ChoiceBox<>();
         textPhysical.getItems().addAll("是", "否");
-        textPhysical.setOnAction(this);
+        textPhysical.getSelectionModel().select(physical ? "是" : "否");
+        textPhysical.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> physical = "是".equals(newValue));
         gridPane.add(new Label("物理物体"), 0, 2);
         gridPane.add(textPhysical, 1, 2);
         TextField maxActivityScope = new TextField();
-        maxActivityScope.textProperty().addListener(this);
+        maxActivityScope.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.maxActivityScope = newValue);
+        if (this.maxActivityScope != null && !this.maxActivityScope.isBlank()) {
+            maxActivityScope.setText(this.maxActivityScope);
+        }
         gridPane.add(new Label("最大追杀范围"), 0, 3);
         gridPane.add(maxActivityScope, 1, 3);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
-    }
-
-    @Override
-    public void handle(ActionEvent event) {
-        System.out.println(event);
-    }
-
-    @Override
-    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        System.out.println(newValue);
     }
 }

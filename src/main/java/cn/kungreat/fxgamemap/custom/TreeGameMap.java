@@ -137,7 +137,11 @@ public class TreeGameMap {
                     }
                 } else if (controller.getTopMovingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        PropertyListener.setChooseCanvasImage(getImageObjectData(event));
+                        ImageObject imageObject = getImageObjectData(event);
+                        PropertyListener.setChooseCanvasImage(imageObject);
+                        if (imageObject != null) {
+                            controller.getRightTopScrollPaneAccordion().setExpandedPane(imageObject.getTitledPane());
+                        }
                     } else {
                         PropertyListener.setChooseCanvasImage(getBackgroundImageData(event));
                     }

@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,6 +10,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -21,26 +23,20 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class ImageObject implements EventHandler<ActionEvent>, ChangeListener<String> {
+public class ImageObject extends TreeGameMap.BackgroundImageData implements EventHandler<ActionEvent>, ChangeListener<String> {
+    @JsonIgnore
+    private TitledPane titledPane;
+
     private String id;
     private String title;
-    private int[][] transform;
-    private Integer width;
-    private Integer height;
-    private Integer layoutX;
-    private Integer layoutY;
-
     private ImageObjectType type = ImageObjectType.FIXED_BODY;
     private Integer level;
     private Boolean physical;
     private Integer maxActivityScope;
 
-    @JsonIgnore
-    private TitledPane titledPane;
-
-    public ImageObject(String id, String title) {
+    public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
+        super(image, startX, startY, imagePath);
         this.id = id;
-        this.title = title;
     }
 
     public void initTitledPane() {
@@ -62,11 +58,11 @@ public class ImageObject implements EventHandler<ActionEvent>, ChangeListener<St
         ChoiceBox<String> textPhysical = new ChoiceBox<>();
         textPhysical.getItems().addAll("是", "否");
         textPhysical.setOnAction(this);
-        gridPane.add(new Label("物理物体"),0,2);
+        gridPane.add(new Label("物理物体"), 0, 2);
         gridPane.add(textPhysical, 1, 2);
         TextField maxActivityScope = new TextField();
         maxActivityScope.textProperty().addListener(this);
-        gridPane.add(new Label("最大追杀范围"),0,3);
+        gridPane.add(new Label("最大追杀范围"), 0, 3);
         gridPane.add(maxActivityScope, 1, 3);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);

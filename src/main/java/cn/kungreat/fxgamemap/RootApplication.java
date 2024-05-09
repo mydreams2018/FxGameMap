@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.Resources;
+import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.frame.FrameTimer;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
@@ -43,6 +44,7 @@ public class RootApplication extends Application {
         PropertyListener.initChooseResourceImageListener();
         RootController rootController = mainFXMLLoader.getController();
         PropertyListener.initMainMenuHistoryListener(rootController.getMainMenuBar().getHistoryMenu());
+        TreeGameMap.addImageObjectEvent();
         new FrameTimer().start();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }

@@ -45,9 +45,6 @@ public class RootController implements Initializable {
 
     private static final Dialog<String> SEGMENT_RESOURCE_IMAGES_DIALOG = BaseDialog.getSegmentResourceImagesDialog();
 
-    private static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
-            , BaseDialog.IMAGE_OBJECT_NAME, BaseDialog.APPLY_IMAGE_OBJECT, BaseDialog.CANCEL_IMAGE_OBJECT);
-
     @FXML
     private HBox topHBox;
     @FXML
@@ -103,7 +100,6 @@ public class RootController implements Initializable {
         rightTopScrollPaneAccordion.prefWidthProperty().bind(rightTopScrollPane.widthProperty().subtract(3));
         addTreeEvent();
         addSegmentResourceImgEvent();
-        addImageObjectEvent();
         addScrollPaneCenterEvent();
     }
 
@@ -186,8 +182,9 @@ public class RootController implements Initializable {
             if (newValue != null) {
                 Object value = newValue.getValue();
                 if (value instanceof TreeGameMap treeGameMap) {
-                    treeGameMap.initCanvas();
+                    rightTopScrollPaneAccordion.getPanes().clear();
                     scrollPaneCenterInHBox.getChildren().clear();
+                    treeGameMap.initCanvas();
                     scrollPaneCenterInHBox.getChildren().add(treeGameMap.getCanvas());
                 } else if (value instanceof TreeArea treeArea) {
                     System.out.println(treeArea);
@@ -245,26 +242,6 @@ public class RootController implements Initializable {
                 tabPaneRight.getTabs().add(segmentResourceTab.getTab());
                 RootApplication.RESOURCES.getSegmentResourceTabList().add(segmentResourceTab);
                 PropertyListener.changeIsSaved(false);
-            }
-        });
-    }
-
-    @FXML
-    public void addImageObject() {
-        IMAGE_OBJECT_DIALOG.showAndWait();
-    }
-
-    public void addImageObjectEvent() {
-        IMAGE_OBJECT_DIALOG.setOnShowing(event -> {
-            BaseDialog.IMAGE_OBJECT_NAME.clear();
-        });
-        Button imageObjectOk = (Button) IMAGE_OBJECT_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_IMAGE_OBJECT);
-        imageObjectOk.setOnAction(event -> {
-            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
-            if (objectNameText != null && !objectNameText.isBlank()) {
-                ImageObject imageObject = new ImageObject(UUID.randomUUID().toString(), objectNameText);
-                imageObject.initTitledPane();
-                rightTopScrollPaneAccordion.getPanes().add(imageObject.getTitledPane());
             }
         });
     }

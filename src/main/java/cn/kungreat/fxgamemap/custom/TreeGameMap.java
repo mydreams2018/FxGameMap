@@ -1,15 +1,14 @@
 package cn.kungreat.fxgamemap.custom;
 
-import cn.kungreat.fxgamemap.Configuration;
-import cn.kungreat.fxgamemap.ImageObject;
-import cn.kungreat.fxgamemap.RootApplication;
-import cn.kungreat.fxgamemap.RootController;
+import cn.kungreat.fxgamemap.*;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,10 +23,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -49,6 +45,10 @@ public class TreeGameMap {
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
     public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));
+    public static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
+            , BaseDialog.IMAGE_OBJECT_NAME, BaseDialog.APPLY_IMAGE_OBJECT, BaseDialog.CANCEL_IMAGE_OBJECT);
+
+    public static final ThreadLocal<TreeGameMap> TREE_GAME_MAP_THREAD_LOCAL = new ThreadLocal<>();
 
     @JsonIgnore
     private Canvas canvas;
@@ -61,7 +61,12 @@ public class TreeGameMap {
     private Set<String> saveImgPaths = new HashSet<>();
 
     private String backgroundImagePath;
-    private List<ImageObject> imageObjectList;
+    private List<ImageObject> imageObjectList = new ArrayList<>();
+    /*
+     * 用来中转ImageObject对象有个弹窗界面
+     * */
+    @JsonIgnore
+    private ImageObject tempImageObject;
 
     public TreeGameMap(String id, String title, Integer width, Integer height, String backgroundImagePath) {
         this.id = id;
@@ -79,26 +84,29 @@ public class TreeGameMap {
             graphicsContext.setFill(CANVAS_DEFAULT_COLOR);
             graphicsContext.setLineWidth(1);
             CANVAS_SNAPSHOT_PARAMETERS.setFill(Color.color(0, 0, 0, 0));
-            if (!backgroundImages.isEmpty()) {
-                backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));
-            }
+            backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));
+            imageObjectList.forEach(imageObject -> {
+                imageObject.initImage(backgroundImagePath);
+                imageObject.initTitledPane();
+            });
             clearAndDraw();
             canvasEvent();
         }
+        imageObjectList.forEach(imageObject -> {
+            RootController controller = RootApplication.mainFXMLLoader.getController();
+            controller.getRightTopScrollPaneAccordion().getPanes().add(imageObject.getTitledPane());
+        });
     }
 
     public void canvasEvent() {
         canvas.setOnMouseMoved(event -> {
             RootController controller = RootApplication.mainFXMLLoader.getController();
             ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
+            clearAndDraw();
             if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
-                if (!controller.getRadioButtonIsObject().isSelected()) {
-                    clearAndDraw();
-                    Image image = chooseResourceImage.getImage();
-                    graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
-                }
+                Image image = chooseResourceImage.getImage();
+                graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
             } else if (controller.getTopDeletingMode().isSelected()) {
-                clearAndDraw();
                 graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2), event.getY() - (DELETE_IMAGE.getHeight() / 2));
             }
         });
@@ -108,27 +116,42 @@ public class TreeGameMap {
                 RootController controller = RootApplication.mainFXMLLoader.getController();
                 ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
                 if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
-                    if (!controller.getRadioButtonIsObject().isSelected()) {
-                        Image image = chooseResourceImage.getImage();
-                        double startX = event.getX() - (image.getWidth() / 2);
-                        double startY = event.getY() - (image.getHeight() / 2);
-                        String imagePath;
-                        if (image.getUrl() != null) {
-                            saveImgPaths.add(image.getUrl());
-                            imagePath = image.getUrl();
-                        } else {
-                            saveImgPaths.add(chooseResourceImage.getId());
-                            imagePath = chooseResourceImage.getId();
-                        }
+                    Image image = chooseResourceImage.getImage();
+                    double startX = event.getX() - (image.getWidth() / 2);
+                    double startY = event.getY() - (image.getHeight() / 2);
+                    String imagePath;
+                    if (image.getUrl() != null) {
+                        saveImgPaths.add(image.getUrl());
+                        imagePath = image.getUrl();
+                    } else {
+                        saveImgPaths.add(chooseResourceImage.getId());
+                        imagePath = chooseResourceImage.getId();
+                    }
+                    if (controller.getRadioButtonIsObject().isSelected()) {
+                        tempImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
+                        TREE_GAME_MAP_THREAD_LOCAL.set(TreeGameMap.this);
+                        IMAGE_OBJECT_DIALOG.showAndWait();
+                    } else {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
                     }
                 } else if (controller.getTopMovingMode().isSelected()) {
-                    if (!controller.getRadioButtonIsObject().isSelected()) {
+                    if (controller.getRadioButtonIsObject().isSelected()) {
+                        PropertyListener.setChooseCanvasImage(getImageObjectData(event));
+                    } else {
                         PropertyListener.setChooseCanvasImage(getBackgroundImageData(event));
                     }
                 } else if (controller.getTopDeletingMode().isSelected()) {
-                    if (!controller.getRadioButtonIsObject().isSelected()) {
+                    if (controller.getRadioButtonIsObject().isSelected()) {
+                        ImageObject removeImageObject = getImageObjectData(event);
+                        if (removeImageObject != null) {
+                            imageObjectList.remove(removeImageObject);
+                            controller.getRightTopScrollPaneAccordion().getPanes().remove(removeImageObject.getTitledPane());
+                            clearAndDraw();
+                            graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2),
+                                    event.getY() - (DELETE_IMAGE.getHeight() / 2));
+                        }
+                    } else {
                         BackgroundImageData backgroundImageData = getBackgroundImageData(event);
                         if (backgroundImageData != null) {
                             backgroundImages.remove(backgroundImageData);
@@ -141,6 +164,25 @@ public class TreeGameMap {
             }
         });
         PropertyListener.initChooseCanvasImageListener();
+    }
+
+    public static void addImageObjectEvent() {
+        IMAGE_OBJECT_DIALOG.setOnShowing(event -> {
+            BaseDialog.IMAGE_OBJECT_NAME.clear();
+        });
+        Button imageObjectOk = (Button) IMAGE_OBJECT_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_IMAGE_OBJECT);
+        imageObjectOk.setOnAction(event -> {
+            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
+            if (objectNameText != null && !objectNameText.isBlank()) {
+                ImageObject changeImageObject = TREE_GAME_MAP_THREAD_LOCAL.get().getTempImageObject();
+                changeImageObject.setTitle(objectNameText);
+                changeImageObject.initTitledPane();
+                RootController controller = RootApplication.mainFXMLLoader.getController();
+                controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
+                TREE_GAME_MAP_THREAD_LOCAL.get().getImageObjectList().add(changeImageObject);
+                PropertyListener.changeIsSaved(false);
+            }
+        });
     }
 
     //拿到当前选中的对象
@@ -158,11 +200,26 @@ public class TreeGameMap {
         return chooseBackgroundImageData;
     }
 
+    private ImageObject getImageObjectData(MouseEvent event) {
+        double currentX = event.getX();
+        double currentY = event.getY();
+        ImageObject chooseImageObject = null;
+        for (ImageObject imageObject : imageObjectList) {
+            if (imageObject.getStartX() < currentX && imageObject.getStartY() < currentY &&
+                    imageObject.getStartX() + imageObject.getImage().getWidth() > currentX &&
+                    imageObject.getStartY() + imageObject.getImage().getHeight() > currentY) {
+                chooseImageObject = imageObject;
+            }
+        }
+        return chooseImageObject;
+    }
+
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);
         drawMarkLine();
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
+        imageObjectList.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
     }
 
     private void drawMarkLine() {
@@ -204,7 +261,7 @@ public class TreeGameMap {
     @Setter
     @Getter
     @NoArgsConstructor
-    public static final class BackgroundImageData {
+    public static class BackgroundImageData {
         /*
          * 图片数据的中转层
          * */

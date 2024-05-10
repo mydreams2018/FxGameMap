@@ -79,3 +79,16 @@ System.out.println(source.getImage().getUrl());
                                     }
                                 }
                                 */
+    public String chooseChildTitle(String id) {
+        String str = "";
+        if (id != null && !id.isBlank()) {
+            if (childrenMap != null && !childrenMap.isEmpty()) {
+                for (TreeGameMap treeGameMap : childrenMap) {
+                    if (treeGameMap.getId().equals(id)) {
+                        return treeGameMap.getTitle();
+                    }
+                }
+            }
+        }
+        return str;
+    }

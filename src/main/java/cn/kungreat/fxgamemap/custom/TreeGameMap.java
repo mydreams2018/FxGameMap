@@ -33,14 +33,6 @@ public class TreeGameMap {
     private String id;
     private Integer width;
     private Integer height;
-    private TreeGameMap left;
-    private TreeGameMap top;
-    private TreeGameMap right;
-    private TreeGameMap bottom;
-    private TreeGameMap leftTop;
-    private TreeGameMap leftBottom;
-    private TreeGameMap rightTop;
-    private TreeGameMap rightBottom;
 
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
     public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));

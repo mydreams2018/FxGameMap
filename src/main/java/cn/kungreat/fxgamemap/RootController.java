@@ -193,7 +193,9 @@ public class RootController implements Initializable {
                     treeGameMap.initCanvas();
                     scrollPaneCenterInHBox.getChildren().add(treeGameMap.getCanvas());
                 } else if (value instanceof TreeArea treeArea) {
-                    System.out.println(treeArea);
+                    scrollPaneCenterInHBox.getChildren().clear();
+                    treeArea.initGridPane();
+                    scrollPaneCenterInHBox.getChildren().add(treeArea.getGridPane());
                 } else if (value instanceof TreeWorld treeWorld) {
                     System.out.println(treeWorld);
                 }

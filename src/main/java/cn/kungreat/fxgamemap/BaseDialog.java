@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.TreeArea;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -46,6 +47,9 @@ public class BaseDialog {
     public static final TextField IMAGE_OBJECT_NAME = BaseDialog.getTextField("请输入图片对象名称");
     public static final ButtonType APPLY_IMAGE_OBJECT = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType CANCEL_IMAGE_OBJECT = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    //区域的图片连接
+    public static final ButtonType AREA_LINK_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType AREA_LINK_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     static {
         SRID_BTN_CHOOSE.setOnAction(event -> {
@@ -109,6 +113,18 @@ public class BaseDialog {
         vBox.getChildren().addAll(SRID_NAME, hBoxInnerOne, hBoxInnerTwo, hBoxInnerThree);
         dialog.setGraphic(vBox);
         dialog.getDialogPane().getButtonTypes().addAll(APPLY_SRID, CANCEL_SRID);
+        return dialog;
+    }
+
+    public static Dialog<String> getChildrenPointDialog() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("选择图像");
+        dialog.setHeaderText("请选择图像");
+        dialog.setContentText("图像名称");
+        dialog.setResizable(false);
+        ChoiceBox<String> choiceBox = new ChoiceBox<>(TreeArea.STRING_OBSERVABLE_LIST);
+        dialog.setGraphic(choiceBox);
+        dialog.getDialogPane().getButtonTypes().addAll(AREA_LINK_APPLY, AREA_LINK_CANCEL);
         return dialog;
     }
 }

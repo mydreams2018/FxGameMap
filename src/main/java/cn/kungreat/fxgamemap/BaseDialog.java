@@ -120,7 +120,7 @@ public class BaseDialog {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("选择图像");
         dialog.setHeaderText("请选择图像");
-        dialog.setContentText("图像名称");
+        dialog.setContentText("是否接受图像名称");
         dialog.setResizable(false);
         ChoiceBox<String> choiceBox = new ChoiceBox<>(TreeArea.STRING_OBSERVABLE_LIST);
         dialog.setGraphic(choiceBox);

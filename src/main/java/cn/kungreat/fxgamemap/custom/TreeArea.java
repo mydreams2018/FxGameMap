@@ -97,10 +97,14 @@ public class TreeArea {
                 childrenMap.forEach(treeGameMap -> STRING_OBSERVABLE_LIST.add(treeGameMap.getTitle()));
             }
             Optional<String> re = STRING_OBSERVABLE_DIALOG.showAndWait();
-            if (re.isPresent() && re.get().equals("OK")) {
+            if (re.isPresent() && "OK".equals(re.get())) {
                 ChoiceBox<String> choiceBox = (ChoiceBox<String>) STRING_OBSERVABLE_DIALOG.getGraphic();
                 if (choiceBox.getValue() != null) {
                     TreeArea.this.childrenPointName[x][y] = choiceBox.getValue();
+                    HBox hBox = (HBox) event.getSource();
+                    Label label = (Label) hBox.getChildren().getLast();
+                    label.setText(choiceBox.getValue());
+                    STRING_OBSERVABLE_DIALOG.setResult("CANCEL");
                 }
             }
         }

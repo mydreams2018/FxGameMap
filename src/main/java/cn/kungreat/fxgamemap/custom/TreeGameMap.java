@@ -39,8 +39,6 @@ public class TreeGameMap {
     public static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
             , BaseDialog.IMAGE_OBJECT_NAME, BaseDialog.APPLY_IMAGE_OBJECT, BaseDialog.CANCEL_IMAGE_OBJECT);
 
-    public static final ThreadLocal<TreeGameMap> TREE_GAME_MAP_THREAD_LOCAL = new ThreadLocal<>();
-
     @JsonIgnore
     private Canvas canvas;
     @JsonIgnore
@@ -54,11 +52,6 @@ public class TreeGameMap {
     private String backgroundImagePath;
     private List<ImageObject> imageObjectList = new ArrayList<>();
     private String canvasFillColor;
-    /*
-     * 用来中转ImageObject对象有个弹窗界面
-     * */
-    @JsonIgnore
-    private ImageObject tempImageObject;
 
     public TreeGameMap(String id, String title, Integer width, Integer height, String backgroundImagePath) {
         this.id = id;
@@ -124,9 +117,18 @@ public class TreeGameMap {
                         imagePath = chooseResourceImage.getId();
                     }
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        tempImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
-                        TREE_GAME_MAP_THREAD_LOCAL.set(TreeGameMap.this);
-                        IMAGE_OBJECT_DIALOG.showAndWait();
+                        Optional<String> optional = IMAGE_OBJECT_DIALOG.showAndWait();
+                        if (optional.isPresent() && optional.get().equals("OK")) {
+                            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
+                            if (objectNameText != null && !objectNameText.isBlank()) {
+                                ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
+                                changeImageObject.setTitle(objectNameText);
+                                changeImageObject.initTitledPane();
+                                controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
+                                imageObjectList.add(changeImageObject);
+                                PropertyListener.changeIsSaved(false);
+                            }
+                        }
                     } else {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);
@@ -171,18 +173,9 @@ public class TreeGameMap {
             BaseDialog.IMAGE_OBJECT_NAME.clear();
         });
         Button imageObjectOk = (Button) IMAGE_OBJECT_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_IMAGE_OBJECT);
-        imageObjectOk.setOnAction(event -> {
-            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
-            if (objectNameText != null && !objectNameText.isBlank()) {
-                ImageObject changeImageObject = TREE_GAME_MAP_THREAD_LOCAL.get().getTempImageObject();
-                changeImageObject.setTitle(objectNameText);
-                changeImageObject.initTitledPane();
-                RootController controller = RootApplication.mainFXMLLoader.getController();
-                controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
-                TREE_GAME_MAP_THREAD_LOCAL.get().getImageObjectList().add(changeImageObject);
-                PropertyListener.changeIsSaved(false);
-            }
-        });
+        Button imageObjectCancel = (Button) IMAGE_OBJECT_DIALOG.getDialogPane().lookupButton(BaseDialog.CANCEL_IMAGE_OBJECT);
+        imageObjectOk.setOnAction(event -> IMAGE_OBJECT_DIALOG.setResult("OK"));
+        imageObjectCancel.setOnAction(event -> IMAGE_OBJECT_DIALOG.setResult("CANCEL"));
     }
 
     //拿到当前选中的对象

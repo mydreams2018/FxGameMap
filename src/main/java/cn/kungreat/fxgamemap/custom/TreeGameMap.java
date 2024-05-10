@@ -61,6 +61,7 @@ public class TreeGameMap {
 
     private String backgroundImagePath;
     private List<ImageObject> imageObjectList = new ArrayList<>();
+    private String canvasFillColor;
     /*
      * 用来中转ImageObject对象有个弹窗界面
      * */
@@ -80,7 +81,11 @@ public class TreeGameMap {
             canvas = new Canvas(width, height);
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
-            graphicsContext.setFill(RootController.CANVAS_DEFAULT_COLOR);
+            if (canvasFillColor != null && !canvasFillColor.isBlank()) {
+                graphicsContext.setFill(Color.web(canvasFillColor));
+            } else {
+                graphicsContext.setFill(RootController.CANVAS_DEFAULT_COLOR);
+            }
             graphicsContext.setLineWidth(1);
             CANVAS_SNAPSHOT_PARAMETERS.setFill(Color.color(0, 0, 0, 0));
             backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));

@@ -301,7 +301,9 @@ public class RootController implements Initializable {
             TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
             if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
                 treeGameMap.getGraphicsContext().setFill(canvasColorPicker.getValue());
+                treeGameMap.setCanvasFillColor(canvasColorPicker.getValue().toString());
                 treeGameMap.clearAndDraw();
+                PropertyListener.changeIsSaved(false);
             }
         });
     }

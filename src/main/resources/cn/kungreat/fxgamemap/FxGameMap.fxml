@@ -17,6 +17,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ColorPicker?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
         <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
@@ -46,6 +47,7 @@
                         <FontIcon iconLiteral="fas-marker" />
                     </graphic>
                 </Button>
+                <ColorPicker fx:id="canvasColorPicker"></ColorPicker>
             </HBox>
         </HBox>
     </top>

@@ -42,7 +42,6 @@ public class TreeGameMap {
     private TreeGameMap rightTop;
     private TreeGameMap rightBottom;
 
-    public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
     public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));
     public static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
@@ -81,7 +80,7 @@ public class TreeGameMap {
             canvas = new Canvas(width, height);
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
-            graphicsContext.setFill(CANVAS_DEFAULT_COLOR);
+            graphicsContext.setFill(RootController.CANVAS_DEFAULT_COLOR);
             graphicsContext.setLineWidth(1);
             CANVAS_SNAPSHOT_PARAMETERS.setFill(Color.color(0, 0, 0, 0));
             backgroundImages.forEach(backgroundImageData -> backgroundImageData.initImage(backgroundImagePath));

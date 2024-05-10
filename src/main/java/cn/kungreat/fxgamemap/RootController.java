@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -45,6 +46,8 @@ public class RootController implements Initializable {
 
     private static final Dialog<String> SEGMENT_RESOURCE_IMAGES_DIALOG = BaseDialog.getSegmentResourceImagesDialog();
 
+    public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
+
     @FXML
     private HBox topHBox;
     @FXML
@@ -57,6 +60,8 @@ public class RootController implements Initializable {
     private TextField canvasMarkLineWidth;
     @FXML
     private TextField canvasMarkLineHeight;
+    @FXML
+    private ColorPicker canvasColorPicker;
     @FXML
     private StackPane stackPaneLeft;
     @FXML
@@ -101,6 +106,7 @@ public class RootController implements Initializable {
         addTreeEvent();
         addSegmentResourceImgEvent();
         addScrollPaneCenterEvent();
+        addCanvasColorPickerEvent();
     }
 
     public ContextMenu getTreeContextMenu() {
@@ -287,5 +293,16 @@ public class RootController implements Initializable {
                 treeGameMap.clearAndDraw();
             }
         }
+    }
+
+    public void addCanvasColorPickerEvent() {
+        canvasColorPicker.setValue(RootController.CANVAS_DEFAULT_COLOR);
+        canvasColorPicker.setOnAction(event -> {
+            TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+            if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+                treeGameMap.getGraphicsContext().setFill(canvasColorPicker.getValue());
+                treeGameMap.clearAndDraw();
+            }
+        });
     }
 }

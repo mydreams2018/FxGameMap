@@ -28,10 +28,10 @@ public class BaseDialog {
     public static final TextField TEXT_AREA = BaseDialog.getTextField("请输入名称");
     public static final TextField TEXT_AREAX = BaseDialog.getTextField("请输入X坐标地图有几个");
     public static final TextField TEXT_AREAY = BaseDialog.getTextField("请输入Y坐标地图有几个");
+    public static final TextField TEXT_AREA_WIDTH = BaseDialog.getTextField("请输入宽度");
+    public static final TextField TEXT_AREA_HEIGHT = BaseDialog.getTextField("请输入高度");
 
     public static final TextField TEXT_MAP = BaseDialog.getTextField("请输入名称");
-    public static final TextField TEXT_MAP_WIDTH = BaseDialog.getTextField("请输入宽度");
-    public static final TextField TEXT_MAP_HEIGHT = BaseDialog.getTextField("请输入高度");
 
     //SegmentResourceImagesDialog
     public static final TextField SRID_NAME = BaseDialog.getTextField("请输入资源名称");
@@ -79,13 +79,13 @@ public class BaseDialog {
 
     public static VBox getMapRectangular() {
         VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_MAP, TEXT_MAP_WIDTH, TEXT_MAP_HEIGHT);
+        vb.getChildren().addAll(TEXT_MAP);
         return vb;
     }
 
     public static VBox getAreaRectangular() {
         VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY);
+        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY,TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT);
         return vb;
     }
 

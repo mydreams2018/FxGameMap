@@ -30,6 +30,8 @@ public class TreeArea {
      * */
     private Integer xNumber;
     private Integer yNumber;
+    private Integer width;
+    private Integer height;
     private List<TreeGameMap> childrenMap;
     private String imageDirectory;
     private String[][] childrenPointName;
@@ -41,13 +43,15 @@ public class TreeArea {
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
 
-    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory) {
+    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory, Integer width , Integer height) {
         this.title = title;
         this.id = id;
         this.xNumber = xNumber;
         this.yNumber = yNumber;
         this.childrenMap = childrenMap;
         this.imageDirectory = imageDirectory;
+        this.width = width;
+        this.height = height;
     }
 
     public void initGridPane() {

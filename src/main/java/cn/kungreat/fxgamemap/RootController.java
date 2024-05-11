@@ -147,13 +147,16 @@ public class RootController implements Initializable {
             String newArea = BaseDialog.TEXT_AREA.getText();
             String areaXText = BaseDialog.TEXT_AREAX.getText();
             String areaYText = BaseDialog.TEXT_AREAY.getText();
-            if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank()
-                    && Pattern.matches(PatternUtils.NumberRegex, areaXText) && Pattern.matches(PatternUtils.NumberRegex, areaYText)) {
+            String areaWidth = BaseDialog.TEXT_AREA_WIDTH.getText();
+            String areaHeight = BaseDialog.TEXT_AREA_HEIGHT.getText();
+            if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank() && !areaWidth.isBlank() && !areaHeight.isBlank()
+                    && Pattern.matches(PatternUtils.NumberRegex, areaXText) && Pattern.matches(PatternUtils.NumberRegex, areaYText)
+                    && Pattern.matches(PatternUtils.NumberRegex, areaWidth) && Pattern.matches(PatternUtils.NumberRegex, areaHeight)) {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
                             Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>(),
-                            treeWorld.getTitle() + File.separator + newArea);
+                            treeWorld.getTitle() + File.separator + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight));
                     treeWorld.getChildrenArea().add(treeArea);
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
@@ -167,14 +170,11 @@ public class RootController implements Initializable {
         Button applyMap = (Button) MAP_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_MAP);
         applyMap.setOnAction(event -> {
             String title = BaseDialog.TEXT_MAP.getText();
-            String mapWidth = BaseDialog.TEXT_MAP_WIDTH.getText();
-            String mapHeight = BaseDialog.TEXT_MAP_HEIGHT.getText();
-            if (!title.isBlank() && !mapWidth.isBlank() && !mapHeight.isBlank()
-                    && Pattern.matches(PatternUtils.NumberRegex, mapWidth) && Pattern.matches(PatternUtils.NumberRegex, mapHeight)) {
+            if (!title.isBlank()) {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeArea treeArea) {
                     TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
-                            Integer.parseInt(mapWidth), Integer.parseInt(mapHeight), treeArea.getImageDirectory() + File.separator + title);
+                            treeArea.getWidth(), treeArea.getHeight(), treeArea.getImageDirectory() + File.separator + title);
                     treeArea.getChildrenMap().add(treeGameMap);
                     TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
                     treeItem.setGraphic(new FontIcon("fas-map"));

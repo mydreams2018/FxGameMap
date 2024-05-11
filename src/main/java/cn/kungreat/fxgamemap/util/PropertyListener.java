@@ -1,6 +1,9 @@
 package cn.kungreat.fxgamemap.util;
 
 import cn.kungreat.fxgamemap.Configuration;
+import cn.kungreat.fxgamemap.RootApplication;
+import cn.kungreat.fxgamemap.RootController;
+import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -10,6 +13,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -28,6 +32,8 @@ public class PropertyListener {
 
     private static final SimpleObjectProperty<TreeGameMap.BackgroundImageData> CHOOSE_CANVAS_IMAGE = new SimpleObjectProperty<>();
     private static final Timeline CHOOSE_CANVAS_TIME = new Timeline();
+
+    private static final SimpleBooleanProperty SWITCH_TREE_AREA = new SimpleBooleanProperty(true);
 
     /*
      * 主程序入口调一次
@@ -133,4 +139,19 @@ public class PropertyListener {
     public static TreeGameMap.BackgroundImageData getChooseCanvasImage() {
         return CHOOSE_CANVAS_IMAGE.get();
     }
+
+    public static void initSwitchTreeAreaListener() {
+        RootController controller = RootApplication.mainFXMLLoader.getController();
+        SWITCH_TREE_AREA.addListener((observable, oldValue, newValue) -> {
+            TreeItem<Object> item = controller.getTreeView().getFocusModel().getFocusedItem();
+            if (item != null && item.getValue() instanceof TreeArea treeArea) {
+                System.out.println(treeArea.getSwitchTypeName());
+            }
+        });
+    }
+
+    public static void setSwitchTreeArea() {
+        SWITCH_TREE_AREA.set(!SWITCH_TREE_AREA.get());
+    }
+
 }

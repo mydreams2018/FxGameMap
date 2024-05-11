@@ -309,4 +309,9 @@ public class RootController implements Initializable {
             }
         });
     }
+
+    @FXML
+    public void switchTreeAreaView() {
+        PropertyListener.setSwitchTreeArea();
+    }
 }

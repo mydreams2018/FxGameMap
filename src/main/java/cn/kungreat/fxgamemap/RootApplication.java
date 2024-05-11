@@ -47,6 +47,7 @@ public class RootApplication extends Application {
         PropertyListener.initMainMenuHistoryListener(rootController.getMainMenuBar().getHistoryMenu());
         TreeGameMap.addImageObjectEvent();
         TreeArea.addChildrenPointDialogEvent();
+        PropertyListener.initSwitchTreeAreaListener();
         new FrameTimer().start();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }

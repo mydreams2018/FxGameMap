@@ -48,6 +48,11 @@
                         <FontIcon iconLiteral="fas-marker" />
                     </graphic>
                 </Button>
+                <Button text="切换区域显示模式" onAction="#switchTreeAreaView">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-exchange-alt" />
+                    </graphic>
+                </Button>
             </HBox>
         </HBox>
     </top>

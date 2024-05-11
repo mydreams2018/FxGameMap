@@ -40,14 +40,14 @@
                         <FontIcon iconLiteral="fas-remove-format" />
                     </graphic>
                 </RadioButton>
+                <ColorPicker fx:id="canvasColorPicker"></ColorPicker>
                 <TextField fx:id="canvasMarkLineWidth" prefWidth="50"></TextField>
                 <TextField fx:id="canvasMarkLineHeight" prefWidth="50"></TextField>
-                <Button text="添加分割线标记" onAction="#addCanvasMarkLine">
+                <Button text="添加临时分割线" onAction="#addCanvasMarkLine">
                     <graphic>
                         <FontIcon iconLiteral="fas-marker" />
                     </graphic>
                 </Button>
-                <ColorPicker fx:id="canvasColorPicker"></ColorPicker>
             </HBox>
         </HBox>
     </top>

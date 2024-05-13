@@ -39,6 +39,8 @@ public class TreeArea {
     private GridPane gridPane;
     @JsonIgnore
     private String switchTypeName;
+    @JsonIgnore
+    private AreaMapShow areaMapShow;
 
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
@@ -57,7 +59,6 @@ public class TreeArea {
     public void initGridPane() {
         if (gridPane == null) {
             gridPane = new GridPane();
-            switchTypeName = "gridPane";
             gridPane.setHgap(10);
             gridPane.setVgap(10);
             gridPane.setMaxHeight(Control.USE_PREF_SIZE);
@@ -77,6 +78,7 @@ public class TreeArea {
                 }
             }
         }
+        switchTypeName = "gridPane";
     }
 
     public static void addChildrenPointDialogEvent() {

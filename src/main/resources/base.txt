@@ -92,3 +92,26 @@ System.out.println(source.getImage().getUrl());
         }
         return str;
     }
+            graphicsContext.drawImage(writableImage, Math.abs(startX), Math.abs(startY), canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+
+        int needWidth = canvasWidth / 2;
+        if (needWidth - remainderLeft > 0) {
+            int needLeftWidth = needWidth - remainderLeft;
+            for (; needLeftWidth > 0; startWidthIndex--) {
+                needLeftWidth = needLeftWidth - width;
+            }
+            startX = needLeftWidth;
+        } else {
+            startX = needWidth - remainderLeft;
+        }
+        int needHeight = canvasHeight / 2;
+
+                if (needHeight - remainderTop > 0) {
+                    int needTopHeight = needHeight - remainderTop;
+                    for (; needTopHeight > 0; startHeightIndex--) {
+                        needTopHeight = needTopHeight - height;
+                    }
+                    startY = needTopHeight;
+                } else {
+                    startY = needHeight - remainderTop;
+                }

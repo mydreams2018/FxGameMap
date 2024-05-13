@@ -3,6 +3,7 @@ package cn.kungreat.fxgamemap.util;
 import cn.kungreat.fxgamemap.Configuration;
 import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.RootController;
+import cn.kungreat.fxgamemap.custom.AreaMapShow;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import javafx.animation.KeyFrame;
@@ -145,7 +146,21 @@ public class PropertyListener {
         SWITCH_TREE_AREA.addListener((observable, oldValue, newValue) -> {
             TreeItem<Object> item = controller.getTreeView().getFocusModel().getFocusedItem();
             if (item != null && item.getValue() instanceof TreeArea treeArea) {
-                System.out.println(treeArea.getSwitchTypeName());
+                if(treeArea.getSwitchTypeName().equals("gridPane")){
+                    AreaMapShow areaMapShow = treeArea.getAreaMapShow();
+                    if (areaMapShow == null) {
+                        areaMapShow = new AreaMapShow();
+                        treeArea.setAreaMapShow(areaMapShow);
+                    }
+                    areaMapShow.initAreaMapShow(treeArea);
+                    areaMapShow.clearAndDraw(treeArea);
+                    controller.getScrollPaneCenterInHBox().getChildren().clear();
+                    controller.getScrollPaneCenterInHBox().getChildren().add(areaMapShow.getCanvas());
+                }else {
+                    controller.getScrollPaneCenterInHBox().getChildren().clear();
+                    treeArea.initGridPane();
+                    controller.getScrollPaneCenterInHBox().getChildren().add(treeArea.getGridPane());
+                }
             }
         });
     }

@@ -117,8 +117,7 @@ public class AreaMapShow {
                 needBottomHeight = needBottomHeight - height;
             }
         }
-        WritableImage writableImage = new WritableImage(((endWidthIndex - startWidthIndex) + 1) * width,
-                ((endHeightIndex - startHeightIndex) + 1) * height);
+        WritableImage writableImage = new WritableImage(((endWidthIndex - startWidthIndex) + 1) * width, ((endHeightIndex - startHeightIndex) + 1) * height);
         int tempX = 0, tempY = 0;
         for (int y = startHeightIndex; y <= endHeightIndex; y++, tempY++) {
             for (int x = startWidthIndex; x <= endWidthIndex; x++, tempX++) {

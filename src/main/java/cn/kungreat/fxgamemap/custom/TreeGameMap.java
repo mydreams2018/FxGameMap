@@ -113,6 +113,7 @@ public class TreeGameMap {
                         saveImgPaths.add(image.getUrl());
                         imagePath = image.getUrl();
                     } else {
+                        //分割图片时用Id暂存的图片路径
                         saveImgPaths.add(chooseResourceImage.getId());
                         imagePath = chooseResourceImage.getId();
                     }

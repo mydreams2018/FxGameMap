@@ -121,11 +121,9 @@ public class AreaMapShow {
         int tempX = 0, tempY = 0;
         for (int y = startHeightIndex; y <= endHeightIndex; y++, tempY++) {
             for (int x = startWidthIndex; x <= endWidthIndex; x++, tempX++) {
-                if (x >= 0 && y >= 0) {
-                    Color chooseColor = backgroundColors[x][y];
-                    Color color = chooseColor == null ? defaultBackgroundColor : chooseColor;
-                    writerColor(tempX, tempY, color, writableImage.getPixelWriter());
-                }
+                Color chooseColor = backgroundColors[x][y];
+                Color color = chooseColor == null ? defaultBackgroundColor : chooseColor;
+                writerColor(tempX, tempY, color, writableImage.getPixelWriter());
             }
             tempX = 0;
         }

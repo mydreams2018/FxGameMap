@@ -155,7 +155,7 @@ public class PropertyListener {
                     areaMapShow.initAreaMapShow(treeArea);
                     areaMapShow.clearAndDraw(treeArea);
                     controller.getScrollPaneCenterInHBox().getChildren().clear();
-                    controller.getScrollPaneCenterInHBox().getChildren().add(areaMapShow.getCanvas());
+                    controller.getScrollPaneCenterInHBox().getChildren().add(areaMapShow.getOutVBox());
                 }else {
                     controller.getScrollPaneCenterInHBox().getChildren().clear();
                     treeArea.initGridPane();

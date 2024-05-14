@@ -276,19 +276,21 @@ public class TreeGameMap {
         }
 
         public void initImage(String backgroundImagePath) {
-            try {
-                String[] split = imagePath.split("/");
-                File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
-                if (outFile.exists() && outFile.isDirectory()) {
-                    for (File file : outFile.listFiles()) {
-                        if (file.getName().equals(split[split.length - 1])) {
-                            this.image = new Image(file.toURI().toString());
-                            this.imageView = new ImageView(image);
+            if (this.imageView == null) {
+                try {
+                    String[] split = imagePath.split("/");
+                    File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
+                    if (outFile.exists() && outFile.isDirectory()) {
+                        for (File file : outFile.listFiles()) {
+                            if (file.getName().equals(split[split.length - 1])) {
+                                this.image = new Image(file.toURI().toString());
+                                this.imageView = new ImageView(image);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    LogService.printLog(LogService.LogLevel.ERROR, TreeGameMap.class, "读取图片资源文件", e);
                 }
-            } catch (Exception e) {
-                LogService.printLog(LogService.LogLevel.ERROR, TreeGameMap.class, "读取图片资源文件", e);
             }
         }
     }

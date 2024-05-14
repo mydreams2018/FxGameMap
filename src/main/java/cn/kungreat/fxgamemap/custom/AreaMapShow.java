@@ -1,52 +1,69 @@
 package cn.kungreat.fxgamemap.custom;
 
 import cn.kungreat.fxgamemap.ImageObject;
+import cn.kungreat.fxgamemap.RootController;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.geometry.Orientation;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Setter
 @Getter
 public class AreaMapShow {
 
-    private List<TreeGameMap.BackgroundImageData> showBackgroundImages = new ArrayList<>();
-    private List<ImageObject> showImageObject = new ArrayList<>();
+    /*
+    * 存放每次需要处理的图片
+    * */
+    private List<TreeGameMap.BackgroundImageData> showBackgroundImages = new LinkedList<>();
+    private List<ImageObject> showImageObject = new LinkedList<>();
 
     private Integer width;
     private Integer height;
 
     private Integer canvasWidth;
     private Integer canvasHeight;
-    private Integer centerX;
-    private Integer centerY;
+    private Integer currentX;
+    private Integer currentY;
 
     private Color[][] backgroundColors;
-    private Color defaultBackgroundColor = Color.BLACK;
     @JsonIgnore
     private Canvas canvas;
     @JsonIgnore
     private GraphicsContext graphicsContext;
+    @JsonIgnore
+    private VBox outVBox;
+    @JsonIgnore
+    private HBox innerHBox;
+    @JsonIgnore
+    private ScrollBar scrollBarY;
+    @JsonIgnore
+    private ScrollBar scrollBarX;
 
     public void initAreaMapShow(TreeArea treeArea) {
         if (canvas == null) {
-            canvasWidth = 3840;
-            canvasHeight = 2160;
+            canvasWidth = treeArea.getWidth();
+            canvasHeight = treeArea.getHeight();
             canvas = new Canvas(canvasWidth, canvasHeight);
             graphicsContext = canvas.getGraphicsContext2D();
             width = treeArea.getWidth();
             height = treeArea.getHeight();
             backgroundColors = new Color[treeArea.getXNumber()][treeArea.getYNumber()];
-            centerX = 0;
-            centerY = 0;
+            currentX = 0;
+            currentY = 0;
+            initView(treeArea);
         }
         String[][] childrenPointName = treeArea.getChildrenPointName();
         for (int y = 0; y < treeArea.getYNumber(); y++) {
@@ -54,7 +71,7 @@ public class AreaMapShow {
                 String pointName = childrenPointName[x][y];
                 if (pointName != null && !pointName.isBlank()) {
                     TreeGameMap treeGameMap = findTreeGameMap(pointName, treeArea);
-                    if (treeGameMap != null) {
+                    if (treeGameMap != null && treeGameMap.getCanvasFillColor() != null) {
                         backgroundColors[x][y] = Color.web(treeGameMap.getCanvasFillColor());
                     }
                 }
@@ -63,8 +80,37 @@ public class AreaMapShow {
         treeArea.setSwitchTypeName("areaMapShow");
     }
 
+    private void initView(TreeArea treeArea) {
+        outVBox = new VBox();
+        innerHBox = new HBox();
+        scrollBarY = new ScrollBar();
+        scrollBarY.setOrientation(Orientation.VERTICAL);
+        scrollBarY.setMin(0);
+        scrollBarY.setMax(treeArea.getYNumber() * height - canvasHeight);
+        scrollBarY.setBlockIncrement(height);
+        innerHBox.getChildren().addAll(canvas, scrollBarY);
+        scrollBarX = new ScrollBar();
+        scrollBarX.setOrientation(Orientation.HORIZONTAL);
+        scrollBarX.setMin(0);
+        scrollBarX.setMax(treeArea.getXNumber()  * width - canvasWidth);
+        scrollBarX.setBlockIncrement(width);
+        outVBox.getChildren().addAll(innerHBox, scrollBarX);
+        outVBox.setMaxWidth(Region.USE_PREF_SIZE);
+        outVBox.setMaxHeight(Region.USE_PREF_SIZE);
+        scrollBarY.valueProperty().addListener((observable, oldValue, newValue) -> {
+            currentY = newValue.intValue();
+            clearAndDraw(treeArea);
+        });
+        scrollBarX.valueProperty().addListener((observable, oldValue, newValue) -> {
+            currentX = newValue.intValue();
+            clearAndDraw(treeArea);
+        });
+    }
+
     public void clearAndDraw(TreeArea treeArea) {
         graphicsContext.clearRect(0, 0, canvasWidth, canvasHeight);
+        showBackgroundImages.clear();
+        showImageObject.clear();
         drawAllImage(treeArea);
     }
 
@@ -72,16 +118,16 @@ public class AreaMapShow {
         int startX = 0, startY = 0;
         int centerPointX = 0, centerPointY = 0;
         for (int x = 0; x < treeArea.getXNumber(); x++) {
-            if (x * width + width > centerX) {
+            if (x * width + width > currentX) {
                 centerPointX = x;
-                startX = width - ((x * width) + width - centerX);
+                startX = width - ((x * width) + width - currentX);
                 break;
             }
         }
         for (int y = 0; y < treeArea.getYNumber(); y++) {
-            if (y * height + height > centerY) {
+            if (y * height + height > currentY) {
                 centerPointY = y;
-                startY = height - ((y * height) + height - centerY);
+                startY = height - ((y * height) + height - currentY);
                 break;
             }
         }
@@ -105,7 +151,7 @@ public class AreaMapShow {
         for (int y = startHeightIndex; y <= endHeightIndex; y++, tempY++) {
             for (int x = startWidthIndex; x <= endWidthIndex; x++, tempX++) {
                 Color chooseColor = backgroundColors[x][y];
-                Color color = chooseColor == null ? defaultBackgroundColor : chooseColor;
+                Color color = chooseColor == null ? RootController.CANVAS_DEFAULT_COLOR : chooseColor;
                 writerColor(tempX, tempY, color, writableImage.getPixelWriter());
                 filterShowImages(treeArea, x, y, startX, startY, tempX, tempY);
             }
@@ -119,9 +165,10 @@ public class AreaMapShow {
             graphicsContext.drawImage(imageObject.getImage(), imageObject.getStartX() - startX, imageObject.getStartY() - startY);
         }
     }
+
     /*
-    * 过滤不必要的图片数据
-    * */
+     * 过滤不必要的图片数据
+     * */
     private void filterShowImages(TreeArea treeArea, int indexX, int indexY, int startX, int startY, int tempX, int tempY) {
         String[][] childrenPointName = treeArea.getChildrenPointName();
         String pointName = childrenPointName[indexX][indexY];
@@ -131,6 +178,7 @@ public class AreaMapShow {
                 List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
                 if (backgroundImages != null && !backgroundImages.isEmpty()) {
                     for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
+                        backgroundImage.initImage(treeGameMap.getBackgroundImagePath());
                         Image image = backgroundImage.getImage();
                         if (backgroundImage.getStartY() + image.getHeight() >= startY && backgroundImage.getStartX() + image.getWidth() >= startX
                                 && backgroundImage.getStartY() <= startY + canvasHeight && backgroundImage.getStartX() <= startX + canvasWidth) {
@@ -144,6 +192,7 @@ public class AreaMapShow {
                 List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
                 if (imageObjectList != null && !imageObjectList.isEmpty()) {
                     for (ImageObject imageObject : imageObjectList) {
+                        imageObject.initImage(treeGameMap.getBackgroundImagePath());
                         Image image = imageObject.getImage();
                         if (imageObject.getStartY() + image.getHeight() >= startY && imageObject.getStartX() + image.getWidth() >= startX
                                 && imageObject.getStartY() <= startY + canvasHeight && imageObject.getStartX() <= startX + canvasWidth) {

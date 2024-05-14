@@ -4,6 +4,7 @@ import cn.kungreat.fxgamemap.ImageObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -55,24 +56,6 @@ public class AreaMapShow {
                     TreeGameMap treeGameMap = findTreeGameMap(pointName, treeArea);
                     if (treeGameMap != null) {
                         backgroundColors[x][y] = Color.web(treeGameMap.getCanvasFillColor());
-                        List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
-                        if (backgroundImages != null && !backgroundImages.isEmpty()) {
-                            for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
-                                TreeGameMap.BackgroundImageData areaShowBackgroundImage = new TreeGameMap.BackgroundImageData
-                                        (backgroundImage.getImage(), x * width + backgroundImage.getStartX()
-                                                , y * height + backgroundImage.getStartY(), backgroundImage.getImagePath());
-                                showBackgroundImages.add(areaShowBackgroundImage);
-                            }
-                        }
-                        List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
-                        if (imageObjectList != null && !imageObjectList.isEmpty()) {
-                            for (ImageObject imageObject : imageObjectList) {
-                                ImageObject areaShowImageObject = new ImageObject(imageObject.getId(), imageObject.getImage(),
-                                        x * width + imageObject.getStartX(),
-                                        y * height + imageObject.getStartY(), imageObject.getImagePath());
-                                showImageObject.add(areaShowImageObject);
-                            }
-                        }
                     }
                 }
             }
@@ -124,14 +107,55 @@ public class AreaMapShow {
                 Color chooseColor = backgroundColors[x][y];
                 Color color = chooseColor == null ? defaultBackgroundColor : chooseColor;
                 writerColor(tempX, tempY, color, writableImage.getPixelWriter());
+                filterShowImages(treeArea, x, y, startX, startY, tempX, tempY);
             }
             tempX = 0;
         }
         graphicsContext.drawImage(writableImage, -startX, -startY);
+        for (TreeGameMap.BackgroundImageData showBackgroundImage : showBackgroundImages) {
+            graphicsContext.drawImage(showBackgroundImage.getImage(), showBackgroundImage.getStartX() - startX, showBackgroundImage.getStartY() - startY);
+        }
+        for (ImageObject imageObject : showImageObject) {
+            graphicsContext.drawImage(imageObject.getImage(), imageObject.getStartX() - startX, imageObject.getStartY() - startY);
+        }
     }
-
-    private void canvasMoveListener(TreeArea treeArea) {
-
+    /*
+    * 过滤不必要的图片数据
+    * */
+    private void filterShowImages(TreeArea treeArea, int indexX, int indexY, int startX, int startY, int tempX, int tempY) {
+        String[][] childrenPointName = treeArea.getChildrenPointName();
+        String pointName = childrenPointName[indexX][indexY];
+        if (pointName != null && !pointName.isBlank()) {
+            TreeGameMap treeGameMap = findTreeGameMap(pointName, treeArea);
+            if (treeGameMap != null) {
+                List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
+                if (backgroundImages != null && !backgroundImages.isEmpty()) {
+                    for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
+                        Image image = backgroundImage.getImage();
+                        if (backgroundImage.getStartY() + image.getHeight() >= startY && backgroundImage.getStartX() + image.getWidth() >= startX
+                                && backgroundImage.getStartY() <= startY + canvasHeight && backgroundImage.getStartX() <= startX + canvasWidth) {
+                            TreeGameMap.BackgroundImageData areaShowBackgroundImage = new TreeGameMap.BackgroundImageData
+                                    (image, tempX * width + backgroundImage.getStartX()
+                                            , tempY * height + backgroundImage.getStartY(), backgroundImage.getImagePath());
+                            showBackgroundImages.add(areaShowBackgroundImage);
+                        }
+                    }
+                }
+                List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
+                if (imageObjectList != null && !imageObjectList.isEmpty()) {
+                    for (ImageObject imageObject : imageObjectList) {
+                        Image image = imageObject.getImage();
+                        if (imageObject.getStartY() + image.getHeight() >= startY && imageObject.getStartX() + image.getWidth() >= startX
+                                && imageObject.getStartY() <= startY + canvasHeight && imageObject.getStartX() <= startX + canvasWidth) {
+                            ImageObject areaShowImageObject = new ImageObject(imageObject.getId(), imageObject.getImage(),
+                                    tempX * width + imageObject.getStartX(),
+                                    tempY * height + imageObject.getStartY(), imageObject.getImagePath());
+                            showImageObject.add(areaShowImageObject);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void writerColor(int tempX, int tempY, Color color, PixelWriter pixelWriter) {

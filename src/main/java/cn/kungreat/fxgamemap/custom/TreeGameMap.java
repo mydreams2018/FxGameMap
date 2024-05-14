@@ -66,7 +66,7 @@ public class TreeGameMap {
             canvas = new Canvas(width, height);
             graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setImageSmoothing(true);
-            if (canvasFillColor != null && !canvasFillColor.isBlank()) {
+            if (canvasFillColor != null) {
                 graphicsContext.setFill(Color.web(canvasFillColor));
             } else {
                 graphicsContext.setFill(RootController.CANVAS_DEFAULT_COLOR);

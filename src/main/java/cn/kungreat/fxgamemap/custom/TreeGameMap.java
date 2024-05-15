@@ -94,7 +94,11 @@ public class TreeGameMap {
             clearAndDraw();
             if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
                 Image image = chooseResourceImage.getImage();
-                graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
+                if (markLine != null) {
+                    graphicsContext.drawImage(image, event.getX() - (event.getX() % markLine.getMarkX()), event.getY() - (event.getY() % markLine.getMarkY()));
+                } else {
+                    graphicsContext.drawImage(image, event.getX() - (image.getWidth() / 2), event.getY() - (image.getHeight() / 2));
+                }
             } else if (controller.getTopDeletingMode().isSelected()) {
                 graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2), event.getY() - (DELETE_IMAGE.getHeight() / 2));
             }
@@ -106,8 +110,15 @@ public class TreeGameMap {
                 ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
                 if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
                     Image image = chooseResourceImage.getImage();
-                    double startX = event.getX() - (image.getWidth() / 2);
-                    double startY = event.getY() - (image.getHeight() / 2);
+                    double startX;
+                    double startY;
+                    if (markLine != null) {
+                        startX = event.getX() - (event.getX() % markLine.getMarkX());
+                        startY = event.getY() - (event.getY() % markLine.getMarkY());
+                    } else {
+                        startX = event.getX() - (image.getWidth() / 2);
+                        startY = event.getY() - (image.getHeight() / 2);
+                    }
                     String imagePath;
                     if (image.getUrl() != null) {
                         saveImgPaths.add(image.getUrl());

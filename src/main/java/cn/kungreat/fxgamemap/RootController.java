@@ -285,15 +285,17 @@ public class RootController implements Initializable {
 
     @FXML
     public void addCanvasMarkLine() {
-        String markLineWidth = canvasMarkLineWidth.getText();
-        String markLineHeight = canvasMarkLineHeight.getText();
-        if (markLineWidth != null && markLineHeight != null && Pattern.matches(PatternUtils.NumberRegex, markLineWidth)
-                && Pattern.matches(PatternUtils.NumberRegex, markLineHeight)) {
-            TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-            if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+            String markLineWidth = canvasMarkLineWidth.getText();
+            String markLineHeight = canvasMarkLineHeight.getText();
+            if (Pattern.matches(PatternUtils.NumberRegex, markLineWidth)
+                    && Pattern.matches(PatternUtils.NumberRegex, markLineHeight)) {
                 treeGameMap.setMarkLine(new TreeGameMap.MarkLine(Integer.parseInt(markLineWidth), Integer.parseInt(markLineHeight)));
-                treeGameMap.clearAndDraw();
+            } else {
+                treeGameMap.setMarkLine(null);
             }
+            treeGameMap.clearAndDraw();
         }
     }
 

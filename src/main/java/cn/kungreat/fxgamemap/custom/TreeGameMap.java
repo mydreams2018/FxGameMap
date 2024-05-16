@@ -282,18 +282,18 @@ public class TreeGameMap {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
-            this.imagePath = imagePath;
+            String[] split = imagePath.split("/");
+            this.imagePath = split[split.length - 1];
             this.imageView = new ImageView(image);
         }
 
         public void initImage(String backgroundImagePath) {
             if (this.imageView == null) {
                 try {
-                    String[] split = imagePath.split("/");
                     File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
                     if (outFile.exists() && outFile.isDirectory()) {
                         for (File file : outFile.listFiles()) {
-                            if (file.getName().equals(split[split.length - 1])) {
+                            if (file.getName().equals(this.imagePath)) {
                                 this.image = new Image(file.toURI().toString());
                                 this.imageView = new ImageView(image);
                             }

@@ -43,7 +43,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         ChoiceBox<String> textType = new ChoiceBox<>();
-        textType.getItems().addAll("FIXED_BODY", "BOSS", "ELITE", "MONSTER");
+        for (ImageObjectType value : ImageObjectType.values()) {
+            textType.getItems().add(value.name());
+        }
         textType.getSelectionModel().clearAndSelect(type.ordinal());
         textType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> type = ImageObjectType.valueOf(newValue));
         gridPane.add(new Label("类型"), 0, 0);

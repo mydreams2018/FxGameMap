@@ -84,6 +84,11 @@
                         </fx:define>
                         <VBox fx:id="rightTopOutVBox">
                             <HBox alignment="CENTER_RIGHT" spacing="10" fx:id="rightTopInHbox">
+                                <Button text="批量修改" onAction="#batchChangeImageObject">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-cogs" />
+                                    </graphic>
+                                </Button>
                                 <RadioButton text="背景图片" selected="true" toggleGroup="$imgTypeGroup"/>
                                 <RadioButton text="对象图片" fx:id="radioButtonIsObject" toggleGroup="$imgTypeGroup"/>
                             </HBox>

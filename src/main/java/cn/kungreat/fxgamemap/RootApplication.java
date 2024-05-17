@@ -48,6 +48,7 @@ public class RootApplication extends Application {
         TreeGameMap.addImageObjectEvent();
         TreeArea.addChildrenPointDialogEvent();
         PropertyListener.initSwitchTreeAreaListener();
+        RootController.addBatchChangeImageObjectEvent();
         new FrameTimer().start();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }

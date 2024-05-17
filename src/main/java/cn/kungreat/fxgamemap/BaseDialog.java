@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeArea;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -50,6 +51,11 @@ public class BaseDialog {
     //区域的图片连接
     public static final ButtonType AREA_LINK_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType AREA_LINK_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    //对象图片的批量修改
+    public static final ButtonType BATCH_IMAGE_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType BATCH_IMAGE_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    public static final ImageObject BATCH_IMAGE_OBJECT = new ImageObject();
+    public static final VBox BATCH_IMAGE_VBOX = new VBox(10);
 
     static {
         SRID_BTN_CHOOSE.setOnAction(event -> {
@@ -85,7 +91,7 @@ public class BaseDialog {
 
     public static VBox getAreaRectangular() {
         VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY,TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT);
+        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT);
         return vb;
     }
 
@@ -125,6 +131,29 @@ public class BaseDialog {
         ChoiceBox<String> choiceBox = new ChoiceBox<>(TreeArea.STRING_OBSERVABLE_LIST);
         dialog.setGraphic(choiceBox);
         dialog.getDialogPane().getButtonTypes().addAll(AREA_LINK_APPLY, AREA_LINK_CANCEL);
+        return dialog;
+    }
+
+    public static Dialog<Boolean> getBatchChangeImageObjectDialog() {
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle("批量修改");
+        dialog.setHeaderText("请选择名称");
+        dialog.setContentText("是否接受修改");
+        dialog.setResizable(false);
+        HBox hBox = new HBox(10);
+        ScrollPane scrollLeft = new ScrollPane();
+        scrollLeft.setContent(BATCH_IMAGE_VBOX);
+        scrollLeft.setPrefHeight(300);
+        BATCH_IMAGE_VBOX.setPadding(new Insets(10, 10, 10, 10));
+        scrollLeft.prefViewportWidthProperty().bind(BATCH_IMAGE_VBOX.widthProperty());
+        BATCH_IMAGE_OBJECT.setTitle("公共的对象属性");
+        BATCH_IMAGE_OBJECT.setId("BATCH_IMAGE_OBJECT");
+        BATCH_IMAGE_OBJECT.initTitledPane();
+        BATCH_IMAGE_OBJECT.getTitledPane().setExpanded(true);
+        hBox.getChildren().addAll(scrollLeft, BATCH_IMAGE_OBJECT.getTitledPane());
+        dialog.setGraphic(hBox);
+        dialog.getDialogPane().getButtonTypes().addAll(BATCH_IMAGE_APPLY, BATCH_IMAGE_CANCEL);
+        dialog.setResult(false);
         return dialog;
     }
 }

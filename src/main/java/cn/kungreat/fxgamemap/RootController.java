@@ -5,8 +5,10 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.KeyCode;
@@ -45,6 +47,8 @@ public class RootController implements Initializable {
             , null, ButtonType.CLOSE);
 
     private static final Dialog<String> SEGMENT_RESOURCE_IMAGES_DIALOG = BaseDialog.getSegmentResourceImagesDialog();
+
+    private static final Dialog<Boolean> BATCH_CHANGE_IMAGE_OBJECT = BaseDialog.getBatchChangeImageObjectDialog();
 
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
 
@@ -314,5 +318,56 @@ public class RootController implements Initializable {
     @FXML
     public void switchTreeAreaView() {
         PropertyListener.setSwitchTreeArea();
+    }
+
+    @FXML
+    public void batchChangeImageObject() {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
+            if(!treeGameMap.getImageObjectList().isEmpty()){
+                ObservableList<Node> vboxChildren = BaseDialog.BATCH_IMAGE_VBOX.getChildren();
+                vboxChildren.clear();
+                for (ImageObject imageObject : treeGameMap.getImageObjectList()) {
+                    RadioButton radioButton = new RadioButton(imageObject.getTitle());
+                    vboxChildren.add(radioButton);
+                }
+                //填充多选数据数据
+                Optional<Boolean> optional = BATCH_CHANGE_IMAGE_OBJECT.showAndWait();
+                if (optional.isPresent() && optional.get()) {
+                    for (Node vboxChild : vboxChildren) {
+                        if (vboxChild instanceof RadioButton radioButton) {
+                            if (radioButton.isSelected()) {
+                                ImageObject findResult = findImageObjectByTitle(radioButton.getText(), treeGameMap.getImageObjectList());
+                                if (findResult != null) {
+                                    findResult.setType(BaseDialog.BATCH_IMAGE_OBJECT.getType());
+                                    findResult.setLevel(BaseDialog.BATCH_IMAGE_OBJECT.getLevel());
+                                    findResult.setPhysical(BaseDialog.BATCH_IMAGE_OBJECT.isPhysical());
+                                    findResult.setMaxActivityScope(BaseDialog.BATCH_IMAGE_OBJECT.getMaxActivityScope());
+                                    findResult.refresh();
+                                }
+                            }
+                        }
+                    }
+                    PropertyListener.changeIsSaved(false);
+                    BATCH_CHANGE_IMAGE_OBJECT.setResult(false);
+                }
+            }
+        }
+    }
+
+    private static ImageObject findImageObjectByTitle(String title, List<ImageObject> imageObjectList) {
+        for (ImageObject imageObject : imageObjectList) {
+            if (imageObject.getTitle().equals(title)) {
+                return imageObject;
+            }
+        }
+        return null;
+    }
+
+    public static void addBatchChangeImageObjectEvent() {
+        Button imageObjectBatchOk = (Button) BATCH_CHANGE_IMAGE_OBJECT.getDialogPane().lookupButton(BaseDialog.BATCH_IMAGE_APPLY);
+        Button imageObjectBatchCancel = (Button) BATCH_CHANGE_IMAGE_OBJECT.getDialogPane().lookupButton(BaseDialog.BATCH_IMAGE_CANCEL);
+        imageObjectBatchOk.setOnAction(event -> BATCH_CHANGE_IMAGE_OBJECT.setResult(true));
+        imageObjectBatchCancel.setOnAction(event -> BATCH_CHANGE_IMAGE_OBJECT.setResult(false));
     }
 }

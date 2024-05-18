@@ -154,8 +154,8 @@ public class RootController implements Initializable {
             String areaWidth = BaseDialog.TEXT_AREA_WIDTH.getText();
             String areaHeight = BaseDialog.TEXT_AREA_HEIGHT.getText();
             if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank() && !areaWidth.isBlank() && !areaHeight.isBlank()
-                    && Pattern.matches(PatternUtils.NumberRegex, areaXText) && Pattern.matches(PatternUtils.NumberRegex, areaYText)
-                    && Pattern.matches(PatternUtils.NumberRegex, areaWidth) && Pattern.matches(PatternUtils.NumberRegex, areaHeight)) {
+                    && PatternUtils.NumberRegex.matcher(areaXText).matches() && PatternUtils.NumberRegex.matcher(areaYText).matches()
+                    && PatternUtils.NumberRegex.matcher(areaWidth).matches() && PatternUtils.NumberRegex.matcher(areaHeight).matches()) {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
@@ -244,7 +244,7 @@ public class RootController implements Initializable {
             String sridMargin = BaseDialog.SRID_MARGIN.getText();
             String sridPadding = BaseDialog.SRID_PADDING.getText();
             if (!sridName.isBlank() && !sridPath.isBlank() && !sridWidth.isBlank() && !sridHeight.isBlank()
-                    && Pattern.matches(PatternUtils.NumberRegex, sridWidth) && Pattern.matches(PatternUtils.NumberRegex, sridHeight)) {
+                    && PatternUtils.NumberRegex.matcher(sridWidth).matches() && PatternUtils.NumberRegex.matcher(sridHeight).matches()) {
                 Integer coverSridMargin = sridMargin.isBlank()  ? 0 : Integer.parseInt(sridMargin);
                 Integer coverSridPadding = sridPadding.isBlank() ? 0 : Integer.parseInt(sridPadding);
                 SegmentResourceTab segmentResourceTab = new SegmentResourceTab(UUID.randomUUID().toString(),
@@ -292,8 +292,8 @@ public class RootController implements Initializable {
         if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
             String markLineWidth = canvasMarkLineWidth.getText();
             String markLineHeight = canvasMarkLineHeight.getText();
-            if (Pattern.matches(PatternUtils.NumberRegex, markLineWidth)
-                    && Pattern.matches(PatternUtils.NumberRegex, markLineHeight)) {
+            if (PatternUtils.NumberRegex.matcher(markLineWidth).matches()
+                    && PatternUtils.NumberRegex.matcher(markLineHeight).matches()) {
                 treeGameMap.setMarkLine(new TreeGameMap.MarkLine(Integer.parseInt(markLineWidth), Integer.parseInt(markLineHeight)));
             } else {
                 treeGameMap.setMarkLine(null);

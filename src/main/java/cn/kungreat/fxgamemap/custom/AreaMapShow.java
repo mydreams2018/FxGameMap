@@ -25,8 +25,8 @@ import java.util.List;
 public class AreaMapShow {
 
     /*
-    * 存放每次需要处理的图片
-    * */
+     * 存放每次需要处理的图片
+     * */
     private List<TreeGameMap.BackgroundImageData> showBackgroundImages = new LinkedList<>();
     private List<ImageObject> showImageObject = new LinkedList<>();
 
@@ -51,6 +51,8 @@ public class AreaMapShow {
     private ScrollBar scrollBarY;
     @JsonIgnore
     private ScrollBar scrollBarX;
+    @JsonIgnore
+    private WritableImage writableImage;
 
     public void initAreaMapShow(TreeArea treeArea) {
         if (canvas == null) {
@@ -92,7 +94,7 @@ public class AreaMapShow {
         scrollBarX = new ScrollBar();
         scrollBarX.setOrientation(Orientation.HORIZONTAL);
         scrollBarX.setMin(0);
-        scrollBarX.setMax(treeArea.getXNumber()  * width - canvasWidth);
+        scrollBarX.setMax(treeArea.getXNumber() * width - canvasWidth);
         scrollBarX.setBlockIncrement(width);
         outVBox.getChildren().addAll(innerHBox, scrollBarX);
         outVBox.setMaxWidth(Region.USE_PREF_SIZE);
@@ -146,7 +148,9 @@ public class AreaMapShow {
                 needBottomHeight = needBottomHeight - height;
             }
         }
-        WritableImage writableImage = new WritableImage(((endWidthIndex - startWidthIndex) + 1) * width, ((endHeightIndex - startHeightIndex) + 1) * height);
+        if (writableImage == null || writableImage.getWidth() < ((endWidthIndex - startWidthIndex) + 1) * width || writableImage.getHeight() < ((endHeightIndex - startHeightIndex) + 1) * height) {
+            writableImage = new WritableImage(((endWidthIndex - startWidthIndex) + 1) * width, ((endHeightIndex - startHeightIndex) + 1) * height);
+        }
         int tempX = 0, tempY = 0;
         for (int y = startHeightIndex; y <= endHeightIndex; y++, tempY++) {
             for (int x = startWidthIndex; x <= endWidthIndex; x++, tempX++) {
@@ -180,8 +184,8 @@ public class AreaMapShow {
                     for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
                         backgroundImage.initImage(treeGameMap.getBackgroundImagePath());
                         Image image = backgroundImage.getImage();
-                        if (backgroundImage.getStartY() + image.getHeight() >= startY && backgroundImage.getStartX() + image.getWidth() >= startX
-                                && backgroundImage.getStartY() <= startY + canvasHeight && backgroundImage.getStartX() <= startX + canvasWidth) {
+                        if (tempY * height + backgroundImage.getStartY() + image.getHeight() >= startY && tempX * width + backgroundImage.getStartX() + image.getWidth() >= startX
+                                && tempY * height + backgroundImage.getStartY() <= startY + canvasHeight && tempX * width + backgroundImage.getStartX() <= startX + canvasWidth) {
                             TreeGameMap.BackgroundImageData areaShowBackgroundImage = new TreeGameMap.BackgroundImageData
                                     (image, tempX * width + backgroundImage.getStartX()
                                             , tempY * height + backgroundImage.getStartY(), backgroundImage.getImagePath());
@@ -194,8 +198,8 @@ public class AreaMapShow {
                     for (ImageObject imageObject : imageObjectList) {
                         imageObject.initImage(treeGameMap.getBackgroundImagePath());
                         Image image = imageObject.getImage();
-                        if (imageObject.getStartY() + image.getHeight() >= startY && imageObject.getStartX() + image.getWidth() >= startX
-                                && imageObject.getStartY() <= startY + canvasHeight && imageObject.getStartX() <= startX + canvasWidth) {
+                        if (tempY * height + imageObject.getStartY() + image.getHeight() >= startY && tempX * width + imageObject.getStartX() + image.getWidth() >= startX
+                                && tempY * height + imageObject.getStartY() <= startY + canvasHeight && tempX * width + imageObject.getStartX() <= startX + canvasWidth) {
                             ImageObject areaShowImageObject = new ImageObject(imageObject.getId(), imageObject.getImage(),
                                     tempX * width + imageObject.getStartX(),
                                     tempY * height + imageObject.getStartY(), imageObject.getImagePath());

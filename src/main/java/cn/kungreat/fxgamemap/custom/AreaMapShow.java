@@ -212,6 +212,9 @@ public class AreaMapShow {
     }
 
     private void writerColor(int tempX, int tempY, Color color, PixelWriter pixelWriter) {
+        if (color.equals(writableImage.getPixelReader().getColor(tempX * width, tempY * height))) {
+            return;
+        }
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 pixelWriter.setColor(tempX * width + x, tempY * height + y, color);

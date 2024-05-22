@@ -1,6 +1,7 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
+import cn.kungreat.fxgamemap.util.PatternUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -30,6 +31,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     ChoiceBox<String> textPhysical = new ChoiceBox<>();
     @JsonIgnore
     TextField maxActivityScopeText = new TextField();
+    @JsonIgnore
+    TextField moveSpeedText = new TextField();
 
     private String id;
     private String title;
@@ -37,6 +40,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private String level;
     private boolean physical = false;
     private String maxActivityScope;
+    private Integer moveSpeed;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -74,6 +78,16 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         maxActivityScopeText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.maxActivityScope = newValue);
         gridPane.add(new Label("最大追杀范围"), 0, 3);
         gridPane.add(maxActivityScopeText, 1, 3);
+        if (this.moveSpeed != null) {
+            moveSpeedText.setText(this.moveSpeed.toString());
+        }
+        moveSpeedText.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ImageObject.this.moveSpeed = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("移动速度"), 0, 4);
+        gridPane.add(this.moveSpeedText, 1, 4);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -86,5 +100,6 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         textLevel.setText(level);
         textPhysical.getSelectionModel().select(physical ? "是" : "否");
         maxActivityScopeText.setText(this.maxActivityScope);
+        moveSpeedText.setText(this.moveSpeed.toString());
     }
 }

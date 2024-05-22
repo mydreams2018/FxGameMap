@@ -45,7 +45,7 @@ public class TreeArea {
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
 
-    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory, Integer width , Integer height) {
+    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory, Integer width, Integer height) {
         this.title = title;
         this.id = id;
         this.xNumber = xNumber;
@@ -103,7 +103,16 @@ public class TreeArea {
         public void handle(MouseEvent event) {
             STRING_OBSERVABLE_LIST.clear();
             if (childrenMap != null) {
-                childrenMap.forEach(treeGameMap -> STRING_OBSERVABLE_LIST.add(treeGameMap.getTitle()));
+                childrenMap.forEach(treeGameMap -> {
+                    for (String[] outArray : childrenPointName) {
+                        for (String titleName : outArray) {
+                            if (treeGameMap.getTitle().equals(titleName)) {
+                                return;
+                            }
+                        }
+                    }
+                    STRING_OBSERVABLE_LIST.add(treeGameMap.getTitle());
+                });
             }
             Optional<String> re = STRING_OBSERVABLE_DIALOG.showAndWait();
             if (re.isPresent() && "OK".equals(re.get())) {

@@ -26,7 +26,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     ChoiceBox<String> textType = new ChoiceBox<>();
     @JsonIgnore
-    TextField textLevel = new TextField();
+    ChoiceBox<String> textLevel = new ChoiceBox<>();
     @JsonIgnore
     ChoiceBox<String> textPhysical = new ChoiceBox<>();
     @JsonIgnore
@@ -37,7 +37,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private String id;
     private String title;
     private ImageObjectType type = ImageObjectType.FIXED_BODY;
-    private String level;
+    private LevelType level = LevelType.DEFAULT_LEVEL;
     private boolean physical = false;
     private String maxActivityScope;
     private Integer moveSpeed;
@@ -61,10 +61,11 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         textType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.type = ImageObjectType.valueOf(newValue));
         gridPane.add(new Label("类型"), 0, 0);
         gridPane.add(textType, 1, 0);
-        if (level != null && !level.isBlank()) {
-            textLevel.setText(level);
+        for (LevelType value : LevelType.values()) {
+            textLevel.getItems().add(value.name());
         }
-        textLevel.textProperty().addListener((observable, oldValue, newValue) -> level = newValue);
+        textLevel.getSelectionModel().clearAndSelect(level.ordinal());
+        textLevel.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.level = LevelType.valueOf(newValue));
         gridPane.add(new Label("层级"), 0, 1);
         gridPane.add(textLevel, 1, 1);
         textPhysical.getItems().addAll("是", "否");
@@ -97,9 +98,11 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
      * */
     public void refresh() {
         textType.getSelectionModel().select(type.name());
-        textLevel.setText(level);
+        textLevel.getSelectionModel().select(level.name());
         textPhysical.getSelectionModel().select(physical ? "是" : "否");
         maxActivityScopeText.setText(this.maxActivityScope);
-        moveSpeedText.setText(this.moveSpeed.toString());
+        if (this.moveSpeed != null) {
+            moveSpeedText.setText(this.moveSpeed.toString());
+        }
     }
 }

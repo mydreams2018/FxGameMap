@@ -33,6 +33,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     TextField maxActivityScopeText = new TextField();
     @JsonIgnore
     TextField moveSpeedText = new TextField();
+    @JsonIgnore
+    ChoiceBox<String> actionTypeCheckBox = new ChoiceBox<>();
 
     private String id;
     private String title;
@@ -41,6 +43,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private boolean physical = false;
     private String maxActivityScope;
     private Integer moveSpeed;
+    private ActionType actionType;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -89,6 +92,12 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         });
         gridPane.add(new Label("移动速度"), 0, 4);
         gridPane.add(this.moveSpeedText, 1, 4);
+        for (ActionType value : ActionType.values()) {
+            actionTypeCheckBox.getItems().add(value.name());
+        }
+        actionTypeCheckBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.actionType = ActionType.valueOf(newValue));
+        gridPane.add(new Label("功击类型"), 0, 5);
+        gridPane.add(actionTypeCheckBox, 1, 5);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -103,6 +112,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         maxActivityScopeText.setText(this.maxActivityScope);
         if (this.moveSpeed != null) {
             moveSpeedText.setText(this.moveSpeed.toString());
+        }
+        if (this.actionType != null) {
+            actionTypeCheckBox.getSelectionModel().select(this.actionType.name());
         }
     }
 }

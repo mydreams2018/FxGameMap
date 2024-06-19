@@ -99,12 +99,12 @@ public class MainMenuBar extends MenuBar {
         WorkThread.THREAD_POOL_EXECUTOR.execute(() -> {
             if (saveFile != null && saveFile.toString().endsWith(".json")) {
                 try {
-                    StringBuilder stringBuilder = getStringBuilder();
-                    Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
-                            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                     Configuration.changeCurrentProject(saveFile.toURI().toString());
                     Configuration.addHistoryProject(saveFile.toURI().toString());
                     Configuration.writerProperties();
+                    StringBuilder stringBuilder = getStringBuilder();
+                    Files.write(saveFile.toPath(), stringBuilder.toString().getBytes(),
+                            StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                     LogService.writerLog(LogService.LogLevel.INFO, getClass(), "写出文件数据完成{%s}", saveFile);
                     Platform.runLater(() -> PropertyListener.changeIsSaved(true));
                 } catch (Exception e) {

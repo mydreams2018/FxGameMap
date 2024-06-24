@@ -222,9 +222,9 @@ public class TreeGameMap {
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);
-        drawMarkLine();
         backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
         imageObjectList.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
+        drawMarkLine();
     }
 
     private void drawMarkLine() {

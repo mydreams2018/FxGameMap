@@ -72,7 +72,7 @@
                 </VBox>
             </StackPane>
             <StackPane>
-                <ScrollPane fx:id="ScrollPaneCenter" styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
+                <ScrollPane fx:id="scrollPaneCenter" styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
                     <HBox fx:id="scrollPaneCenterInHBox" alignment="CENTER"></HBox>
                 </ScrollPane>
             </StackPane>

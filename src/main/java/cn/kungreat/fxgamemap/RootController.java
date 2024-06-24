@@ -23,7 +23,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Getter
 public class RootController implements Initializable {
@@ -71,7 +70,7 @@ public class RootController implements Initializable {
     @FXML
     private HBox stackPaneLeftHBox;
     @FXML
-    private ScrollPane ScrollPaneCenter;
+    private ScrollPane scrollPaneCenter;
     @FXML
     private HBox scrollPaneCenterInHBox;
     @FXML
@@ -258,7 +257,7 @@ public class RootController implements Initializable {
     }
 
     public void addScrollPaneCenterEvent() {
-        ScrollPaneCenter.setOnKeyPressed(event -> {
+        scrollPaneCenter.setOnKeyPressed(event -> {
             TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
             if (topMovingMode.isSelected() && chooseCanvasImage != null) {
                 if (event.getCode() == KeyCode.W) {

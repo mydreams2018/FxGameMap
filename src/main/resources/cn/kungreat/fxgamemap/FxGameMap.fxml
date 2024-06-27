@@ -100,6 +100,11 @@
                     <StackPane>
                         <VBox alignment="TOP_CENTER" fx:id="tabPaneRightVbox">
                             <HBox alignment="CENTER_RIGHT" spacing="10" fx:id="tabPaneRightHBox">
+                                <Button text="动画效果资源" onAction="#addResourceAnimation">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-plus"/>
+                                    </graphic>
+                                </Button>
                                 <Button text="多个小资源图片" onAction="#addResourceImg">
                                     <graphic>
                                         <FontIcon iconLiteral="fas-plus"/>

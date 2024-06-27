@@ -49,6 +49,8 @@ public class RootController implements Initializable {
 
     private static final Dialog<Boolean> BATCH_CHANGE_IMAGE_OBJECT = BaseDialog.getBatchChangeImageObjectDialog();
 
+    private static final Dialog<Boolean> RESOURCE_ANIMATION_DIALOG = BaseDialog.getResourceAnimationDialog();
+
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
 
     @FXML
@@ -244,7 +246,7 @@ public class RootController implements Initializable {
             String sridPadding = BaseDialog.SRID_PADDING.getText();
             if (!sridName.isBlank() && !sridPath.isBlank() && !sridWidth.isBlank() && !sridHeight.isBlank()
                     && PatternUtils.NumberRegex.matcher(sridWidth).matches() && PatternUtils.NumberRegex.matcher(sridHeight).matches()) {
-                Integer coverSridMargin = sridMargin.isBlank()  ? 0 : Integer.parseInt(sridMargin);
+                Integer coverSridMargin = sridMargin.isBlank() ? 0 : Integer.parseInt(sridMargin);
                 Integer coverSridPadding = sridPadding.isBlank() ? 0 : Integer.parseInt(sridPadding);
                 SegmentResourceTab segmentResourceTab = new SegmentResourceTab(UUID.randomUUID().toString(),
                         sridName, sridPath, Integer.parseInt(sridWidth), Integer.parseInt(sridHeight), coverSridMargin, coverSridPadding);
@@ -254,6 +256,22 @@ public class RootController implements Initializable {
                 PropertyListener.changeIsSaved(false);
             }
         });
+    }
+
+    @FXML
+    public void addResourceAnimation() {
+        Optional<Boolean> optionalB = RESOURCE_ANIMATION_DIALOG.showAndWait();
+        if (optionalB.isPresent() && optionalB.get()) {
+            String tabName = BaseDialog.RESOURCE_ANIMATION_NAME.getText();
+            String tabPath = BaseDialog.RESOURCE_ANIMATION_PATH.getText();
+            if (!tabName.isBlank() && !tabPath.isBlank()) {
+                ResourceAnimation resourceAnimation = new ResourceAnimation(UUID.randomUUID().toString(), tabName, tabPath);
+                resourceAnimation.initTab();
+                tabPaneRight.getTabs().add(resourceAnimation.getTab());
+                RootApplication.RESOURCES.getResourceAnimations().add(resourceAnimation);
+                PropertyListener.changeIsSaved(false);
+            }
+        }
     }
 
     public void addScrollPaneCenterEvent() {
@@ -323,7 +341,7 @@ public class RootController implements Initializable {
     public void batchChangeImageObject() {
         TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
         if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
-            if(!treeGameMap.getImageObjectList().isEmpty()){
+            if (!treeGameMap.getImageObjectList().isEmpty()) {
                 ObservableList<Node> vboxChildren = BaseDialog.BATCH_IMAGE_VBOX.getChildren();
                 vboxChildren.clear();
                 for (ImageObject imageObject : treeGameMap.getImageObjectList()) {

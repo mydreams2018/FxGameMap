@@ -1,6 +1,8 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeArea;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -56,6 +58,11 @@ public class BaseDialog {
     public static final ButtonType BATCH_IMAGE_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
     public static final ImageObject BATCH_IMAGE_OBJECT = new ImageObject();
     public static final VBox BATCH_IMAGE_VBOX = new VBox(10);
+    //动画资源
+    public static final TextField RESOURCE_ANIMATION_NAME = BaseDialog.getTextField("请输入动画名称");
+    public static final TextField RESOURCE_ANIMATION_PATH = BaseDialog.getTextField("动画目录");
+    public static final ButtonType RESOURCE_ANIMATION_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
+    public static final ButtonType RESOURCE_ANIMATION_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     static {
         SRID_BTN_CHOOSE.setOnAction(event -> {
@@ -154,6 +161,40 @@ public class BaseDialog {
         dialog.setGraphic(hBox);
         dialog.getDialogPane().getButtonTypes().addAll(BATCH_IMAGE_APPLY, BATCH_IMAGE_CANCEL);
         dialog.setResult(false);
+        return dialog;
+    }
+
+    public static Dialog<Boolean> getResourceAnimationDialog() {
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle("添加动画资源");
+        dialog.setHeaderText("请填写信息");
+        dialog.setContentText("是否添加");
+        dialog.setResizable(false);
+        VBox vBox = new VBox(10);
+        HBox hBox = new HBox(10);
+        Button chooseDirectory = new Button("选择动画存储目录");
+        RESOURCE_ANIMATION_PATH.setDisable(true);
+        chooseDirectory.setOnAction(event -> {
+            File file = ResourceAnimation.DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
+            if (file != null && file.exists()) {
+                RESOURCE_ANIMATION_PATH.setText(file.toString());
+            }
+        });
+        hBox.getChildren().addAll(RESOURCE_ANIMATION_PATH, chooseDirectory);
+        vBox.getChildren().addAll(RESOURCE_ANIMATION_NAME, hBox);
+        dialog.setGraphic(vBox);
+        dialog.getDialogPane().getButtonTypes().addAll(RESOURCE_ANIMATION_APPLY, RESOURCE_ANIMATION_CANCEL);
+        //按钮事件
+        Button buttonOk = (Button) dialog.getDialogPane().lookupButton(RESOURCE_ANIMATION_APPLY);
+        Button buttonCancel = (Button) dialog.getDialogPane().lookupButton(RESOURCE_ANIMATION_CANCEL);
+        buttonOk.setOnAction(event -> dialog.setResult(true));
+        buttonCancel.setOnAction(event -> dialog.setResult(false));
+        //显示事件
+        dialog.setOnShowing(event -> {
+            dialog.setResult(false);
+            RESOURCE_ANIMATION_PATH.clear();
+            RESOURCE_ANIMATION_NAME.clear();
+        });
         return dialog;
     }
 }

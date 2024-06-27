@@ -135,6 +135,7 @@ public class Configuration {
         Resources resources = RootApplication.MAP_JSON.readValue(s, Resources.class);
         RootApplication.RESOURCES.setResourceTabList(resources.getResourceTabList());
         RootApplication.RESOURCES.setSegmentResourceTabList(resources.getSegmentResourceTabList());
+        RootApplication.RESOURCES.setResourceAnimations(resources.getResourceAnimations());
         if (!resources.getResourceTabList().isEmpty()) {
             resources.getResourceTabList().forEach(resourceTab -> {
                 resourceTab.initTab();
@@ -145,6 +146,12 @@ public class Configuration {
             resources.getSegmentResourceTabList().forEach(segmentResourceTab -> {
                 segmentResourceTab.initTab();
                 tabPaneRight.getTabs().add(segmentResourceTab.getTab());
+            });
+        }
+        if (!resources.getResourceAnimations().isEmpty()) {
+            resources.getResourceAnimations().forEach(resourceAnimation -> {
+                resourceAnimation.initTab();
+                tabPaneRight.getTabs().add(resourceAnimation.getTab());
             });
         }
     }

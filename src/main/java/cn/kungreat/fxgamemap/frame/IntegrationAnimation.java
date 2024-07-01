@@ -57,17 +57,18 @@ public class IntegrationAnimation {
             this.idleTimeline = new Timeline();
             this.idleTimeline.setCycleCount(Animation.INDEFINITE);
             this.idleTimeline.setAutoReverse(false);
-            imageView.setImage(images.getFirst());
-            for (int i = 0; i < images.size(); i++) {
-                KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                    KeyFrame source = (KeyFrame) event.getSource();
-                    int indexImage = Integer.parseInt(source.getName());
-                    imageView.setImage(images.get(indexImage));
-                });
-                this.idleTimeline.getKeyFrames().add(keyFrame);
-            }
-            this.idleTimeline.setDelay(Duration.millis(delayMillis));
         }
+        this.idleTimeline.getKeyFrames().clear();
+        imageView.setImage(images.getFirst());
+        for (int i = 0; i < images.size(); i++) {
+            KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
+                KeyFrame source = (KeyFrame) event.getSource();
+                int indexImage = Integer.parseInt(source.getName());
+                imageView.setImage(images.get(indexImage));
+            });
+            this.idleTimeline.getKeyFrames().add(keyFrame);
+        }
+        this.idleTimeline.setDelay(Duration.millis(delayMillis));
     }
 
     /* 步行动画
@@ -88,6 +89,10 @@ public class IntegrationAnimation {
             this.walkVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.walkTimeline, operationHistoryDistance);
             this.walkTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.walkVariableAnimation.setImagesRight(imagesRight);
+        } else if (imagesLeft != null) {
+            this.walkVariableAnimation.setImagesLeft(imagesLeft);
         }
     }
 
@@ -139,47 +144,47 @@ public class IntegrationAnimation {
         if (this.animationType != null) {
             switch (this.animationType) {
                 case IDLE -> {
-                    if (this.idleTimeline != null){
+                    if (this.idleTimeline != null) {
                         this.idleTimeline.stop();
                     }
                 }
                 case ATTACK -> {
-                    if (this.attackTimeline != null){
+                    if (this.attackTimeline != null) {
                         this.attackTimeline.stop();
                     }
                 }
                 case HIGH_ATTACK -> {
-                    if (this.highAttackTimeline != null){
+                    if (this.highAttackTimeline != null) {
                         this.highAttackTimeline.stop();
                     }
                 }
                 case RUN -> {
-                    if (this.runTimeline != null){
+                    if (this.runTimeline != null) {
                         this.runTimeline.stop();
                     }
                 }
                 case HURT -> {
-                    if (this.hurtTimeline != null){
+                    if (this.hurtTimeline != null) {
                         this.hurtTimeline.stop();
                     }
                 }
                 case JUMP -> {
-                    if (this.jumpTimeline != null){
+                    if (this.jumpTimeline != null) {
                         this.jumpTimeline.stop();
                     }
                 }
                 case WALK -> {
-                    if (this.walkTimeline != null){
+                    if (this.walkTimeline != null) {
                         this.walkTimeline.stop();
                     }
                 }
                 case CLIMB -> {
-                    if (this.climbTimeline!= null){
+                    if (this.climbTimeline != null) {
                         this.climbTimeline.stop();
                     }
                 }
                 case DEATH -> {
-                    if (this.deathTimeline != null){
+                    if (this.deathTimeline != null) {
                         this.deathTimeline.stop();
                     }
                 }
@@ -188,65 +193,66 @@ public class IntegrationAnimation {
         this.animationType = animationType;
         switch (this.animationType) {
             case IDLE -> {
-                if ( this.idleTimeline!= null){
+                if (this.idleTimeline != null) {
                     this.idleTimeline.playFromStart();
                 }
             }
             case ATTACK -> {
-                if (this.attackTimeline != null){
+                if (this.attackTimeline != null) {
                     this.attackVariableAnimation.startAttackVariableAnimation();
                     this.attackTimeline.playFromStart();
                 }
             }
             case HIGH_ATTACK -> {
-                if (this.highAttackTimeline != null){
+                if (this.highAttackTimeline != null) {
                     this.highAttackVariableAnimation.startAttackVariableAnimation();
                     this.highAttackTimeline.playFromStart();
                 }
             }
             case RUN -> {
-                if (this.runTimeline != null){
+                if (this.runTimeline != null) {
                     this.runTimeline.playFromStart();
                 }
             }
             case HURT -> {
-                if (this.hurtTimeline != null){
+                if (this.hurtTimeline != null) {
                     this.hurtTimeline.playFromStart();
                 }
             }
             case JUMP -> {
-                if (this.jumpTimeline != null){
+                if (this.jumpTimeline != null) {
                     this.jumpTimeline.playFromStart();
                 }
             }
             case WALK -> {
-                if (this.walkTimeline != null){
+                if (this.walkTimeline != null) {
                     this.walkVariableAnimation.startMoveVariableAnimation();
                     this.walkTimeline.playFromStart();
                 }
             }
             case CLIMB -> {
-                if (this.climbTimeline != null){
+                if (this.climbTimeline != null) {
                     this.climbTimeline.playFromStart();
                 }
             }
             case DEATH -> {
-                if (this.deathTimeline != null){
+                if (this.deathTimeline != null) {
                     this.deathTimeline.playFromStart();
                 }
             }
         }
     }
 
+    @Setter
     private static final class VariableAnimation {
 
         private final ImageView imageView;
-        private final List<Image> imagesRight;
-        private final List<Image> imagesLeft;
+        private List<Image> imagesRight;
+        private List<Image> imagesLeft;
         private final int durationMillis;
         private final int moveDistance;
         private final ThreadLocal<OperationHistory> operationHistoryThreadLocal;
-        private final Timeline walkTimeline;
+        private final Timeline animationTimeline;
         private final int operationHistoryDistance;
         //操作历史记录
         private OperationHistory operationHistoryCache;
@@ -255,19 +261,19 @@ public class IntegrationAnimation {
                                   int durationMillis,
                                   int moveDistance,
                                   ThreadLocal<OperationHistory> operationHistoryThreadLocal,
-                                  Timeline walkTimeline, int operationHistoryDistance) {
+                                  Timeline animationTimeline, int operationHistoryDistance) {
             this.imageView = imageView;
             this.imagesRight = imagesRight;
             this.imagesLeft = imagesLeft;
             this.durationMillis = durationMillis;
             this.moveDistance = moveDistance;
             this.operationHistoryThreadLocal = operationHistoryThreadLocal;
-            this.walkTimeline = walkTimeline;
+            this.animationTimeline = animationTimeline;
             this.operationHistoryDistance = operationHistoryDistance;
         }
 
         public void startMoveVariableAnimation() {
-            this.walkTimeline.getKeyFrames().clear();
+            this.animationTimeline.getKeyFrames().clear();
             if (this.operationHistoryCache == null) {
                 this.operationHistoryCache = this.operationHistoryThreadLocal.get();
             } else if (this.operationHistoryCache != this.operationHistoryThreadLocal.get()) {
@@ -299,12 +305,12 @@ public class IntegrationAnimation {
                         imageView.setImage(imagesLeft.get(indexImage));
                     }, keyValue);
                 }
-                this.walkTimeline.getKeyFrames().add(keyFrame);
+                this.animationTimeline.getKeyFrames().add(keyFrame);
             }
         }
 
         public void startAttackVariableAnimation() {
-            this.walkTimeline.getKeyFrames().clear();
+            this.animationTimeline.getKeyFrames().clear();
             for (int i = 0; i < this.imagesRight.size(); i++) {
                 KeyFrame keyFrame;
                 if (this.operationHistoryThreadLocal.get() == OperationHistory.RIGHT) {
@@ -320,7 +326,7 @@ public class IntegrationAnimation {
                         imageView.setImage(imagesLeft.get(indexImage));
                     });
                 }
-                this.walkTimeline.getKeyFrames().add(keyFrame);
+                this.animationTimeline.getKeyFrames().add(keyFrame);
             }
         }
 
@@ -329,7 +335,7 @@ public class IntegrationAnimation {
         }
 
         public void startRunAttackVariableAnimation() {
-            this.walkTimeline.getKeyFrames().clear();
+            this.animationTimeline.getKeyFrames().clear();
             for (int i = 0; i < this.imagesRight.size(); i++) {
                 KeyFrame keyFrame;
                 KeyValue keyValue;
@@ -348,7 +354,7 @@ public class IntegrationAnimation {
                         imageView.setImage(imagesLeft.get(indexImage));
                     }, keyValue);
                 }
-                this.walkTimeline.getKeyFrames().add(keyFrame);
+                this.animationTimeline.getKeyFrames().add(keyFrame);
             }
         }
 

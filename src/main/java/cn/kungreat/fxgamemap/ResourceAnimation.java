@@ -63,6 +63,8 @@ public class ResourceAnimation {
     private final IntegrationAnimation integrationAnimation = new IntegrationAnimation();
     @JsonIgnore
     private final ImageView idleImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView walkImageView = new ImageView();
 
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
@@ -73,6 +75,8 @@ public class ResourceAnimation {
     private Integer highAttackIntervalMilli;
     private Map<String, String> imageProperties;
     private List<String> idleImagesName;
+    private List<String> walkLeftImagesName;
+    private List<String> walkRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -185,6 +189,79 @@ public class ResourceAnimation {
         idleVBox.getChildren().addAll(idleButtonAdd, idleButtonShow);
         gridPane.add(idleVBox, 0, 5);
         gridPane.add(this.idleImageView, 1, 5);
+        if (this.walkLeftImagesName != null) {
+            addWalkLeftTimeline();
+        }
+        if (this.walkRightImagesName != null) {
+            addWalkRightTimeline();
+        }
+        VBox walkLeftVBox = new VBox(10);
+        Button walkLeftButtonAdd = new Button("添加左移动画");
+        Button walkLeftButtonShow = new Button("播放左移动画");
+        walkLeftButtonShow.setOnAction(event -> {
+            if (this.walkLeftImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.LEFT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.WALK);
+            }
+        });
+        walkLeftButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.walkLeftImagesName == null) {
+                    ResourceAnimation.this.walkLeftImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.walkLeftImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "walkLeft", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.walkLeftImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addWalkLeftTimeline();
+            }
+        });
+        Button walkRightButtonAdd = new Button("添加右移动画");
+        Button walkRightButtonShow = new Button("播放右移动画");
+        walkRightButtonShow.setOnAction(event -> {
+            if (this.walkRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.WALK);
+            }
+        });
+        walkRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.walkRightImagesName == null) {
+                    ResourceAnimation.this.walkRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.walkRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "walkRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.walkRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addWalkRightTimeline();
+            }
+        });
+        walkLeftVBox.getChildren().addAll(walkLeftButtonAdd, walkLeftButtonShow, walkRightButtonAdd, walkRightButtonShow);
+        gridPane.add(walkLeftVBox, 0, 6);
+        gridPane.add(this.walkImageView, 1, 6);
+
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -197,6 +274,28 @@ public class ResourceAnimation {
                 idleImages.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addIdleTimeline(this.idleImageView, idleImages, 100, 0);
+        }
+    }
+
+    private void addWalkLeftTimeline() {
+        if (!this.walkLeftImagesName.isEmpty()) {
+            List<Image> walkLeftImg = new ArrayList<>();
+            for (String imageName : this.walkLeftImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "walkLeft", imageName);
+                walkLeftImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addWalkTimeline(this.walkImageView, null, walkLeftImg, 100, 0, 0, 0);
+        }
+    }
+
+    private void addWalkRightTimeline() {
+        if (!this.walkRightImagesName.isEmpty()) {
+            List<Image> walkRightImg = new ArrayList<>();
+            for (String imageName : this.walkRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "walkRight", imageName);
+                walkRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addWalkTimeline(this.walkImageView, walkRightImg, null, 100, 0, 0, 0);
         }
     }
 

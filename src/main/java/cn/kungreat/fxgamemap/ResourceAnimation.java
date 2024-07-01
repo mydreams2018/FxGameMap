@@ -65,7 +65,8 @@ public class ResourceAnimation {
     private final ImageView idleImageView = new ImageView();
     @JsonIgnore
     private final ImageView walkImageView = new ImageView();
-
+    @JsonIgnore
+    private final ImageView attackImageView = new ImageView();
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -77,6 +78,8 @@ public class ResourceAnimation {
     private List<String> idleImagesName;
     private List<String> walkLeftImagesName;
     private List<String> walkRightImagesName;
+    private List<String> attackLeftImagesName;
+    private List<String> attackRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -155,6 +158,17 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("图片边距属性"), 0, 4);
         gridPane.add(this.imagePropertiesArea, 1, 4);
+        gridPane.add(initIdleImages(), 0, 5);
+        gridPane.add(this.idleImageView, 1, 5);
+        gridPane.add(initWalkImages(), 0, 6);
+        gridPane.add(this.walkImageView, 1, 6);
+        gridPane.add(initAttackImages(), 0, 7);
+        gridPane.add(this.attackImageView, 1, 7);
+        scrollPane.setContent(gridPane);
+        tab.setContent(scrollPane);
+    }
+
+    private VBox initIdleImages() {
         if (this.idleImagesName != null) {
             addIdleTimeline();
         }
@@ -187,8 +201,10 @@ public class ResourceAnimation {
             }
         });
         idleVBox.getChildren().addAll(idleButtonAdd, idleButtonShow);
-        gridPane.add(idleVBox, 0, 5);
-        gridPane.add(this.idleImageView, 1, 5);
+        return idleVBox;
+    }
+
+    private VBox initWalkImages() {
         if (this.walkLeftImagesName != null) {
             addWalkLeftTimeline();
         }
@@ -259,11 +275,81 @@ public class ResourceAnimation {
             }
         });
         walkLeftVBox.getChildren().addAll(walkLeftButtonAdd, walkLeftButtonShow, walkRightButtonAdd, walkRightButtonShow);
-        gridPane.add(walkLeftVBox, 0, 6);
-        gridPane.add(this.walkImageView, 1, 6);
+        return walkLeftVBox;
+    }
 
-        scrollPane.setContent(gridPane);
-        tab.setContent(scrollPane);
+    private VBox initAttackImages() {
+        if (this.attackLeftImagesName != null) {
+            addAttackLeftTimeline();
+        }
+        if (this.attackRightImagesName != null) {
+            addAttackRightTimeline();
+        }
+        VBox attackLeftVBox = new VBox(10);
+        Button attackLeftButtonAdd = new Button("添加左功动画");
+        Button attackLeftButtonShow = new Button("播放左功动画");
+        attackLeftButtonShow.setOnAction(event -> {
+            if (this.attackLeftImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.LEFT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.ATTACK);
+            }
+        });
+        attackLeftButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.attackLeftImagesName == null) {
+                    ResourceAnimation.this.attackLeftImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.attackLeftImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "attackLeft", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.attackLeftImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addAttackLeftTimeline();
+            }
+        });
+        Button attackRightButtonAdd = new Button("添加右功动画");
+        Button attackRightButtonShow = new Button("播放右功动画");
+        attackRightButtonShow.setOnAction(event -> {
+            if (this.attackRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.ATTACK);
+            }
+        });
+        attackRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.attackRightImagesName == null) {
+                    ResourceAnimation.this.attackRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.attackRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "attackRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.attackRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addAttackRightTimeline();
+            }
+        });
+        attackLeftVBox.getChildren().addAll(attackLeftButtonAdd, attackLeftButtonShow, attackRightButtonAdd, attackRightButtonShow);
+        return attackLeftVBox;
     }
 
     private void addIdleTimeline() {
@@ -296,6 +382,28 @@ public class ResourceAnimation {
                 walkRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addWalkTimeline(this.walkImageView, walkRightImg, null, 100, 0, 0, 0);
+        }
+    }
+
+    private void addAttackLeftTimeline() {
+        if (!this.attackLeftImagesName.isEmpty()) {
+            List<Image> attackLeftImg = new ArrayList<>();
+            for (String imageName : this.attackLeftImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "attackLeft", imageName);
+                attackLeftImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addAttackTimeline(this.attackImageView, null, attackLeftImg, 100, 0, 0);
+        }
+    }
+
+    private void addAttackRightTimeline() {
+        if (!this.attackRightImagesName.isEmpty()) {
+            List<Image> attackRightImg = new ArrayList<>();
+            for (String imageName : this.attackRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "attackRight", imageName);
+                attackRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addAttackTimeline(this.attackImageView, attackRightImg, null, 100, 0, 0);
         }
     }
 

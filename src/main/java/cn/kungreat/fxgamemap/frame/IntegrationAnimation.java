@@ -113,6 +113,10 @@ public class IntegrationAnimation {
             this.attackVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.attackTimeline, 0);
             this.attackTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.attackVariableAnimation.setImagesRight(imagesRight);
+        } else if (imagesLeft != null) {
+            this.attackVariableAnimation.setImagesLeft(imagesLeft);
         }
     }
 

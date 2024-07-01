@@ -50,6 +50,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private Tab tab;
     @JsonIgnore
+    private final TextField operationHistoryDistanceView = new TextField();
+    @JsonIgnore
     private final TextField moveIntervalMilliView = new TextField();
     @JsonIgnore
     private final TextField jumpIntervalMilliView = new TextField();
@@ -70,6 +72,7 @@ public class ResourceAnimation {
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
+    private Integer operationHistoryDistance;
     private Integer moveIntervalMilli;
     private Integer jumpIntervalMilli;
     private Integer attackIntervalMilli;
@@ -136,6 +139,16 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("重击间隔"), 0, 3);
         gridPane.add(this.highAttackIntervalMilliView, 1, 3);
+        if (this.operationHistoryDistance != null) {
+            this.operationHistoryDistanceView.setText(this.operationHistoryDistance.toString());
+        }
+        this.operationHistoryDistanceView.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ResourceAnimation.this.operationHistoryDistance = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 4);
+        gridPane.add(this.operationHistoryDistanceView, 1, 4);
         this.imagePropertiesArea.setWrapText(false);
         if (this.imageProperties != null) {
             StringBuilder propertiesBuild = new StringBuilder();
@@ -156,14 +169,14 @@ public class ResourceAnimation {
                 }
             }
         });
-        gridPane.add(new Label("图片边距属性"), 0, 4);
-        gridPane.add(this.imagePropertiesArea, 1, 4);
-        gridPane.add(initIdleImages(), 0, 5);
-        gridPane.add(this.idleImageView, 1, 5);
-        gridPane.add(initWalkImages(), 0, 6);
-        gridPane.add(this.walkImageView, 1, 6);
-        gridPane.add(initAttackImages(), 0, 7);
-        gridPane.add(this.attackImageView, 1, 7);
+        gridPane.add(new Label("图片边距属性"), 0, 5);
+        gridPane.add(this.imagePropertiesArea, 1, 5);
+        gridPane.add(initIdleImages(), 0, 6);
+        gridPane.add(this.idleImageView, 1, 6);
+        gridPane.add(initWalkImages(), 0, 7);
+        gridPane.add(this.walkImageView, 1, 7);
+        gridPane.add(initAttackImages(), 0, 8);
+        gridPane.add(this.attackImageView, 1, 8);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }

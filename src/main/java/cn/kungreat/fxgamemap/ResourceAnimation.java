@@ -69,6 +69,8 @@ public class ResourceAnimation {
     private final ImageView walkImageView = new ImageView();
     @JsonIgnore
     private final ImageView attackImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView jumpImageView = new ImageView();
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -83,6 +85,8 @@ public class ResourceAnimation {
     private List<String> walkRightImagesName;
     private List<String> attackLeftImagesName;
     private List<String> attackRightImagesName;
+    private List<String> jumpLeftImagesName;
+    private List<String> jumpRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -177,6 +181,8 @@ public class ResourceAnimation {
         gridPane.add(this.walkImageView, 1, 7);
         gridPane.add(initAttackImages(), 0, 8);
         gridPane.add(this.attackImageView, 1, 8);
+        gridPane.add(initJumpImages(), 0, 9);
+        gridPane.add(this.jumpImageView, 1, 9);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -365,6 +371,80 @@ public class ResourceAnimation {
         return attackLeftVBox;
     }
 
+    private VBox initJumpImages() {
+        VBox jumpVBox = new VBox(10);
+        if (this.jumpLeftImagesName != null) {
+            addJumpLeftTimeline();
+        }
+        if (this.jumpRightImagesName != null) {
+            addJumpRightTimeline();
+        }
+        Button jumpLeftButtonAdd = new Button("添加左跳动画");
+        Button jumpLeftButtonShow = new Button("播放左跳动画");
+        jumpLeftButtonShow.setOnAction(event -> {
+            if (this.jumpLeftImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.LEFT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.JUMP);
+            }
+        });
+        jumpLeftButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.jumpLeftImagesName == null) {
+                    ResourceAnimation.this.jumpLeftImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.jumpLeftImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "jumpLeft", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.jumpLeftImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addJumpLeftTimeline();
+            }
+        });
+        Button jumpRightButtonAdd = new Button("添加右跳动画");
+        Button jumpRightButtonShow = new Button("播放右跳动画");
+        jumpRightButtonShow.setOnAction(event -> {
+            if (this.jumpRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.JUMP);
+            }
+        });
+        jumpRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.jumpRightImagesName == null) {
+                    ResourceAnimation.this.jumpRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.jumpRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "jumpRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.jumpRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addJumpRightTimeline();
+            }
+        });
+        jumpVBox.getChildren().addAll(jumpLeftButtonAdd, jumpLeftButtonShow, jumpRightButtonAdd, jumpRightButtonShow);
+        return jumpVBox;
+    }
+
     private void addIdleTimeline() {
         if (!this.idleImagesName.isEmpty()) {
             List<Image> idleImages = new ArrayList<>();
@@ -417,6 +497,28 @@ public class ResourceAnimation {
                 attackRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addAttackTimeline(this.attackImageView, attackRightImg, null, 100, 0, 0);
+        }
+    }
+
+    private void addJumpRightTimeline() {
+        if (!this.jumpRightImagesName.isEmpty()) {
+            List<Image> jumpRightImg = new ArrayList<>();
+            for (String imageName : this.jumpRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "jumpRight", imageName);
+                jumpRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addJumpTimeline(this.jumpImageView, jumpRightImg, null, 100, 0, 0);
+        }
+    }
+
+    private void addJumpLeftTimeline() {
+        if (!this.jumpLeftImagesName.isEmpty()) {
+            List<Image> jumpLeftImg = new ArrayList<>();
+            for (String imageName : this.jumpLeftImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "jumpLeft", imageName);
+                jumpLeftImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addJumpTimeline(this.jumpImageView, null, jumpLeftImg, 100, 0, 0);
         }
     }
 

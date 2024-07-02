@@ -32,6 +32,7 @@ public class IntegrationAnimation {
     private Timeline hurtTimeline;
     //跳动画
     private Timeline jumpTimeline;
+    private VariableAnimation jumpVariableAnimation;
     //跑动画
     private Timeline runTimeline;
     //走动画
@@ -140,6 +141,30 @@ public class IntegrationAnimation {
         }
     }
 
+    /* 功击动画
+     * imageView 动画应用的图像
+     * imagesRight 多个动画帧集合 右操作方向
+     * imagesLeft 多个动画帧集合 左操作方向
+     * durationMillis 动画的间隔时间
+     * delayMillis 动画启动的延迟时间
+     * moveDistance 每一步走的像素
+     * */
+    public void addJumpTimeline(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft, int durationMillis,
+                                  int delayMillis, int moveDistance) {
+        if (this.jumpTimeline == null) {
+            this.jumpTimeline = new Timeline();
+            this.jumpTimeline.setCycleCount(1);
+            this.jumpTimeline.setAutoReverse(false);
+            this.jumpVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.jumpTimeline, 0);
+            this.jumpTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.jumpVariableAnimation.setImagesRight(imagesRight);
+        } else if (imagesLeft != null) {
+            this.jumpVariableAnimation.setImagesLeft(imagesLeft);
+        }
+    }
+
 
     /*
      * 关闭旧的动画 开始新的动画
@@ -225,6 +250,8 @@ public class IntegrationAnimation {
             }
             case JUMP -> {
                 if (this.jumpTimeline != null) {
+                    //只显示动画的过程,别的处理细节由引擎完成,这里只做演示
+                    this.jumpVariableAnimation.startAttackVariableAnimation();
                     this.jumpTimeline.playFromStart();
                 }
             }

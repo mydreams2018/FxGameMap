@@ -24,17 +24,19 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TitledPane titledPane;
     @JsonIgnore
-    ChoiceBox<String> textType = new ChoiceBox<>();
+    private ChoiceBox<String> textType = new ChoiceBox<>();
     @JsonIgnore
-    ChoiceBox<String> textLevel = new ChoiceBox<>();
+    private ChoiceBox<String> textLevel = new ChoiceBox<>();
     @JsonIgnore
-    ChoiceBox<String> textPhysical = new ChoiceBox<>();
+    private ChoiceBox<String> textPhysical = new ChoiceBox<>();
     @JsonIgnore
-    TextField maxActivityScopeText = new TextField();
+    private TextField maxActivityScopeText = new TextField();
     @JsonIgnore
-    TextField moveSpeedText = new TextField();
+    private TextField moveSpeedText = new TextField();
     @JsonIgnore
-    ChoiceBox<String> actionTypeCheckBox = new ChoiceBox<>();
+    private ChoiceBox<String> actionTypeCheckBox = new ChoiceBox<>();
+    @JsonIgnore
+    private TextField animationNameText = new TextField();
 
     private String id;
     private String title;
@@ -44,6 +46,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private String maxActivityScope;
     private Integer moveSpeed;
     private ActionType actionType;
+    private String animationName;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -51,41 +54,41 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     }
 
     public void initTitledPane() {
-        titledPane = new TitledPane();
-        titledPane.setText(title);
+        this.titledPane = new TitledPane();
+        this.titledPane.setText(this.title);
         VBox outVBox = new VBox(10);
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         for (ImageObjectType value : ImageObjectType.values()) {
-            textType.getItems().add(value.name());
+            this.textType.getItems().add(value.name());
         }
-        textType.getSelectionModel().clearAndSelect(type.ordinal());
-        textType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.type = ImageObjectType.valueOf(newValue));
+        this.textType.getSelectionModel().clearAndSelect(type.ordinal());
+        this.textType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.type = ImageObjectType.valueOf(newValue));
         gridPane.add(new Label("类型"), 0, 0);
-        gridPane.add(textType, 1, 0);
+        gridPane.add(this.textType, 1, 0);
         for (LevelType value : LevelType.values()) {
-            textLevel.getItems().add(value.name());
+            this.textLevel.getItems().add(value.name());
         }
-        textLevel.getSelectionModel().clearAndSelect(level.ordinal());
-        textLevel.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.level = LevelType.valueOf(newValue));
+        this.textLevel.getSelectionModel().clearAndSelect(level.ordinal());
+        this.textLevel.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.level = LevelType.valueOf(newValue));
         gridPane.add(new Label("层级"), 0, 1);
-        gridPane.add(textLevel, 1, 1);
-        textPhysical.getItems().addAll("是", "否");
-        textPhysical.getSelectionModel().select(physical ? "是" : "否");
-        textPhysical.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> physical = "是".equals(newValue));
+        gridPane.add(this.textLevel, 1, 1);
+        this.textPhysical.getItems().addAll("是", "否");
+        this.textPhysical.getSelectionModel().select(this.physical ? "是" : "否");
+        this.textPhysical.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> this.physical = "是".equals(newValue));
         gridPane.add(new Label("物理物体"), 0, 2);
         gridPane.add(textPhysical, 1, 2);
         if (this.maxActivityScope != null && !this.maxActivityScope.isBlank()) {
-            maxActivityScopeText.setText(this.maxActivityScope);
+            this.maxActivityScopeText.setText(this.maxActivityScope);
         }
-        maxActivityScopeText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.maxActivityScope = newValue);
+        this.maxActivityScopeText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.maxActivityScope = newValue);
         gridPane.add(new Label("最大追杀范围"), 0, 3);
-        gridPane.add(maxActivityScopeText, 1, 3);
+        gridPane.add(this.maxActivityScopeText, 1, 3);
         if (this.moveSpeed != null) {
-            moveSpeedText.setText(this.moveSpeed.toString());
+            this.moveSpeedText.setText(this.moveSpeed.toString());
         }
-        moveSpeedText.textProperty().addListener((observable, oldValue, newValue) -> {
+        this.moveSpeedText.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
                 ImageObject.this.moveSpeed = Integer.parseInt(newValue);
             }
@@ -93,11 +96,17 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         gridPane.add(new Label("移动速度"), 0, 4);
         gridPane.add(this.moveSpeedText, 1, 4);
         for (ActionType value : ActionType.values()) {
-            actionTypeCheckBox.getItems().add(value.name());
+            this.actionTypeCheckBox.getItems().add(value.name());
         }
-        actionTypeCheckBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.actionType = ActionType.valueOf(newValue));
+        this.actionTypeCheckBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.actionType = ActionType.valueOf(newValue));
         gridPane.add(new Label("功击类型"), 0, 5);
-        gridPane.add(actionTypeCheckBox, 1, 5);
+        gridPane.add(this.actionTypeCheckBox, 1, 5);
+        if (this.animationName != null && !this.animationName.isBlank()) {
+            this.animationNameText.setText(this.animationName);
+        }
+        this.animationNameText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.animationName = newValue);
+        gridPane.add(new Label("动画名称"), 0, 6);
+        gridPane.add(this.animationNameText, 1, 6);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -106,15 +115,18 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
      * 批量修改时刷新数据
      * */
     public void refresh() {
-        textType.getSelectionModel().select(type.name());
-        textLevel.getSelectionModel().select(level.name());
-        textPhysical.getSelectionModel().select(physical ? "是" : "否");
-        maxActivityScopeText.setText(this.maxActivityScope);
+        this.textType.getSelectionModel().select(this.type.name());
+        this.textLevel.getSelectionModel().select(this.level.name());
+        this.textPhysical.getSelectionModel().select(this.physical ? "是" : "否");
+        this.maxActivityScopeText.setText(this.maxActivityScope);
         if (this.moveSpeed != null) {
-            moveSpeedText.setText(this.moveSpeed.toString());
+            this.moveSpeedText.setText(this.moveSpeed.toString());
         }
         if (this.actionType != null) {
-            actionTypeCheckBox.getSelectionModel().select(this.actionType.name());
+            this.actionTypeCheckBox.getSelectionModel().select(this.actionType.name());
+        }
+        if (this.animationName != null) {
+            this.animationNameText.setText(this.animationName);
         }
     }
 }

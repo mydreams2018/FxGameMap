@@ -362,6 +362,7 @@ public class RootController implements Initializable {
                                     findResult.setMaxActivityScope(BaseDialog.BATCH_IMAGE_OBJECT.getMaxActivityScope());
                                     findResult.setMoveSpeed(BaseDialog.BATCH_IMAGE_OBJECT.getMoveSpeed());
                                     findResult.setActionType(BaseDialog.BATCH_IMAGE_OBJECT.getActionType());
+                                    findResult.setAnimationName(BaseDialog.BATCH_IMAGE_OBJECT.getAnimationName());
                                     findResult.refresh();
                                 }
                             }

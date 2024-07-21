@@ -60,7 +60,7 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField highAttackIntervalMilliView = new TextField();
     @JsonIgnore
-    private final TextArea imagePropertiesArea = new TextArea();
+    private final TextField imagePropertiesView = new TextField();
     @JsonIgnore
     private final IntegrationAnimation integrationAnimation = new IntegrationAnimation();
     @JsonIgnore
@@ -79,7 +79,7 @@ public class ResourceAnimation {
     private Integer jumpIntervalMilli;
     private Integer attackIntervalMilli;
     private Integer highAttackIntervalMilli;
-    private Map<String, String> imageProperties;
+    private String imageProperties;
     private List<String> idleImagesName;
     private List<String> walkLeftImagesName;
     private List<String> walkRightImagesName;
@@ -153,28 +153,12 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 4);
         gridPane.add(this.operationHistoryDistanceView, 1, 4);
-        this.imagePropertiesArea.setWrapText(false);
-        if (this.imageProperties != null) {
-            StringBuilder propertiesBuild = new StringBuilder();
-            for (Map.Entry<String, String> propertiesEntry : imageProperties.entrySet()) {
-                propertiesBuild.append(propertiesEntry.getKey()).append("=").append(propertiesEntry.getValue()).append("\n");
-            }
-            this.imagePropertiesArea.setText(propertiesBuild.toString());
-        } else {
-            this.imageProperties = new HashMap<>();
+        if (this.imageProperties != null && !this.imageProperties.isEmpty()) {
+            this.imagePropertiesView.setText(this.imageProperties);
         }
-        this.imagePropertiesArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            ResourceAnimation.this.imageProperties.clear();
-            String[] splitProperties = newValue.split("\n", 5);
-            for (String property : splitProperties) {
-                if (property.contains("=")) {
-                    String[] splitKV = property.split("=", 5);
-                    ResourceAnimation.this.imageProperties.put(splitKV[0], splitKV[1]);
-                }
-            }
-        });
+        this.imagePropertiesView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.imageProperties = newValue);
         gridPane.add(new Label("图片边距属性"), 0, 5);
-        gridPane.add(this.imagePropertiesArea, 1, 5);
+        gridPane.add(this.imagePropertiesView, 1, 5);
         gridPane.add(initIdleImages(), 0, 6);
         gridPane.add(this.idleImageView, 1, 6);
         gridPane.add(initWalkImages(), 0, 7);

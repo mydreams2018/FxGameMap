@@ -81,19 +81,17 @@ public class IntegrationAnimation {
      * moveDistance 每一步走的像素
      * operationHistoryDistance 左 <--> 右 转换时的一个间隔像素
      * */
-    public void addWalkTimeline(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft, int durationMillis,
+    public void addWalkTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
                                 int delayMillis, int moveDistance, int operationHistoryDistance) {
         if (this.walkTimeline == null) {
             this.walkTimeline = new Timeline();
             this.walkTimeline.setCycleCount(1);
             this.walkTimeline.setAutoReverse(false);
-            this.walkVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
+            this.walkVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.walkTimeline, operationHistoryDistance);
             this.walkTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.walkVariableAnimation.setImagesRight(imagesRight);
-        } else if (imagesLeft != null) {
-            this.walkVariableAnimation.setImagesLeft(imagesLeft);
         }
     }
 
@@ -105,19 +103,17 @@ public class IntegrationAnimation {
      * delayMillis 动画启动的延迟时间
      * moveDistance 每一步走的像素
      * */
-    public void addAttackTimeline(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft, int durationMillis,
+    public void addAttackTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
                                   int delayMillis, int moveDistance) {
         if (this.attackTimeline == null) {
             this.attackTimeline = new Timeline();
             this.attackTimeline.setCycleCount(1);
             this.attackTimeline.setAutoReverse(false);
-            this.attackVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
+            this.attackVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.attackTimeline, 0);
             this.attackTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.attackVariableAnimation.setImagesRight(imagesRight);
-        } else if (imagesLeft != null) {
-            this.attackVariableAnimation.setImagesLeft(imagesLeft);
         }
     }
 
@@ -129,13 +125,13 @@ public class IntegrationAnimation {
      * delayMillis 动画启动的延迟时间
      * moveDistance 每一步走的像素
      * */
-    public void addHighAttackTimeline(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft, int durationMillis,
+    public void addHighAttackTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
                                       int delayMillis, int moveDistance) {
         if (this.highAttackTimeline == null) {
             this.highAttackTimeline = new Timeline();
             this.highAttackTimeline.setCycleCount(1);
             this.highAttackTimeline.setAutoReverse(false);
-            this.highAttackVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
+            this.highAttackVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.highAttackTimeline, 0);
             this.highAttackTimeline.setDelay(Duration.millis(delayMillis));
         }
@@ -149,19 +145,17 @@ public class IntegrationAnimation {
      * delayMillis 动画启动的延迟时间
      * moveDistance 每一步走的像素
      * */
-    public void addJumpTimeline(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft, int durationMillis,
-                                  int delayMillis, int moveDistance) {
+    public void addJumpTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                int delayMillis, int moveDistance) {
         if (this.jumpTimeline == null) {
             this.jumpTimeline = new Timeline();
             this.jumpTimeline.setCycleCount(1);
             this.jumpTimeline.setAutoReverse(false);
-            this.jumpVariableAnimation = new VariableAnimation(imageView, imagesRight, imagesLeft, durationMillis, moveDistance,
+            this.jumpVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.jumpTimeline, 0);
             this.jumpTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.jumpVariableAnimation.setImagesRight(imagesRight);
-        } else if (imagesLeft != null) {
-            this.jumpVariableAnimation.setImagesLeft(imagesLeft);
         }
     }
 
@@ -279,7 +273,6 @@ public class IntegrationAnimation {
 
         private final ImageView imageView;
         private List<Image> imagesRight;
-        private List<Image> imagesLeft;
         private final int durationMillis;
         private final int moveDistance;
         private final ThreadLocal<OperationHistory> operationHistoryThreadLocal;
@@ -288,14 +281,13 @@ public class IntegrationAnimation {
         //操作历史记录
         private OperationHistory operationHistoryCache;
 
-        private VariableAnimation(ImageView imageView, List<Image> imagesRight, List<Image> imagesLeft,
+        private VariableAnimation(ImageView imageView, List<Image> imagesRight,
                                   int durationMillis,
                                   int moveDistance,
                                   ThreadLocal<OperationHistory> operationHistoryThreadLocal,
                                   Timeline animationTimeline, int operationHistoryDistance) {
             this.imageView = imageView;
             this.imagesRight = imagesRight;
-            this.imagesLeft = imagesLeft;
             this.durationMillis = durationMillis;
             this.moveDistance = moveDistance;
             this.operationHistoryThreadLocal = operationHistoryThreadLocal;
@@ -305,37 +297,13 @@ public class IntegrationAnimation {
 
         public void startMoveVariableAnimation() {
             this.animationTimeline.getKeyFrames().clear();
-            if (this.operationHistoryCache == null) {
-                this.operationHistoryCache = this.operationHistoryThreadLocal.get();
-            } else if (this.operationHistoryCache != this.operationHistoryThreadLocal.get()) {
-                if (this.operationHistoryThreadLocal.get() == OperationHistory.RIGHT) {
-                    this.imageView.setLayoutX(this.imageView.getLayoutX() + operationHistoryDistance);
-                    this.imageView.setImage(this.imagesRight.getFirst());
-                } else {
-                    this.imageView.setLayoutX(this.imageView.getLayoutX() - operationHistoryDistance);
-                    this.imageView.setImage(this.imagesLeft.getFirst());
-                }
-                this.operationHistoryCache = this.operationHistoryThreadLocal.get();
-                return;
-            }
             for (int i = 0; i < this.imagesRight.size(); i++) {
-                KeyValue keyValue = null;
-                KeyFrame keyFrame = null;
-                if (this.operationHistoryThreadLocal.get() == OperationHistory.RIGHT) {
-                    keyValue = new KeyValue(imageView.layoutXProperty(), imageView.layoutXProperty().get() + (i * moveDistance));
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesRight.get(indexImage));
-                    }, keyValue);
-                } else {
-                    keyValue = new KeyValue(imageView.layoutXProperty(), imageView.layoutXProperty().get() - (i * moveDistance));
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesLeft.get(indexImage));
-                    }, keyValue);
-                }
+                KeyValue keyValue = new KeyValue(imageView.layoutXProperty(), imageView.layoutXProperty().get() + (i * moveDistance));
+                KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
+                    KeyFrame source = (KeyFrame) event.getSource();
+                    int indexImage = Integer.parseInt(source.getName());
+                    imageView.setImage(imagesRight.get(indexImage));
+                }, keyValue);
                 this.animationTimeline.getKeyFrames().add(keyFrame);
             }
         }
@@ -343,52 +311,14 @@ public class IntegrationAnimation {
         public void startAttackVariableAnimation() {
             this.animationTimeline.getKeyFrames().clear();
             for (int i = 0; i < this.imagesRight.size(); i++) {
-                KeyFrame keyFrame;
-                if (this.operationHistoryThreadLocal.get() == OperationHistory.RIGHT) {
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesRight.get(indexImage));
-                    });
-                } else {
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesLeft.get(indexImage));
-                    });
-                }
+                KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
+                    KeyFrame source = (KeyFrame) event.getSource();
+                    int indexImage = Integer.parseInt(source.getName());
+                    imageView.setImage(imagesRight.get(indexImage));
+                });
                 this.animationTimeline.getKeyFrames().add(keyFrame);
             }
         }
-
-        public void resetTranslateX() {
-            this.imageView.setTranslateX(0);
-        }
-
-        public void startRunAttackVariableAnimation() {
-            this.animationTimeline.getKeyFrames().clear();
-            for (int i = 0; i < this.imagesRight.size(); i++) {
-                KeyFrame keyFrame;
-                KeyValue keyValue;
-                if (this.operationHistoryThreadLocal.get() == OperationHistory.RIGHT) {
-                    keyValue = new KeyValue(imageView.translateXProperty(), imageView.translateXProperty().get() + (i * moveDistance));
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesRight.get(indexImage));
-                    }, keyValue);
-                } else {
-                    keyValue = new KeyValue(imageView.translateXProperty(), imageView.translateXProperty().get() - (i * moveDistance));
-                    keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
-                        KeyFrame source = (KeyFrame) event.getSource();
-                        int indexImage = Integer.parseInt(source.getName());
-                        imageView.setImage(imagesLeft.get(indexImage));
-                    }, keyValue);
-                }
-                this.animationTimeline.getKeyFrames().add(keyFrame);
-            }
-        }
-
     }
 
     public static enum AnimationType {

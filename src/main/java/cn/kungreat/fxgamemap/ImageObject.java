@@ -38,11 +38,16 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TextField animationNameText = new TextField();
 
+
+    /*
+    * physical 是否物理物体,是否需要检测碰撞
+    * level [作废字段]
+    * */
     private String id;
     private String title;
     private ImageObjectType type = ImageObjectType.FIXED_BODY;
     private LevelType level = LevelType.DEFAULT_LEVEL;
-    private boolean physical = false;
+    private boolean physical = true;
     private String maxActivityScope;
     private Integer moveSpeed;
     private ActionType actionType;

@@ -275,6 +275,21 @@ public class TreeGameMap {
         @JsonIgnore
         private ImageView imageView;
         private String imagePath;
+        /*
+         * 用于数据交互的每一次坐标转换
+         * */
+        @JsonIgnore
+        private double changeX;
+        @JsonIgnore
+        private double changeY;
+        /*
+         * 用于全局坐标转换的临时坐标
+         * */
+        @JsonIgnore
+        private double tempStartX;
+        @JsonIgnore
+        private double tempStartY;
+
         private double startX;
         private double startY;
 

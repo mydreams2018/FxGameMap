@@ -1,80 +1,106 @@
 package cn.kungreat.fxgamemap.custom;
 
 import cn.kungreat.fxgamemap.ImageObject;
-import cn.kungreat.fxgamemap.RootController;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import cn.kungreat.fxgamemap.ImageObjectType;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelWriter;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+/*
+ * 图层层级
+ * 1.底图色
+ * 2.背景图片
+ * 3.对象图片
+ * 5.顶层图片 用作图像重叠
+ * */
 
 @Setter
 @Getter
 public class AreaMapShow {
 
     /*
+     * SUBSTRATE_PANE 底图层
+     * FIXED_BODY_PANE 固定图像层
+     * TOP_PANE 顶图层
+     * */
+    private static final Pane SUBSTRATE_PANE = new Pane();
+    private static final Pane SUBSTRATE_IMAGE_PANE = new Pane();
+    private static final Pane FIXED_BODY_PANE = new Pane();
+    private static final Pane TOP_PANE = new Pane();
+
+    /*
      * 存放每次需要处理的图片
      * */
-    private List<TreeGameMap.BackgroundImageData> showBackgroundImages = new LinkedList<>();
-    private List<ImageObject> showImageObject = new LinkedList<>();
+    private static final List<TreeGameMap.BackgroundImageData> SHOW_BACKGROUND_COLOR = new LinkedList<>();
+    private static final List<TreeGameMap.BackgroundImageData> SHOW_BACKGROUND_IMAGES = new LinkedList<>();
+    private static final List<ImageObject> FIXED_OBJECT_LIST = new LinkedList<>();
+    private static final List<ImageObject> SHOW_TOP_IMAGE = new LinkedList<>();
 
-    private Integer width;
-    private Integer height;
+    /*
+     * 此区域地图下的所有图片信息 坐标转换成全局的
+     * allImageObject 当前还没有使用到
+     * */
+    private final List<TreeGameMap.BackgroundImageData> allBackgroundColor = new ArrayList<>();
+    private final List<TreeGameMap.BackgroundImageData> allBackgroundImages = new ArrayList<>();
+    private final List<ImageObject> allImageObject = new ArrayList<>();
+    private final List<ImageObject> allTopImageObject = new ArrayList<>();
+    private final List<ImageObject> allFixedImageObject = new ArrayList<>();
 
-    private Integer canvasWidth;
-    private Integer canvasHeight;
+
+    private Integer groupWidth;
+    private Integer groupHeight;
     private Integer currentX;
     private Integer currentY;
 
-    private Color[][] backgroundColors;
-    @JsonIgnore
-    private Canvas canvas;
-    @JsonIgnore
-    private GraphicsContext graphicsContext;
-    @JsonIgnore
+    private StackPane mainPane;
     private VBox outVBox;
-    @JsonIgnore
     private HBox innerHBox;
-    @JsonIgnore
     private ScrollBar scrollBarY;
-    @JsonIgnore
     private ScrollBar scrollBarX;
-    @JsonIgnore
     private WritableImage writableImage;
 
     public void initAreaMapShow(TreeArea treeArea) {
-        if (canvas == null) {
-            canvasWidth = treeArea.getWidth();
-            canvasHeight = treeArea.getHeight();
-            canvas = new Canvas(canvasWidth, canvasHeight);
-            graphicsContext = canvas.getGraphicsContext2D();
-            width = treeArea.getWidth();
-            height = treeArea.getHeight();
-            backgroundColors = new Color[treeArea.getXNumber()][treeArea.getYNumber()];
+        if (mainPane == null) {
+            groupWidth = treeArea.getWidth();
+            groupHeight = treeArea.getHeight();
+            mainPane = new StackPane();
+            mainPane.setPrefSize(groupWidth, groupHeight);
+            Rectangle clipRect = new Rectangle();
+            clipRect.setWidth(groupWidth);
+            clipRect.setHeight(groupHeight);
+            clipRect.setSmooth(true);
+            mainPane.setClip(clipRect);//超出的子无素修剪掉
+            mainPane.getChildren().addAll(SUBSTRATE_PANE,SUBSTRATE_IMAGE_PANE, FIXED_BODY_PANE, TOP_PANE);
             currentX = 0;
             currentY = 0;
             initView(treeArea);
         }
+        allBackgroundColor.clear();
+        allBackgroundImages.clear();
+        allImageObject.clear();
+        allTopImageObject.clear();
+        allFixedImageObject.clear();
         String[][] childrenPointName = treeArea.getChildrenPointName();
         for (int y = 0; y < treeArea.getYNumber(); y++) {
             for (int x = 0; x < treeArea.getXNumber(); x++) {
                 String pointName = childrenPointName[x][y];
                 if (pointName != null && !pointName.isBlank()) {
                     TreeGameMap treeGameMap = findTreeGameMap(pointName, treeArea);
-                    if (treeGameMap != null && treeGameMap.getCanvasFillColor() != null) {
-                        backgroundColors[x][y] = Color.web(treeGameMap.getCanvasFillColor());
+                    if (treeGameMap != null) {
+                        this.allBackgroundColor.add(initShowBackgroundColor(treeGameMap.getCanvasFillColor(), x, y));
+                        loadTreeGameMap(treeGameMap, x, y);
                     }
                 }
             }
@@ -88,138 +114,241 @@ public class AreaMapShow {
         scrollBarY = new ScrollBar();
         scrollBarY.setOrientation(Orientation.VERTICAL);
         scrollBarY.setMin(0);
-        scrollBarY.setMax(treeArea.getYNumber() * height - canvasHeight);
-        scrollBarY.setBlockIncrement(height);
-        innerHBox.getChildren().addAll(canvas, scrollBarY);
+        scrollBarY.setMax(treeArea.getYNumber() * groupHeight - groupHeight);
+        scrollBarY.setBlockIncrement(groupHeight);
+        innerHBox.getChildren().addAll(mainPane, scrollBarY);
         scrollBarX = new ScrollBar();
         scrollBarX.setOrientation(Orientation.HORIZONTAL);
         scrollBarX.setMin(0);
-        scrollBarX.setMax(treeArea.getXNumber() * width - canvasWidth);
-        scrollBarX.setBlockIncrement(width);
+        scrollBarX.setMax(treeArea.getXNumber() * groupWidth - groupWidth);
+        scrollBarX.setBlockIncrement(groupWidth);
         outVBox.getChildren().addAll(innerHBox, scrollBarX);
         outVBox.setMaxWidth(Region.USE_PREF_SIZE);
         outVBox.setMaxHeight(Region.USE_PREF_SIZE);
         scrollBarY.valueProperty().addListener((observable, oldValue, newValue) -> {
             currentY = newValue.intValue();
-            clearAndDraw(treeArea);
+            clearAndDraw();
         });
         scrollBarX.valueProperty().addListener((observable, oldValue, newValue) -> {
             currentX = newValue.intValue();
-            clearAndDraw(treeArea);
+            clearAndDraw();
         });
     }
 
-    public void clearAndDraw(TreeArea treeArea) {
-        graphicsContext.clearRect(0, 0, canvasWidth, canvasHeight);
-        showBackgroundImages.clear();
-        showImageObject.clear();
-        drawAllImage(treeArea);
+    public void clearAndDraw() {
+        filterShowSubstrateImages();
+        filterShowMesosphereImages();
+        filterShowTopImages();
+        clearCacheImageView();
+        startDrawSubstratePane();
+        startDrawMesospherePane();
+        startDrawTopPane();
     }
 
-    private void drawAllImage(TreeArea treeArea) {
-        int startX = 0, startY = 0;
-        int centerPointX = 0, centerPointY = 0;
-        for (int x = 0; x < treeArea.getXNumber(); x++) {
-            if (x * width + width > currentX) {
-                centerPointX = x;
-                startX = width - ((x * width) + width - currentX);
-                break;
+    private void startDrawSubstratePane() {
+        //外面的一个大矩形绘制背景色
+        for (TreeGameMap.BackgroundImageData backgroundColor : SHOW_BACKGROUND_COLOR) {
+            ImageView view = backgroundColor.getImageView();
+            view.setLayoutX(backgroundColor.getChangeX());
+            view.setLayoutY(backgroundColor.getChangeY());
+            if (!SUBSTRATE_PANE.getChildren().contains(view)) {
+                SUBSTRATE_PANE.getChildren().add(view);
             }
         }
-        for (int y = 0; y < treeArea.getYNumber(); y++) {
-            if (y * height + height > currentY) {
-                centerPointY = y;
-                startY = height - ((y * height) + height - currentY);
-                break;
+        //背景图层
+        for (TreeGameMap.BackgroundImageData showBackgroundImage : SHOW_BACKGROUND_IMAGES) {
+            ImageView view = showBackgroundImage.getImageView();
+            view.setLayoutX(showBackgroundImage.getChangeX());
+            view.setLayoutY(showBackgroundImage.getChangeY());
+            if (!SUBSTRATE_IMAGE_PANE.getChildren().contains(view)) {
+                SUBSTRATE_IMAGE_PANE.getChildren().add(view);
             }
-        }
-        int startWidthIndex = centerPointX, endWidthIndex = centerPointX;
-        if (canvasWidth - (width - startX) > 0) {
-            int needRightWidth = canvasWidth - (width - startX);
-            for (; needRightWidth > 0; endWidthIndex++) {
-                needRightWidth = needRightWidth - width;
-            }
-        }
-        int startHeightIndex = centerPointY;
-        int endHeightIndex = centerPointY;
-        if (canvasHeight - (height - startY) > 0) {
-            int needBottomHeight = canvasHeight - (height - startY);
-            for (; needBottomHeight > 0; endHeightIndex++) {
-                needBottomHeight = needBottomHeight - height;
-            }
-        }
-        if (writableImage == null || writableImage.getWidth() < ((endWidthIndex - startWidthIndex) + 1) * width || writableImage.getHeight() < ((endHeightIndex - startHeightIndex) + 1) * height) {
-            writableImage = new WritableImage(((endWidthIndex - startWidthIndex) + 1) * width, ((endHeightIndex - startHeightIndex) + 1) * height);
-        }
-        int tempX = 0, tempY = 0;
-        for (int y = startHeightIndex; y <= endHeightIndex; y++, tempY++) {
-            for (int x = startWidthIndex; x <= endWidthIndex; x++, tempX++) {
-                Color chooseColor = backgroundColors[x][y];
-                Color color = chooseColor == null ? RootController.CANVAS_DEFAULT_COLOR : chooseColor;
-                writerColor(tempX, tempY, color, writableImage.getPixelWriter());
-                filterShowImages(treeArea, x, y, startX, startY, tempX, tempY);
-            }
-            tempX = 0;
-        }
-        graphicsContext.drawImage(writableImage, -startX, -startY);
-        for (TreeGameMap.BackgroundImageData showBackgroundImage : showBackgroundImages) {
-            graphicsContext.drawImage(showBackgroundImage.getImage(), showBackgroundImage.getStartX() - startX, showBackgroundImage.getStartY() - startY);
-        }
-        for (ImageObject imageObject : showImageObject) {
-            graphicsContext.drawImage(imageObject.getImage(), imageObject.getStartX() - startX, imageObject.getStartY() - startY);
         }
     }
 
-    /*
-     * 过滤不必要的图片数据
-     * */
-    private void filterShowImages(TreeArea treeArea, int indexX, int indexY, int startX, int startY, int tempX, int tempY) {
-        String[][] childrenPointName = treeArea.getChildrenPointName();
-        String pointName = childrenPointName[indexX][indexY];
-        if (pointName != null && !pointName.isBlank()) {
-            TreeGameMap treeGameMap = findTreeGameMap(pointName, treeArea);
-            if (treeGameMap != null) {
-                List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
-                if (backgroundImages != null && !backgroundImages.isEmpty()) {
-                    for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
-                        backgroundImage.initImage(treeGameMap.getBackgroundImagePath());
-                        Image image = backgroundImage.getImage();
-                        if (tempY * height + backgroundImage.getStartY() + image.getHeight() >= startY && tempX * width + backgroundImage.getStartX() + image.getWidth() >= startX
-                                && tempY * height + backgroundImage.getStartY() <= startY + canvasHeight && tempX * width + backgroundImage.getStartX() <= startX + canvasWidth) {
-                            TreeGameMap.BackgroundImageData areaShowBackgroundImage = new TreeGameMap.BackgroundImageData
-                                    (image, tempX * width + backgroundImage.getStartX()
-                                            , tempY * height + backgroundImage.getStartY(), backgroundImage.getImagePath());
-                            showBackgroundImages.add(areaShowBackgroundImage);
-                        }
-                    }
+    private void startDrawTopPane() {
+        for (ImageObject topimageObject : SHOW_TOP_IMAGE) {
+            ImageView view = topimageObject.getImageView();
+            view.setLayoutX(topimageObject.getChangeX());
+            view.setLayoutY(topimageObject.getChangeY());
+            if (!TOP_PANE.getChildren().contains(view)) {
+                TOP_PANE.getChildren().add(view);
+            }
+        }
+    }
+
+    private void filterShowSubstrateImages() {
+        SHOW_BACKGROUND_COLOR.clear();
+        SHOW_BACKGROUND_IMAGES.clear();
+        List<TreeGameMap.BackgroundImageData> allBackgroundColor = this.allBackgroundColor;
+        if (!allBackgroundColor.isEmpty()) {
+            for (TreeGameMap.BackgroundImageData backgroundColor : allBackgroundColor) {
+                if (addShowImages(backgroundColor)) {
+                    SHOW_BACKGROUND_COLOR.add(backgroundColor);
                 }
-                List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
-                if (imageObjectList != null && !imageObjectList.isEmpty()) {
-                    for (ImageObject imageObject : imageObjectList) {
-                        imageObject.initImage(treeGameMap.getBackgroundImagePath());
-                        Image image = imageObject.getImage();
-                        if (tempY * height + imageObject.getStartY() + image.getHeight() >= startY && tempX * width + imageObject.getStartX() + image.getWidth() >= startX
-                                && tempY * height + imageObject.getStartY() <= startY + canvasHeight && tempX * width + imageObject.getStartX() <= startX + canvasWidth) {
-                            ImageObject areaShowImageObject = new ImageObject(imageObject.getId(), imageObject.getImage(),
-                                    tempX * width + imageObject.getStartX(),
-                                    tempY * height + imageObject.getStartY(), imageObject.getImagePath());
-                            showImageObject.add(areaShowImageObject);
-                        }
-                    }
+            }
+        }
+        List<TreeGameMap.BackgroundImageData> allBackgroundImages = this.allBackgroundImages;
+        if (!allBackgroundImages.isEmpty()) {
+            for (TreeGameMap.BackgroundImageData backgroundImage : allBackgroundImages) {
+                if (addShowImages(backgroundImage)) {
+                    SHOW_BACKGROUND_IMAGES.add(backgroundImage);
                 }
             }
         }
     }
 
-    private void writerColor(int tempX, int tempY, Color color, PixelWriter pixelWriter) {
-        if (color.equals(writableImage.getPixelReader().getColor(tempX * width, tempY * height))) {
-            return;
-        }
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                pixelWriter.setColor(tempX * width + x, tempY * height + y, color);
+    private void filterShowTopImages() {
+        SHOW_TOP_IMAGE.clear();
+        List<ImageObject> allTopImageObject = this.allTopImageObject;
+        if (!allTopImageObject.isEmpty()) {
+            for (ImageObject imageObject : allTopImageObject) {
+                if (addShowImages(imageObject)) {
+                    SHOW_TOP_IMAGE.add(imageObject);
+                }
             }
         }
+    }
+
+    private void filterShowMesosphereImages() {
+        FIXED_OBJECT_LIST.clear();
+        for (ImageObject internetObject : this.allFixedImageObject) {
+            if (addShowImages(internetObject)) {
+                FIXED_OBJECT_LIST.add(internetObject);
+            }
+        }
+    }
+
+    private void startDrawMesospherePane() {
+        for (TreeGameMap.BackgroundImageData interObject : FIXED_OBJECT_LIST) {
+            ImageView view = interObject.getImageView();
+            view.setLayoutX(interObject.getChangeX());
+            view.setLayoutY(interObject.getChangeY());
+            if (!FIXED_BODY_PANE.getChildren().contains(view)) {
+                FIXED_BODY_PANE.getChildren().add(view);
+            }
+        }
+    }
+
+    private boolean addShowImages(TreeGameMap.BackgroundImageData backgroundImage) {
+        Image image = backgroundImage.getImageView().getImage();
+        double startX = backgroundImage.getTempStartX();
+        double startY = backgroundImage.getTempStartY();
+        if (startY + image.getHeight() > this.currentY && startX + image.getWidth() > this.currentX &&
+                startY < this.currentY + this.groupHeight && startX < this.currentX + this.groupWidth) {
+            backgroundImage.setChangeX(startX - this.currentX);
+            backgroundImage.setChangeY(startY - this.currentY);
+            return true;
+        }
+        return false;
+    }
+
+    private void clearCacheImageView() {
+        final ObservableList<Node> removeNode = FXCollections.observableArrayList();
+        for (Node child : SUBSTRATE_PANE.getChildren()) {
+            boolean isContains = false;
+            for (TreeGameMap.BackgroundImageData backgroundImageData : SHOW_BACKGROUND_COLOR) {
+                if (backgroundImageData.getImageView() == child) {
+                    isContains = true;
+                    break;
+                }
+            }
+            if (!isContains) {
+                removeNode.add(child);
+            }
+        }
+        SUBSTRATE_PANE.getChildren().removeAll(removeNode);
+        removeNode.clear();
+        for (Node child : SUBSTRATE_IMAGE_PANE.getChildren()) {
+            boolean isContains = false;
+            for (TreeGameMap.BackgroundImageData backgroundImageData : SHOW_BACKGROUND_IMAGES) {
+                if (backgroundImageData.getImageView() == child) {
+                    isContains = true;
+                    break;
+                }
+            }
+            if (!isContains) {
+                removeNode.add(child);
+            }
+        }
+        SUBSTRATE_IMAGE_PANE.getChildren().removeAll(removeNode);
+        removeNode.clear();
+        for (Node child : FIXED_BODY_PANE.getChildren()) {
+            boolean isContains = false;
+            for (TreeGameMap.BackgroundImageData imageData : FIXED_OBJECT_LIST) {
+                if (imageData.getImageView() == child) {
+                    isContains = true;
+                    break;
+                }
+            }
+            if (!isContains) {
+                removeNode.add(child);
+            }
+        }
+        FIXED_BODY_PANE.getChildren().removeAll(removeNode);
+        removeNode.clear();
+        for (Node child : TOP_PANE.getChildren()) {
+            boolean isContains = false;
+            for (TreeGameMap.BackgroundImageData imageData : SHOW_TOP_IMAGE) {
+                if (imageData.getImageView() == child) {
+                    isContains = true;
+                    break;
+                }
+            }
+            if (!isContains) {
+                removeNode.add(child);
+            }
+        }
+        TOP_PANE.getChildren().removeAll(removeNode);
+    }
+
+    private void loadTreeGameMap(TreeGameMap gameMap, int pointX, int pointY) {
+        int globalX = pointX * groupWidth;
+        int globalY = pointY * groupHeight;
+        List<TreeGameMap.BackgroundImageData> backgroundImages = gameMap.getBackgroundImages();
+        if (backgroundImages != null && !backgroundImages.isEmpty()) {
+            for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
+                backgroundImage.initImage(gameMap.getBackgroundImagePath());
+                backgroundImage.setTempStartX(globalX + backgroundImage.getStartX());
+                backgroundImage.setTempStartY(globalY + backgroundImage.getStartY());
+                this.allBackgroundImages.add(backgroundImage);
+            }
+        }
+        List<ImageObject> imageObjectList = gameMap.getImageObjectList();
+        if (imageObjectList != null && !imageObjectList.isEmpty()) {
+            for (ImageObject imageObject : imageObjectList) {
+                imageObject.initImage(gameMap.getBackgroundImagePath());
+                imageObject.setTempStartX(globalX + imageObject.getStartX());
+                imageObject.setTempStartY(globalY + imageObject.getStartY());
+                if (imageObject.getType() != null && imageObject.getType() == ImageObjectType.FIXED_BODY_TOP) {
+                    this.allTopImageObject.add(imageObject);
+                } else if (imageObject.getType() != null && imageObject.getType() == ImageObjectType.FIXED_BODY) {
+                    this.allFixedImageObject.add(imageObject);
+                } else {
+                    this.allImageObject.add(imageObject);
+                }
+            }
+        }
+    }
+
+    private TreeGameMap.BackgroundImageData initShowBackgroundColor(String colorName, int globalX, int globalY) {
+        TreeGameMap.BackgroundImageData backgroundColor = new TreeGameMap.BackgroundImageData();
+        WritableImage writableImage = new WritableImage(groupWidth, groupHeight);
+        Color color;
+        if (colorName == null) {
+            color = Color.LIGHTBLUE;
+        } else {
+            color = Color.web(colorName);
+        }
+        for (int y = 0; y < groupHeight; y++) {
+            for (int x = 0; x < groupWidth; x++) {
+                writableImage.getPixelWriter().setColor(x, y, color);
+            }
+        }
+        backgroundColor.setImageView(new ImageView(writableImage));
+        backgroundColor.setTempStartX(globalX * groupWidth);
+        backgroundColor.setTempStartY(globalY * groupHeight);
+        return backgroundColor;
     }
 
     private TreeGameMap findTreeGameMap(String title, TreeArea treeArea) {

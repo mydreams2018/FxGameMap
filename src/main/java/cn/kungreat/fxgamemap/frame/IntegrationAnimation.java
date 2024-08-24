@@ -30,6 +30,7 @@ public class IntegrationAnimation {
     private Timeline deathTimeline;
     //受伤动画
     private Timeline hurtTimeline;
+    private VariableAnimation hurtVariableAnimation;
     //跳动画
     private Timeline jumpTimeline;
     private VariableAnimation jumpVariableAnimation;
@@ -137,6 +138,18 @@ public class IntegrationAnimation {
         }
     }
 
+    public void addHurtTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                      int delayMillis, int moveDistance) {
+        if (this.hurtTimeline == null) {
+            this.hurtTimeline = new Timeline();
+            this.hurtTimeline.setCycleCount(1);
+            this.hurtTimeline.setAutoReverse(false);
+            this.hurtVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.hurtTimeline, 0);
+            this.hurtTimeline.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
     /* 功击动画
      * imageView 动画应用的图像
      * imagesRight 多个动画帧集合 右操作方向
@@ -159,9 +172,9 @@ public class IntegrationAnimation {
         }
     }
 
-
     /*
-     * 关闭旧的动画 开始新的动画
+     * 保存数据  关闭旧的动画 开始新的动画
+     * 游戏引擎处需要额外的处理逻辑
      * */
     public void startAnimation(AnimationType animationType) {
         if (this.animationType != null) {
@@ -239,6 +252,7 @@ public class IntegrationAnimation {
             }
             case HURT -> {
                 if (this.hurtTimeline != null) {
+                    this.hurtVariableAnimation.startAttackVariableAnimation();
                     this.hurtTimeline.playFromStart();
                 }
             }

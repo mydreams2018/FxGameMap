@@ -71,6 +71,8 @@ public class ResourceAnimation {
     private final ImageView jumpImageView = new ImageView();
     @JsonIgnore
     private final ImageView highAttackImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView hurtImageView = new ImageView();
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -85,6 +87,7 @@ public class ResourceAnimation {
     private List<String> attackRightImagesName;
     private List<String> jumpRightImagesName;
     private List<String> highAttackRightImagesName;
+    private List<String> hurtRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -167,6 +170,8 @@ public class ResourceAnimation {
         gridPane.add(this.jumpImageView, 1, 9);
         gridPane.add(this.initHighAttackImages(), 0, 10);
         gridPane.add(this.highAttackImageView, 1, 10);
+        gridPane.add(this.initHurtImages(), 0, 11);
+        gridPane.add(this.hurtImageView, 1, 11);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -366,6 +371,45 @@ public class ResourceAnimation {
         return highAttackVBox;
     }
 
+    private VBox initHurtImages() {
+        if (this.hurtRightImagesName != null) {
+            addHurtRightTimeline();
+        }
+        VBox hurtVBox = new VBox(10);
+        Button hurtRightButtonAdd = new Button("添加受伤动画");
+        Button hurtRightButtonShow = new Button("播放受伤动画");
+        hurtRightButtonShow.setOnAction(event -> {
+            if (this.hurtRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.HURT);
+            }
+        });
+        hurtRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.hurtRightImagesName == null) {
+                    ResourceAnimation.this.hurtRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.hurtRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "hurtRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.hurtRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addHurtRightTimeline();
+            }
+        });
+        hurtVBox.getChildren().addAll(hurtRightButtonAdd, hurtRightButtonShow);
+        return hurtVBox;
+    }
+
     private void addIdleTimeline() {
         if (!this.idleImagesName.isEmpty()) {
             List<Image> idleImages = new ArrayList<>();
@@ -407,6 +451,17 @@ public class ResourceAnimation {
                 highAttackRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addHighAttackTimeline(this.highAttackImageView, highAttackRightImg, 100, 0, 0);
+        }
+    }
+
+    private void addHurtRightTimeline() {
+        if (!this.hurtRightImagesName.isEmpty()) {
+            List<Image> hurtRightImg = new ArrayList<>();
+            for (String imageName : this.hurtRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "hurtRight", imageName);
+                hurtRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addHurtTimeline(this.hurtImageView, hurtRightImg, 100, 0, 0);
         }
     }
 

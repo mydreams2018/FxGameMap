@@ -103,6 +103,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         for (ActionType value : ActionType.values()) {
             this.actionTypeCheckBox.getItems().add(value.name());
         }
+        if (this.actionType != null){
+            this.actionTypeCheckBox.getSelectionModel().clearAndSelect(actionType.ordinal());
+        }
         this.actionTypeCheckBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.actionType = ActionType.valueOf(newValue));
         gridPane.add(new Label("功击类型"), 0, 5);
         gridPane.add(this.actionTypeCheckBox, 1, 5);

@@ -58,6 +58,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField highAttackIntervalMilliView = new TextField();
     @JsonIgnore
+    private final TextField hurtIntervalMilliView = new TextField();
+    @JsonIgnore
     private final TextField attackRangeView = new TextField();
     @JsonIgnore
     private final TextField imagePropertiesView = new TextField();
@@ -83,6 +85,7 @@ public class ResourceAnimation {
     private Integer jumpIntervalMilli;
     private Integer attackIntervalMilli;
     private Integer highAttackIntervalMilli;
+    private Integer hurtIntervalMilli;
     private Integer attackRange;
     private String imageProperties;
     private List<String> idleImagesName;
@@ -157,6 +160,16 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("功击范围"), 0, 4);
         gridPane.add(this.attackRangeView, 1, 4);
+        if (this.hurtIntervalMilli != null) {
+            this.hurtIntervalMilliView.setText(this.hurtIntervalMilli.toString());
+        }
+        this.hurtIntervalMilliView.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ResourceAnimation.this.hurtIntervalMilli = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("受伤间隔"), 0, 5);
+        gridPane.add(this.hurtIntervalMilliView, 1, 5);
         if (this.operationHistoryDistance != null) {
             this.operationHistoryDistanceView.setText(this.operationHistoryDistance.toString());
         }
@@ -165,26 +178,26 @@ public class ResourceAnimation {
                 ResourceAnimation.this.operationHistoryDistance = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 5);
-        gridPane.add(this.operationHistoryDistanceView, 1, 5);
+        gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 6);
+        gridPane.add(this.operationHistoryDistanceView, 1, 6);
         if (this.imageProperties != null && !this.imageProperties.isEmpty()) {
             this.imagePropertiesView.setText(this.imageProperties);
         }
         this.imagePropertiesView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.imageProperties = newValue);
-        gridPane.add(new Label("图片边距属性"), 0, 6);
-        gridPane.add(this.imagePropertiesView, 1, 6);
-        gridPane.add(this.initIdleImages(), 0, 7);
-        gridPane.add(this.idleImageView, 1, 7);
-        gridPane.add(this.initWalkImages(), 0, 8);
-        gridPane.add(this.walkImageView, 1, 8);
-        gridPane.add(this.initAttackImages(), 0, 9);
-        gridPane.add(this.attackImageView, 1, 9);
-        gridPane.add(this.initJumpImages(), 0, 10);
-        gridPane.add(this.jumpImageView, 1, 10);
-        gridPane.add(this.initHighAttackImages(), 0, 11);
-        gridPane.add(this.highAttackImageView, 1, 11);
-        gridPane.add(this.initHurtImages(), 0, 12);
-        gridPane.add(this.hurtImageView, 1, 12);
+        gridPane.add(new Label("图片边距属性"), 0, 7);
+        gridPane.add(this.imagePropertiesView, 1, 7);
+        gridPane.add(this.initIdleImages(), 0, 8);
+        gridPane.add(this.idleImageView, 1, 8);
+        gridPane.add(this.initWalkImages(), 0, 9);
+        gridPane.add(this.walkImageView, 1, 9);
+        gridPane.add(this.initAttackImages(), 0, 10);
+        gridPane.add(this.attackImageView, 1, 10);
+        gridPane.add(this.initJumpImages(), 0, 11);
+        gridPane.add(this.jumpImageView, 1, 11);
+        gridPane.add(this.initHighAttackImages(), 0, 12);
+        gridPane.add(this.highAttackImageView, 1, 12);
+        gridPane.add(this.initHurtImages(), 0, 13);
+        gridPane.add(this.hurtImageView, 1, 13);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }

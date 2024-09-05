@@ -37,12 +37,13 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private ChoiceBox<String> actionTypeCheckBox = new ChoiceBox<>();
     @JsonIgnore
     private TextField animationNameText = new TextField();
-
+    @JsonIgnore
+    private TextField bloodVolumeText = new TextField();
 
     /*
-    * physical 是否物理物体,是否需要检测碰撞
-    * level [作废字段]
-    * */
+     * physical 是否物理物体,是否需要检测碰撞
+     * level [作废字段]
+     * */
     private String id;
     private String title;
     private ImageObjectType type = ImageObjectType.FIXED_BODY;
@@ -52,6 +53,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private Integer moveSpeed;
     private ActionType actionType;
     private String animationName;
+    private Integer bloodVolume;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -103,7 +105,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         for (ActionType value : ActionType.values()) {
             this.actionTypeCheckBox.getItems().add(value.name());
         }
-        if (this.actionType != null){
+        if (this.actionType != null) {
             this.actionTypeCheckBox.getSelectionModel().clearAndSelect(actionType.ordinal());
         }
         this.actionTypeCheckBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.actionType = ActionType.valueOf(newValue));
@@ -115,6 +117,16 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         this.animationNameText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.animationName = newValue);
         gridPane.add(new Label("动画名称"), 0, 6);
         gridPane.add(this.animationNameText, 1, 6);
+        if (this.bloodVolume != null) {
+            this.bloodVolumeText.setText(this.bloodVolume.toString());
+        }
+        this.bloodVolumeText.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ImageObject.this.bloodVolume = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("怪物血量"), 0, 7);
+        gridPane.add(this.bloodVolumeText, 1, 7);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -135,6 +147,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         if (this.animationName != null) {
             this.animationNameText.setText(this.animationName);
+        }
+        if (this.bloodVolume != null) {
+            this.bloodVolumeText.setText(this.bloodVolume.toString());
         }
     }
 }

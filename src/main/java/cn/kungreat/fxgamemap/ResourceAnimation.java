@@ -77,6 +77,8 @@ public class ResourceAnimation {
     private final ImageView highAttackImageView = new ImageView();
     @JsonIgnore
     private final ImageView hurtImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView deathImageView = new ImageView();
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -94,6 +96,7 @@ public class ResourceAnimation {
     private List<String> jumpRightImagesName;
     private List<String> highAttackRightImagesName;
     private List<String> hurtRightImagesName;
+    private List<String> deathRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -198,6 +201,8 @@ public class ResourceAnimation {
         gridPane.add(this.highAttackImageView, 1, 12);
         gridPane.add(this.initHurtImages(), 0, 13);
         gridPane.add(this.hurtImageView, 1, 13);
+        gridPane.add(this.initDeathImages(), 0, 14);
+        gridPane.add(this.deathImageView, 1, 14);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -436,6 +441,45 @@ public class ResourceAnimation {
         return hurtVBox;
     }
 
+    private VBox initDeathImages() {
+        if (this.deathRightImagesName != null) {
+            addDeathRightTimeline();
+        }
+        VBox deathVBox = new VBox(10);
+        Button deathRightButtonAdd = new Button("添加死亡动画");
+        Button deathRightButtonShow = new Button("播放死亡动画");
+        deathRightButtonShow.setOnAction(event -> {
+            if (this.deathRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.DEATH);
+            }
+        });
+        deathRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.deathRightImagesName == null) {
+                    ResourceAnimation.this.deathRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.deathRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "deathRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.deathRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addDeathRightTimeline();
+            }
+        });
+        deathVBox.getChildren().addAll(deathRightButtonAdd, deathRightButtonShow);
+        return deathVBox;
+    }
+
     private void addIdleTimeline() {
         if (!this.idleImagesName.isEmpty()) {
             List<Image> idleImages = new ArrayList<>();
@@ -499,6 +543,17 @@ public class ResourceAnimation {
                 jumpRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addJumpTimeline(this.jumpImageView, jumpRightImg, 100, 0, 0);
+        }
+    }
+
+    private void addDeathRightTimeline() {
+        if (!this.deathRightImagesName.isEmpty()) {
+            List<Image> deathRightImg = new ArrayList<>();
+            for (String imageName : this.deathRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "deathRight", imageName);
+                deathRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addDeathTimeline(this.deathImageView, deathRightImg, 100, 0);
         }
     }
 }

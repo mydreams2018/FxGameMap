@@ -28,6 +28,7 @@ public class IntegrationAnimation {
     private Timeline climbTimeline;
     //挂掉动画
     private Timeline deathTimeline;
+    private VariableAnimation deathVariableAnimation;
     //受伤动画
     private Timeline hurtTimeline;
     private VariableAnimation hurtVariableAnimation;
@@ -139,7 +140,7 @@ public class IntegrationAnimation {
     }
 
     public void addHurtTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
-                                      int delayMillis, int moveDistance) {
+                                int delayMillis, int moveDistance) {
         if (this.hurtTimeline == null) {
             this.hurtTimeline = new Timeline();
             this.hurtTimeline.setCycleCount(1);
@@ -147,6 +148,17 @@ public class IntegrationAnimation {
             this.hurtVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
                     this.operationHistoryThreadLocal, this.hurtTimeline, 0);
             this.hurtTimeline.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
+    public void addDeathTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
+        if (this.deathTimeline == null) {
+            this.deathTimeline = new Timeline();
+            this.deathTimeline.setCycleCount(1);
+            this.deathTimeline.setAutoReverse(false);
+            this.deathVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
+                    this.operationHistoryThreadLocal, this.deathTimeline, 0);
+            this.deathTimeline.setDelay(Duration.millis(delayMillis));
         }
     }
 
@@ -235,13 +247,13 @@ public class IntegrationAnimation {
             }
             case ATTACK -> {
                 if (this.attackTimeline != null) {
-                    this.attackVariableAnimation.startAttackVariableAnimation();
+                    this.attackVariableAnimation.startBaseVariableAnimation();
                     this.attackTimeline.playFromStart();
                 }
             }
             case HIGH_ATTACK -> {
                 if (this.highAttackTimeline != null) {
-                    this.highAttackVariableAnimation.startAttackVariableAnimation();
+                    this.highAttackVariableAnimation.startBaseVariableAnimation();
                     this.highAttackTimeline.playFromStart();
                 }
             }
@@ -252,20 +264,20 @@ public class IntegrationAnimation {
             }
             case HURT -> {
                 if (this.hurtTimeline != null) {
-                    this.hurtVariableAnimation.startAttackVariableAnimation();
+                    this.hurtVariableAnimation.startBaseVariableAnimation();
                     this.hurtTimeline.playFromStart();
                 }
             }
             case JUMP -> {
                 if (this.jumpTimeline != null) {
                     //只显示动画的过程,别的处理细节由引擎完成,这里只做演示
-                    this.jumpVariableAnimation.startAttackVariableAnimation();
+                    this.jumpVariableAnimation.startBaseVariableAnimation();
                     this.jumpTimeline.playFromStart();
                 }
             }
             case WALK -> {
                 if (this.walkTimeline != null) {
-                    this.walkVariableAnimation.startMoveVariableAnimation();
+                    this.walkVariableAnimation.startBaseVariableAnimation();
                     this.walkTimeline.playFromStart();
                 }
             }
@@ -276,6 +288,7 @@ public class IntegrationAnimation {
             }
             case DEATH -> {
                 if (this.deathTimeline != null) {
+                    this.deathVariableAnimation.startBaseVariableAnimation();
                     this.deathTimeline.playFromStart();
                 }
             }
@@ -309,7 +322,7 @@ public class IntegrationAnimation {
             this.operationHistoryDistance = operationHistoryDistance;
         }
 
-        public void startMoveVariableAnimation() {
+ /*       public void startMoveVariableAnimation() {
             this.animationTimeline.getKeyFrames().clear();
             for (int i = 0; i < this.imagesRight.size(); i++) {
                 KeyValue keyValue = new KeyValue(imageView.layoutXProperty(), imageView.layoutXProperty().get() + (i * moveDistance));
@@ -320,9 +333,9 @@ public class IntegrationAnimation {
                 }, keyValue);
                 this.animationTimeline.getKeyFrames().add(keyFrame);
             }
-        }
+        }*/
 
-        public void startAttackVariableAnimation() {
+        public void startBaseVariableAnimation() {
             this.animationTimeline.getKeyFrames().clear();
             for (int i = 0; i < this.imagesRight.size(); i++) {
                 KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {

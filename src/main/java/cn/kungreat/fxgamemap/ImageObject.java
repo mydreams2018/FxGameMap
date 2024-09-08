@@ -39,6 +39,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private TextField animationNameText = new TextField();
     @JsonIgnore
     private TextField bloodVolumeText = new TextField();
+    @JsonIgnore
+    private TextField baseAttackValueText = new TextField();
 
     /*
      * physical 是否物理物体,是否需要检测碰撞
@@ -54,6 +56,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private ActionType actionType;
     private String animationName;
     private Integer bloodVolume;
+    private Integer baseAttackValue;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -127,6 +130,16 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         });
         gridPane.add(new Label("怪物血量"), 0, 7);
         gridPane.add(this.bloodVolumeText, 1, 7);
+        if (this.baseAttackValue != null) {
+            this.baseAttackValueText.setText(this.baseAttackValue.toString());
+        }
+        this.baseAttackValueText.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ImageObject.this.baseAttackValue = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("基础功击"), 0, 8);
+        gridPane.add(this.baseAttackValueText, 1, 8);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -147,9 +160,6 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         if (this.animationName != null) {
             this.animationNameText.setText(this.animationName);
-        }
-        if (this.bloodVolume != null) {
-            this.bloodVolumeText.setText(this.bloodVolume.toString());
         }
     }
 }

@@ -6,6 +6,7 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.frame.FrameTimer;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +25,11 @@ public class RootApplication extends Application {
     public static final FXMLLoader mainFXMLLoader = new FXMLLoader(RootApplication.class.getResource("FxGameMap.fxml"));
     public static final ObjectMapper MAP_JSON = new ObjectMapper();
     public static final Resources RESOURCES = new Resources();
+
+    static {
+        //序列化时过滤掉为null的对象
+        MAP_JSON.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     @Override
     public void start(Stage stage) throws IOException {

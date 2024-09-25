@@ -79,6 +79,11 @@ public class ResourceAnimation {
     private final ImageView hurtImageView = new ImageView();
     @JsonIgnore
     private final ImageView deathImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView magicMoveRightImageView = new ImageView();
+    @JsonIgnore
+    private final ImageView magicDestructionRightImageView = new ImageView();
+
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -97,6 +102,8 @@ public class ResourceAnimation {
     private List<String> highAttackRightImagesName;
     private List<String> hurtRightImagesName;
     private List<String> deathRightImagesName;
+    private List<String> magicMoveRightImagesName;
+    private List<String> magicDestructionRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -203,6 +210,10 @@ public class ResourceAnimation {
         gridPane.add(this.hurtImageView, 1, 13);
         gridPane.add(this.initDeathImages(), 0, 14);
         gridPane.add(this.deathImageView, 1, 14);
+        gridPane.add(this.initMagicMoveImages(), 0, 15);
+        gridPane.add(this.magicMoveRightImageView, 1, 15);
+        gridPane.add(this.initMagicDestructionImages(), 0, 16);
+        gridPane.add(this.magicDestructionRightImageView, 1, 16);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -480,6 +491,84 @@ public class ResourceAnimation {
         return deathVBox;
     }
 
+    private VBox initMagicMoveImages() {
+        if (this.magicMoveRightImagesName != null) {
+            addMagicMoveRightTimeline();
+        }
+        VBox magicMoveVBox = new VBox(10);
+        Button magicMoveRightButtonAdd = new Button("添加魔法移动动画");
+        Button magicMoveRightButtonShow = new Button("播放魔法移动动画");
+        magicMoveRightButtonShow.setOnAction(event -> {
+            if (this.magicMoveRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.MAGIC_MOVE);
+            }
+        });
+        magicMoveRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.magicMoveRightImagesName == null) {
+                    ResourceAnimation.this.magicMoveRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.magicMoveRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "magicMoveRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.magicMoveRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addMagicMoveRightTimeline();
+            }
+        });
+        magicMoveVBox.getChildren().addAll(magicMoveRightButtonAdd, magicMoveRightButtonShow);
+        return magicMoveVBox;
+    }
+
+    private VBox initMagicDestructionImages() {
+        if (this.magicDestructionRightImagesName != null) {
+            addMagicDestructionRightTimeline();
+        }
+        VBox magicDestructionVBox = new VBox(10);
+        Button magicDestructionRightButtonAdd = new Button("添加魔法销毁动画");
+        Button magicDestructionRightButtonShow = new Button("播放魔法销毁动画");
+        magicDestructionRightButtonShow.setOnAction(event -> {
+            if (this.magicDestructionRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.MAGIC_D);
+            }
+        });
+        magicDestructionRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.magicDestructionRightImagesName == null) {
+                    ResourceAnimation.this.magicDestructionRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.magicDestructionRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "magicDestructionRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.magicDestructionRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addMagicDestructionRightTimeline();
+            }
+        });
+        magicDestructionVBox.getChildren().addAll(magicDestructionRightButtonAdd, magicDestructionRightButtonShow);
+        return magicDestructionVBox;
+    }
+
     private void addIdleTimeline() {
         if (!this.idleImagesName.isEmpty()) {
             List<Image> idleImages = new ArrayList<>();
@@ -554,6 +643,28 @@ public class ResourceAnimation {
                 deathRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addDeathTimeline(this.deathImageView, deathRightImg, 100, 0);
+        }
+    }
+
+    private void addMagicMoveRightTimeline() {
+        if (!this.magicMoveRightImagesName.isEmpty()) {
+            List<Image> magicMoveRightImg = new ArrayList<>();
+            for (String imageName : this.magicMoveRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "magicMoveRight", imageName);
+                magicMoveRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addMagicMoveTimeline(this.magicMoveRightImageView, magicMoveRightImg, 100, 0);
+        }
+    }
+
+    private void addMagicDestructionRightTimeline() {
+        if (!this.magicDestructionRightImagesName.isEmpty()) {
+            List<Image> magicDestructionRightImg = new ArrayList<>();
+            for (String imageName : this.magicDestructionRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "magicDestructionRight", imageName);
+                magicDestructionRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addMagicDestructionTimeline(this.magicDestructionRightImageView, magicDestructionRightImg, 100, 0);
         }
     }
 }

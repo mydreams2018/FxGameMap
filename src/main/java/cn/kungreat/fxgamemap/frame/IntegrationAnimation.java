@@ -2,7 +2,6 @@ package cn.kungreat.fxgamemap.frame;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,6 +39,12 @@ public class IntegrationAnimation {
     //走动画
     private Timeline walkTimeline;
     private VariableAnimation walkVariableAnimation;
+    //魔法移动
+    private Timeline magicMoveTimeline;
+    private VariableAnimation magicMoveVariableAnimation;
+    //魔法销毁
+    private Timeline magicDestructionTimeline;
+    private VariableAnimation magicDestructionVariableAnimation;
     //当前播放的动画类型标识
     private AnimationType animationType;
 
@@ -162,6 +167,28 @@ public class IntegrationAnimation {
         }
     }
 
+    public void addMagicMoveTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
+        if (this.magicMoveTimeline == null) {
+            this.magicMoveTimeline = new Timeline();
+            this.magicMoveTimeline.setCycleCount(1);
+            this.magicMoveTimeline.setAutoReverse(false);
+            this.magicMoveVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
+                    this.operationHistoryThreadLocal, this.magicMoveTimeline, 0);
+            this.magicMoveTimeline.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
+    public void addMagicDestructionTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
+        if (this.magicDestructionTimeline == null) {
+            this.magicDestructionTimeline = new Timeline();
+            this.magicDestructionTimeline.setCycleCount(1);
+            this.magicDestructionTimeline.setAutoReverse(false);
+            this.magicDestructionVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
+                    this.operationHistoryThreadLocal, this.magicDestructionTimeline, 0);
+            this.magicDestructionTimeline.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
     /* 功击动画
      * imageView 动画应用的图像
      * imagesRight 多个动画帧集合 右操作方向
@@ -236,6 +263,16 @@ public class IntegrationAnimation {
                         this.deathTimeline.stop();
                     }
                 }
+                case MAGIC_MOVE -> {
+                    if (this.magicMoveTimeline != null) {
+                        this.magicMoveTimeline.stop();
+                    }
+                }
+                case MAGIC_D -> {
+                    if (this.magicDestructionTimeline != null) {
+                        this.magicDestructionTimeline.stop();
+                    }
+                }
             }
         }
         this.animationType = animationType;
@@ -290,6 +327,18 @@ public class IntegrationAnimation {
                 if (this.deathTimeline != null) {
                     this.deathVariableAnimation.startBaseVariableAnimation();
                     this.deathTimeline.playFromStart();
+                }
+            }
+            case MAGIC_MOVE -> {
+                if (this.magicMoveTimeline != null) {
+                    this.magicMoveVariableAnimation.startBaseVariableAnimation();
+                    this.magicMoveTimeline.playFromStart();
+                }
+            }
+            case MAGIC_D -> {
+                if (this.magicDestructionTimeline != null) {
+                    this.magicDestructionVariableAnimation.startBaseVariableAnimation();
+                    this.magicDestructionTimeline.playFromStart();
                 }
             }
         }
@@ -349,7 +398,7 @@ public class IntegrationAnimation {
     }
 
     public static enum AnimationType {
-        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK;
+        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D;
     }
 
     public static enum OperationHistory {

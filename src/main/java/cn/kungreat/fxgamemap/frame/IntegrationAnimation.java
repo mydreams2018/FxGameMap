@@ -386,11 +386,11 @@ public class IntegrationAnimation {
 
         public void startBaseVariableAnimation() {
             this.animationTimeline.getKeyFrames().clear();
-            for (int i = 0; i < this.imagesRight.size(); i++) {
+            for (int i = 1; i <= this.imagesRight.size(); i++) {
                 KeyFrame keyFrame = new KeyFrame(Duration.millis(i * durationMillis), String.valueOf(i), event -> {
                     KeyFrame source = (KeyFrame) event.getSource();
                     int indexImage = Integer.parseInt(source.getName());
-                    imageView.setImage(imagesRight.get(indexImage));
+                    imageView.setImage(imagesRight.get(indexImage - 1));
                 });
                 this.animationTimeline.getKeyFrames().add(keyFrame);
             }

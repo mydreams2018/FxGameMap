@@ -35,6 +35,7 @@ public class TreeArea {
     private List<TreeGameMap> childrenMap;
     private String imageDirectory;
     private String[][] childrenPointName;
+    private String bgAudioClip;
     @JsonIgnore
     private GridPane gridPane;
     @JsonIgnore
@@ -45,7 +46,8 @@ public class TreeArea {
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
 
-    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory, Integer width, Integer height) {
+    public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory,
+                    Integer width, Integer height, String bgAudioClip) {
         this.title = title;
         this.id = id;
         this.xNumber = xNumber;
@@ -54,6 +56,7 @@ public class TreeArea {
         this.imageDirectory = imageDirectory;
         this.width = width;
         this.height = height;
+        this.bgAudioClip = bgAudioClip;
     }
 
     public void initGridPane() {

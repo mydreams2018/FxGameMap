@@ -33,6 +33,7 @@ public class BaseDialog {
     public static final TextField TEXT_AREAY = BaseDialog.getTextField("请输入Y坐标地图有几个");
     public static final TextField TEXT_AREA_WIDTH = BaseDialog.getTextField("请输入宽度");
     public static final TextField TEXT_AREA_HEIGHT = BaseDialog.getTextField("请输入高度");
+    public static final TextField TEXT_AREA_BG_AUDIO = BaseDialog.getTextField("请输入背景音乐");
 
     public static final TextField TEXT_MAP = BaseDialog.getTextField("请输入名称");
 
@@ -98,7 +99,7 @@ public class BaseDialog {
 
     public static VBox getAreaRectangular() {
         VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT);
+        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT, TEXT_AREA_BG_AUDIO);
         return vb;
     }
 

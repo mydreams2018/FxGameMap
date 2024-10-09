@@ -154,6 +154,7 @@ public class RootController implements Initializable {
             String areaYText = BaseDialog.TEXT_AREAY.getText();
             String areaWidth = BaseDialog.TEXT_AREA_WIDTH.getText();
             String areaHeight = BaseDialog.TEXT_AREA_HEIGHT.getText();
+            String bgAudio = BaseDialog.TEXT_AREA_BG_AUDIO.getText();
             if (!newArea.isBlank() && !areaXText.isBlank() && !areaYText.isBlank() && !areaWidth.isBlank() && !areaHeight.isBlank()
                     && PatternUtils.NumberRegex.matcher(areaXText).matches() && PatternUtils.NumberRegex.matcher(areaYText).matches()
                     && PatternUtils.NumberRegex.matcher(areaWidth).matches() && PatternUtils.NumberRegex.matcher(areaHeight).matches()) {
@@ -161,7 +162,7 @@ public class RootController implements Initializable {
                 if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
                             Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>(),
-                            treeWorld.getTitle() + File.separator + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight));
+                            treeWorld.getTitle() + File.separator + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight), bgAudio);
                     treeWorld.getChildrenArea().add(treeArea);
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));

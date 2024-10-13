@@ -36,6 +36,7 @@ public class IntegrationAnimation {
     private VariableAnimation jumpVariableAnimation;
     //跑动画
     private Timeline runTimeline;
+    private VariableAnimation runVariableAnimation;
     //走动画
     private Timeline walkTimeline;
     private VariableAnimation walkVariableAnimation;
@@ -99,6 +100,20 @@ public class IntegrationAnimation {
             this.walkTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.walkVariableAnimation.setImagesRight(imagesRight);
+        }
+    }
+
+    public void addRunTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                int delayMillis, int moveDistance, int operationHistoryDistance) {
+        if (this.runTimeline == null) {
+            this.runTimeline = new Timeline();
+            this.runTimeline.setCycleCount(1);
+            this.runTimeline.setAutoReverse(false);
+            this.runVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.runTimeline, operationHistoryDistance);
+            this.runTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.runVariableAnimation.setImagesRight(imagesRight);
         }
     }
 
@@ -296,6 +311,7 @@ public class IntegrationAnimation {
             }
             case RUN -> {
                 if (this.runTimeline != null) {
+                    this.runVariableAnimation.startBaseVariableAnimation();
                     this.runTimeline.playFromStart();
                 }
             }

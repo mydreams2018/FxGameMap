@@ -78,6 +78,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final ImageView walkImageView = new ImageView();
     @JsonIgnore
+    private final ImageView runImageView = new ImageView();
+    @JsonIgnore
     private final ImageView attackImageView = new ImageView();
     @JsonIgnore
     private final ImageView jumpImageView = new ImageView();
@@ -109,6 +111,7 @@ public class ResourceAnimation {
     private String moveAudio;
     private List<String> idleImagesName;
     private List<String> walkRightImagesName;
+    private List<String> runRightImagesName;
     private List<String> attackRightImagesName;
     private List<String> jumpRightImagesName;
     private List<String> highAttackRightImagesName;
@@ -244,6 +247,9 @@ public class ResourceAnimation {
         gridPane.add(this.initWalkImages(), 0, rowIndex);
         gridPane.add(this.walkImageView, 1, rowIndex);
         rowIndex++;
+        gridPane.add(this.initRunImages(), 0, rowIndex);
+        gridPane.add(this.runImageView, 1, rowIndex);
+        rowIndex++;
         gridPane.add(this.initAttackImages(), 0, rowIndex);
         gridPane.add(this.attackImageView, 1, rowIndex);
         rowIndex++;
@@ -340,6 +346,46 @@ public class ResourceAnimation {
         });
         walkVBox.getChildren().addAll(walkRightButtonAdd, walkRightButtonShow);
         return walkVBox;
+    }
+
+    private VBox initRunImages() {
+        if (this.runRightImagesName != null) {
+            addRunRightTimeline();
+        }
+        VBox runVBox = new VBox(10);
+        Button runRightButtonAdd = new Button("添加右跑动画");
+        Button runRightButtonShow = new Button("播放右跑动画");
+        runRightButtonShow.setOnAction(event -> {
+            if (this.runRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.RUN);
+            }
+        });
+        runRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.runRightImagesName == null) {
+                    ResourceAnimation.this.runRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.runRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "runRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.runRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addRunRightTimeline();
+            }
+        });
+        runVBox.getChildren().addAll(runRightButtonAdd, runRightButtonShow);
+        return runVBox;
     }
 
     private VBox initAttackImages() {
@@ -636,6 +682,17 @@ public class ResourceAnimation {
                 walkRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addWalkTimeline(this.walkImageView, walkRightImg, 100, 0, 0, 0);
+        }
+    }
+
+    private void addRunRightTimeline() {
+        if (!this.runRightImagesName.isEmpty()) {
+            List<Image> runRightImg = new ArrayList<>();
+            for (String imageName : this.runRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "runRight", imageName);
+                runRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addRunTimeline(this.runImageView, runRightImg, 100, 0, 0, 0);
         }
     }
 

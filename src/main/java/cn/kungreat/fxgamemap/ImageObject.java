@@ -34,6 +34,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TextField moveSpeedText = new TextField();
     @JsonIgnore
+    private TextField runSpeedText = new TextField();
+    @JsonIgnore
     private ChoiceBox<String> actionTypeCheckBox = new ChoiceBox<>();
     @JsonIgnore
     private TextField animationNameText = new TextField();
@@ -53,6 +55,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private boolean physical = true;
     private String maxActivityScope;
     private Integer moveSpeed;
+    private Integer runSpeed;
     private ActionType actionType;
     private String animationName;
     private Integer bloodVolume;
@@ -140,6 +143,16 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         });
         gridPane.add(new Label("基础功击"), 0, 8);
         gridPane.add(this.baseAttackValueText, 1, 8);
+        if (this.runSpeed != null) {
+            this.runSpeedText.setText(this.runSpeed.toString());
+        }
+        this.runSpeedText.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ImageObject.this.runSpeed = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("跑动速度"), 0, 9);
+        gridPane.add(this.runSpeedText, 1, 9);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }
@@ -154,6 +167,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         this.maxActivityScopeText.setText(this.maxActivityScope);
         if (this.moveSpeed != null) {
             this.moveSpeedText.setText(this.moveSpeed.toString());
+        }
+        if (this.runSpeed != null) {
+            this.runSpeedText.setText(this.runSpeed.toString());
         }
         if (this.actionType != null) {
             this.actionTypeCheckBox.getSelectionModel().select(this.actionType.name());

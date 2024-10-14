@@ -34,6 +34,9 @@ public class IntegrationAnimation {
     //跳动画
     private Timeline jumpTimeline;
     private VariableAnimation jumpVariableAnimation;
+    //大跳动画
+    private Timeline highJumpTimeline;
+    private VariableAnimation highJumpVariableAnimation;
     //跑动画
     private Timeline runTimeline;
     private VariableAnimation runVariableAnimation;
@@ -226,6 +229,20 @@ public class IntegrationAnimation {
         }
     }
 
+    public void addHighJumpTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                int delayMillis, int moveDistance) {
+        if (this.highJumpTimeline == null) {
+            this.highJumpTimeline = new Timeline();
+            this.highJumpTimeline.setCycleCount(1);
+            this.highJumpTimeline.setAutoReverse(false);
+            this.highJumpVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.highJumpTimeline, 0);
+            this.highJumpTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.highJumpVariableAnimation.setImagesRight(imagesRight);
+        }
+    }
+
     /*
      * 保存数据  关闭旧的动画 开始新的动画
      * 游戏引擎处需要额外的处理逻辑
@@ -328,6 +345,12 @@ public class IntegrationAnimation {
                     this.jumpTimeline.playFromStart();
                 }
             }
+            case HIGH_JUMP -> {
+                if (this.highJumpTimeline != null) {
+                    this.highJumpVariableAnimation.startBaseVariableAnimation();
+                    this.highJumpTimeline.playFromStart();
+                }
+            }
             case WALK -> {
                 if (this.walkTimeline != null) {
                     this.walkVariableAnimation.startBaseVariableAnimation();
@@ -414,7 +437,7 @@ public class IntegrationAnimation {
     }
 
     public static enum AnimationType {
-        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D;
+        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP;
     }
 
     public static enum OperationHistory {

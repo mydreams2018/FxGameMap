@@ -56,6 +56,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField jumpIntervalMilliView = new TextField();
     @JsonIgnore
+    private final TextField highJumpIntervalMilliView = new TextField();
+    @JsonIgnore
     private final TextField attackIntervalMilliView = new TextField();
     @JsonIgnore
     private final TextField highAttackIntervalMilliView = new TextField();
@@ -86,6 +88,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final ImageView jumpImageView = new ImageView();
     @JsonIgnore
+    private final ImageView highJumpImageView = new ImageView();
+    @JsonIgnore
     private final ImageView highAttackImageView = new ImageView();
     @JsonIgnore
     private final ImageView hurtImageView = new ImageView();
@@ -103,6 +107,7 @@ public class ResourceAnimation {
     private Integer moveIntervalMilli;
     private Integer runIntervalMilli;
     private Integer jumpIntervalMilli;
+    private Integer highJumpIntervalMilli;
     private Integer attackIntervalMilli;
     private Integer highAttackIntervalMilli;
     private Integer hurtIntervalMilli;
@@ -117,6 +122,7 @@ public class ResourceAnimation {
     private List<String> runRightImagesName;
     private List<String> attackRightImagesName;
     private List<String> jumpRightImagesName;
+    private List<String> highJumpRightImagesName;
     private List<String> highAttackRightImagesName;
     private List<String> hurtRightImagesName;
     private List<String> deathRightImagesName;
@@ -157,7 +163,6 @@ public class ResourceAnimation {
         gridPane.add(this.runIntervalMilliView, 1, 1);
         if (this.jumpIntervalMilli != null) {
             this.jumpIntervalMilliView.setText(this.jumpIntervalMilli.toString());
-            this.integrationAnimation.setJumpDurationControl(new DurationControl(this.jumpIntervalMilli));
         }
         this.jumpIntervalMilliView.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
@@ -248,7 +253,17 @@ public class ResourceAnimation {
         this.moveAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.moveAudio = newValue);
         gridPane.add(new Label("移动音乐"), 0, 12);
         gridPane.add(this.moveAudioView, 1, 12);
-        this.gridPaneAuto(gridPane, 13);
+        if (this.highJumpIntervalMilli != null) {
+            this.highJumpIntervalMilliView.setText(this.highJumpIntervalMilli.toString());
+        }
+        this.highJumpIntervalMilliView.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ResourceAnimation.this.highJumpIntervalMilli = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("大跳跃间隔"), 0, 13);
+        gridPane.add(this.highJumpIntervalMilliView, 1, 13);
+        this.gridPaneAuto(gridPane, 14);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }
@@ -283,6 +298,9 @@ public class ResourceAnimation {
         rowIndex++;
         gridPane.add(this.initMagicDestructionImages(), 0, rowIndex);
         gridPane.add(this.magicDestructionRightImageView, 1, rowIndex);
+        rowIndex++;
+        gridPane.add(this.initHighJumpImages(), 0, rowIndex);
+        gridPane.add(this.highJumpImageView, 1, rowIndex);
     }
 
     private VBox initIdleImages() {
@@ -479,6 +497,46 @@ public class ResourceAnimation {
         });
         jumpVBox.getChildren().addAll(jumpRightButtonAdd, jumpRightButtonShow);
         return jumpVBox;
+    }
+
+    private VBox initHighJumpImages() {
+        VBox highJumpVBox = new VBox(10);
+        if (this.highJumpRightImagesName != null) {
+            addHighJumpRightTimeline();
+        }
+        Button highJumpRightButtonAdd = new Button("添加右大跳动画");
+        Button highJumpRightButtonShow = new Button("播放右大跳动画");
+        highJumpRightButtonShow.setOnAction(event -> {
+            if (this.highJumpRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.HIGH_JUMP);
+            }
+        });
+        highJumpRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.highJumpRightImagesName == null) {
+                    ResourceAnimation.this.highJumpRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.highJumpRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "highJumpRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.highJumpRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addHighJumpRightTimeline();
+            }
+        });
+        highJumpVBox.getChildren().addAll(highJumpRightButtonAdd, highJumpRightButtonShow);
+        return highJumpVBox;
     }
 
     private VBox initHighAttackImages() {
@@ -750,6 +808,17 @@ public class ResourceAnimation {
                 jumpRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addJumpTimeline(this.jumpImageView, jumpRightImg, 100, 0, 0);
+        }
+    }
+
+    private void addHighJumpRightTimeline() {
+        if (!this.highJumpRightImagesName.isEmpty()) {
+            List<Image> highJumpRightImg = new ArrayList<>();
+            for (String imageName : this.highJumpRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "highJumpRight", imageName);
+                highJumpRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addHighJumpTimeline(this.highJumpImageView, highJumpRightImg, 100, 0, 0);
         }
     }
 

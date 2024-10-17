@@ -23,6 +23,9 @@ public class IntegrationAnimation {
     //跑步重击
     private Timeline highAttackTimeline;
     private VariableAnimation highAttackVariableAnimation;
+    //跑功击动画
+    private Timeline runAttackTimeline;
+    private VariableAnimation runAttackVariableAnimation;
     //攀登动画
     private Timeline climbTimeline;
     //挂掉动画
@@ -139,6 +142,20 @@ public class IntegrationAnimation {
             this.attackTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.attackVariableAnimation.setImagesRight(imagesRight);
+        }
+    }
+
+    public void addRunAttackTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                  int delayMillis, int moveDistance) {
+        if (this.runAttackTimeline == null) {
+            this.runAttackTimeline = new Timeline();
+            this.runAttackTimeline.setCycleCount(1);
+            this.runAttackTimeline.setAutoReverse(false);
+            this.runAttackVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.runAttackTimeline, 0);
+            this.runAttackTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.runAttackVariableAnimation.setImagesRight(imagesRight);
         }
     }
 
@@ -320,6 +337,12 @@ public class IntegrationAnimation {
                     this.attackTimeline.playFromStart();
                 }
             }
+            case RUN_ATTACK -> {
+                if (this.runAttackTimeline != null) {
+                    this.runAttackVariableAnimation.startBaseVariableAnimation();
+                    this.runAttackTimeline.playFromStart();
+                }
+            }
             case HIGH_ATTACK -> {
                 if (this.highAttackTimeline != null) {
                     this.highAttackVariableAnimation.startBaseVariableAnimation();
@@ -437,7 +460,7 @@ public class IntegrationAnimation {
     }
 
     public static enum AnimationType {
-        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP;
+        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP,RUN_ATTACK;
     }
 
     public static enum OperationHistory {

@@ -86,6 +86,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final ImageView attackImageView = new ImageView();
     @JsonIgnore
+    private final ImageView runAttackImageView = new ImageView();
+    @JsonIgnore
     private final ImageView jumpImageView = new ImageView();
     @JsonIgnore
     private final ImageView highJumpImageView = new ImageView();
@@ -128,6 +130,7 @@ public class ResourceAnimation {
     private List<String> deathRightImagesName;
     private List<String> magicMoveRightImagesName;
     private List<String> magicDestructionRightImagesName;
+    private List<String> runAttackRightImagesName;
 
     public void initTab() {
         tab = new Tab();
@@ -301,6 +304,9 @@ public class ResourceAnimation {
         rowIndex++;
         gridPane.add(this.initHighJumpImages(), 0, rowIndex);
         gridPane.add(this.highJumpImageView, 1, rowIndex);
+        rowIndex++;
+        gridPane.add(this.initRunAttackImages(), 0, rowIndex);
+        gridPane.add(this.runAttackImageView, 1, rowIndex);
     }
 
     private VBox initIdleImages() {
@@ -457,6 +463,46 @@ public class ResourceAnimation {
         });
         attackVBox.getChildren().addAll(attackRightButtonAdd, attackRightButtonShow);
         return attackVBox;
+    }
+
+    private VBox initRunAttackImages() {
+        if (this.runAttackRightImagesName != null) {
+            addRunAttackRightTimeline();
+        }
+        VBox runAttackVBox = new VBox(10);
+        Button runAttackRightButtonAdd = new Button("添加跑功动画");
+        Button runAttackRightButtonShow = new Button("播放跑功动画");
+        runAttackRightButtonShow.setOnAction(event -> {
+            if (this.runAttackRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.RUN_ATTACK);
+            }
+        });
+        runAttackRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.runAttackRightImagesName == null) {
+                    ResourceAnimation.this.runAttackRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.runAttackRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "runAttackRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.runAttackRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addRunAttackRightTimeline();
+            }
+        });
+        runAttackVBox.getChildren().addAll(runAttackRightButtonAdd, runAttackRightButtonShow);
+        return runAttackVBox;
     }
 
     private VBox initJumpImages() {
@@ -775,6 +821,17 @@ public class ResourceAnimation {
                 attackRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addAttackTimeline(this.attackImageView, attackRightImg, 100, 0, 0);
+        }
+    }
+
+    private void addRunAttackRightTimeline() {
+        if (!this.runAttackRightImagesName.isEmpty()) {
+            List<Image> runAttackRightImg = new ArrayList<>();
+            for (String imageName : this.runAttackRightImagesName) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "runAttackRight", imageName);
+                runAttackRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addRunAttackTimeline(this.runAttackImageView, runAttackRightImg, 100, 0, 0);
         }
     }
 

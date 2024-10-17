@@ -76,6 +76,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField moveAudioView = new TextField();
     @JsonIgnore
+    private final TextField runAttackAudioView = new TextField();
+    @JsonIgnore
     private final IntegrationAnimation integrationAnimation = new IntegrationAnimation();
     @JsonIgnore
     private final ImageView idleImageView = new ImageView();
@@ -119,6 +121,7 @@ public class ResourceAnimation {
     private String highAttackAudio;
     private String hurtAudio;
     private String moveAudio;
+    private String runAttackAudio;
     private List<String> idleImagesName;
     private List<String> walkRightImagesName;
     private List<String> runRightImagesName;
@@ -266,7 +269,13 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("大跳跃间隔"), 0, 13);
         gridPane.add(this.highJumpIntervalMilliView, 1, 13);
-        this.gridPaneAuto(gridPane, 14);
+        if (this.runAttackAudio != null && !this.runAttackAudio.isEmpty()) {
+            this.runAttackAudioView.setText(this.runAttackAudio);
+        }
+        this.runAttackAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.runAttackAudio = newValue);
+        gridPane.add(new Label("跑功音乐"), 0, 14);
+        gridPane.add(this.runAttackAudioView, 1, 14);
+        this.gridPaneAuto(gridPane, 15);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }

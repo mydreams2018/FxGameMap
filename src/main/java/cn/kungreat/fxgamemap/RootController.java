@@ -180,7 +180,7 @@ public class RootController implements Initializable {
                 TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
                 if (item != null && item.getValue() instanceof TreeArea treeArea) {
                     TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
-                            treeArea.getWidth(), treeArea.getHeight(), treeArea.getImageDirectory() + File.separator + title);
+                            treeArea.getWidth(), treeArea.getHeight(), treeArea.getImageDirectory());
                     treeArea.getChildrenMap().add(treeGameMap);
                     TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
                     treeItem.setGraphic(new FontIcon("fas-map"));

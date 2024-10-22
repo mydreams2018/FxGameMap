@@ -1,18 +1,25 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
+import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  * 图片对象的描述信息
@@ -43,7 +50,14 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private TextField bloodVolumeText = new TextField();
     @JsonIgnore
     private TextField baseAttackValueText = new TextField();
-
+    @JsonIgnore
+    private TextField baseAnimationNameText = new TextField();
+    @JsonIgnore
+    private Button baseAnimationButton = new Button("添加单独动画");
+    @JsonIgnore
+    public static final String FIXED_ANIMATION_DIRECTORY = "fixed_animation";
+    @JsonIgnore
+    private List<File> FixedAnimationFileSrc;
     /*
      * physical 是否物理物体,是否需要检测碰撞
      * level [作废字段]
@@ -60,6 +74,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private String animationName;
     private Integer bloodVolume;
     private Integer baseAttackValue;
+    private List<String> baseAnimationName;
 
     public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
         super(image, startX, startY, imagePath);
@@ -153,8 +168,49 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         });
         gridPane.add(new Label("跑动速度"), 0, 9);
         gridPane.add(this.runSpeedText, 1, 9);
+        if (this.baseAnimationName != null) {
+            this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
+        }
+        this.baseAnimationNameText.setEditable(false);
+        this.baseAnimationButton.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles == null || selectedFiles.isEmpty()) {
+                this.FixedAnimationFileSrc = null;
+                this.baseAnimationNameText.setText("");
+                this.baseAnimationName = null;
+            } else {
+                this.FixedAnimationFileSrc = selectedFiles;
+                if (this.baseAnimationName == null) {
+                    this.baseAnimationName = new ArrayList<>();
+                } else {
+                    this.baseAnimationName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    this.baseAnimationName.add(selectedFile.getName());
+                }
+                this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
+            }
+        });
+        gridPane.add(this.baseAnimationButton, 0, 10);
+        gridPane.add(this.baseAnimationNameText, 1, 10);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
+    }
+
+    public List<String> getBaseAnimationName() {
+        if (this.FixedAnimationFileSrc != null) {
+            this.FixedAnimationFileSrc.forEach(imageSrcPath -> {
+                try {
+                    File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), FIXED_ANIMATION_DIRECTORY);
+                    outFile.mkdirs();
+                    Files.copy(imageSrcPath.toPath(), Path.of(outFile.toString(), imageSrcPath.getName()),
+                            StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                } catch (Exception e) {
+                    LogService.printLog(LogService.LogLevel.ERROR, ImageObject.class, "保存图片资源文件", e);
+                }
+            });
+        }
+        return this.baseAnimationName;
     }
 
     /*
@@ -176,6 +232,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         if (this.animationName != null) {
             this.animationNameText.setText(this.animationName);
+        }
+        if (this.baseAnimationName != null) {
+            this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
         }
     }
 }

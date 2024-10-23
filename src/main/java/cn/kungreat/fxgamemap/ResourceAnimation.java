@@ -78,6 +78,8 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField runAttackAudioView = new TextField();
     @JsonIgnore
+    private final TextField monsterIconNameView = new TextField();
+    @JsonIgnore
     private final IntegrationAnimation integrationAnimation = new IntegrationAnimation();
     @JsonIgnore
     private final ImageView idleImageView = new ImageView();
@@ -122,6 +124,7 @@ public class ResourceAnimation {
     private String hurtAudio;
     private String moveAudio;
     private String runAttackAudio;
+    private String monsterIconName;
     private List<String> idleImagesName;
     private List<String> walkRightImagesName;
     private List<String> runRightImagesName;
@@ -275,7 +278,13 @@ public class ResourceAnimation {
         this.runAttackAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.runAttackAudio = newValue);
         gridPane.add(new Label("跑功音乐"), 0, 14);
         gridPane.add(this.runAttackAudioView, 1, 14);
-        this.gridPaneAuto(gridPane, 15);
+        if (this.monsterIconName != null && !this.monsterIconName.isEmpty()) {
+            this.monsterIconNameView.setText(this.monsterIconName);
+        }
+        this.monsterIconNameView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.monsterIconName = newValue);
+        gridPane.add(new Label("怪物图标名称"), 0, 15);
+        gridPane.add(this.monsterIconNameView, 1, 15);
+        this.gridPaneAuto(gridPane, 16);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }

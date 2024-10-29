@@ -34,6 +34,8 @@ public class BaseDialog {
     public static final TextField TEXT_AREA_WIDTH = BaseDialog.getTextField("请输入宽度");
     public static final TextField TEXT_AREA_HEIGHT = BaseDialog.getTextField("请输入高度");
     public static final TextField TEXT_AREA_BG_AUDIO = BaseDialog.getTextField("请输入背景音乐");
+    public static final TextField TEXT_AREA_ROLE_STARTX = BaseDialog.getTextField("角色初始坐标X");
+    public static final TextField TEXT_AREA_ROLE_STARTY = BaseDialog.getTextField("角色初始坐标Y");
 
     public static final TextField TEXT_MAP = BaseDialog.getTextField("请输入名称");
 
@@ -99,7 +101,7 @@ public class BaseDialog {
 
     public static VBox getAreaRectangular() {
         VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT, TEXT_AREA_BG_AUDIO);
+        vb.getChildren().addAll(TEXT_AREA, TEXT_AREAX, TEXT_AREAY, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT, TEXT_AREA_BG_AUDIO, TEXT_AREA_ROLE_STARTX, TEXT_AREA_ROLE_STARTY);
         return vb;
     }
 

@@ -60,7 +60,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private List<File> FixedAnimationFileSrc;
     /*
      * physical 是否物理物体,是否需要检测碰撞
-     * level [作废字段]
+     * level
      * */
     private String id;
     private String title;

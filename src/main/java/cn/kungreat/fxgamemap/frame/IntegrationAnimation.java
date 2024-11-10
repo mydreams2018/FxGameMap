@@ -20,6 +20,12 @@ public class IntegrationAnimation {
     //功击动画
     private Timeline attackTimeline;
     private VariableAnimation attackVariableAnimation;
+    //魔法功击动画
+    private Timeline magicAttackTimeline;
+    private VariableAnimation magicAttackVariableAnimation;
+    //魔法功击动画 Y
+    private Timeline magicAttackTimelineYaxis;
+    private VariableAnimation magicAttackVariableAnimationYaxis;
     //跑步重击
     private Timeline highAttackTimeline;
     private VariableAnimation highAttackVariableAnimation;
@@ -148,6 +154,34 @@ public class IntegrationAnimation {
             this.attackTimeline.setDelay(Duration.millis(delayMillis));
         } else if (imagesRight != null) {
             this.attackVariableAnimation.setImagesRight(imagesRight);
+        }
+    }
+
+    public void addMagicAttackTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                  int delayMillis, int moveDistance) {
+        if (this.magicAttackTimeline == null) {
+            this.magicAttackTimeline = new Timeline();
+            this.magicAttackTimeline.setCycleCount(1);
+            this.magicAttackTimeline.setAutoReverse(false);
+            this.magicAttackVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.magicAttackTimeline, 0);
+            this.magicAttackTimeline.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.magicAttackVariableAnimation.setImagesRight(imagesRight);
+        }
+    }
+
+    public void addMagicAttackTimelineYaxis(ImageView imageView, List<Image> imagesRight, int durationMillis,
+                                       int delayMillis, int moveDistance) {
+        if (this.magicAttackTimelineYaxis == null) {
+            this.magicAttackTimelineYaxis = new Timeline();
+            this.magicAttackTimelineYaxis.setCycleCount(1);
+            this.magicAttackTimelineYaxis.setAutoReverse(false);
+            this.magicAttackVariableAnimationYaxis = new VariableAnimation(imageView, imagesRight, durationMillis, moveDistance,
+                    this.operationHistoryThreadLocal, this.magicAttackTimelineYaxis, 0);
+            this.magicAttackTimelineYaxis.setDelay(Duration.millis(delayMillis));
+        } else if (imagesRight != null) {
+            this.magicAttackVariableAnimationYaxis.setImagesRight(imagesRight);
         }
     }
 
@@ -443,6 +477,18 @@ public class IntegrationAnimation {
                     this.magicDestructionTimelineY.playFromStart();
                 }
             }
+            case MAGIC_ATTACK -> {
+                if (this.magicAttackTimeline != null) {
+                    this.magicAttackVariableAnimation.startBaseVariableAnimation();
+                    this.magicAttackTimeline.playFromStart();
+                }
+            }
+            case MAGIC_ATTACK_Y -> {
+                if (this.magicAttackTimelineYaxis != null) {
+                    this.magicAttackVariableAnimationYaxis.startBaseVariableAnimation();
+                    this.magicAttackTimelineYaxis.playFromStart();
+                }
+            }
         }
     }
 
@@ -500,7 +546,7 @@ public class IntegrationAnimation {
     }
 
     public static enum AnimationType {
-        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP,RUN_ATTACK,MAGIC_MOVE_Y,MAGIC_D_Y;
+        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP,RUN_ATTACK,MAGIC_MOVE_Y,MAGIC_D_Y,MAGIC_ATTACK,MAGIC_ATTACK_Y;
     }
 
     public static enum OperationHistory {

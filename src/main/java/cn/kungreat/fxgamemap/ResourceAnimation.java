@@ -105,7 +105,14 @@ public class ResourceAnimation {
     private final ImageView magicMoveRightImageView = new ImageView();
     @JsonIgnore
     private final ImageView magicDestructionRightImageView = new ImageView();
-
+    @JsonIgnore
+    private final ImageView magicMoveRightImageViewYaxis = new ImageView();
+    @JsonIgnore
+    private final ImageView magicDestructionRightImageViewYaxis = new ImageView();
+    @JsonIgnore
+    private final ImageView attackMagicImagesView = new ImageView();
+    @JsonIgnore
+    private final ImageView attackMagicImagesViewYaxis = new ImageView();
     /*
      * 只在初始化的时候更新,修改的时候不同步更新
      * */
@@ -137,6 +144,10 @@ public class ResourceAnimation {
     private List<String> magicMoveRightImagesName;
     private List<String> magicDestructionRightImagesName;
     private List<String> runAttackRightImagesName;
+    private List<String> magicMoveRightImagesNameYaxis;
+    private List<String> magicDestructionRightImagesNameYaxis;
+    private List<String> attackMagicImagesName;
+    private List<String> attackMagicImagesNameYaxis;
 
     public void initTab() {
         tab = new Tab();
@@ -325,6 +336,12 @@ public class ResourceAnimation {
         rowIndex++;
         gridPane.add(this.initRunAttackImages(), 0, rowIndex);
         gridPane.add(this.runAttackImageView, 1, rowIndex);
+        rowIndex++;
+        gridPane.add(this.initMagicMoveImagesYaxis(), 0, rowIndex);
+        gridPane.add(this.magicMoveRightImageViewYaxis, 1, rowIndex);
+        rowIndex++;
+        gridPane.add(this.initMagicDestructionImagesYaxis(), 0, rowIndex);
+        gridPane.add(this.magicDestructionRightImageViewYaxis, 1, rowIndex);
     }
 
     private VBox initIdleImages() {
@@ -445,6 +462,46 @@ public class ResourceAnimation {
 
     private VBox initAttackImages() {
         if (this.attackRightImagesName != null) {
+            addAttackRightTimeline();
+        }
+        VBox attackVBox = new VBox(10);
+        Button attackRightButtonAdd = new Button("添加右功动画");
+        Button attackRightButtonShow = new Button("播放右功动画");
+        attackRightButtonShow.setOnAction(event -> {
+            if (this.attackRightImagesName != null) {
+                ResourceAnimation.this.integrationAnimation.getOperationHistoryThreadLocal().set(IntegrationAnimation.OperationHistory.RIGHT);
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.ATTACK);
+            }
+        });
+        attackRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.attackRightImagesName == null) {
+                    ResourceAnimation.this.attackRightImagesName = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.attackRightImagesName.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "attackRight", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.attackRightImagesName.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addAttackRightTimeline();
+            }
+        });
+        attackVBox.getChildren().addAll(attackRightButtonAdd, attackRightButtonShow);
+        return attackVBox;
+    }
+
+    private VBox initMagicAttackImages() {
+        if (this.attackMagicImagesName != null) {
             addAttackRightTimeline();
         }
         VBox attackVBox = new VBox(10);
@@ -798,6 +855,84 @@ public class ResourceAnimation {
         return magicDestructionVBox;
     }
 
+    private VBox initMagicMoveImagesYaxis() {
+        if (this.magicMoveRightImagesNameYaxis != null) {
+            addMagicMoveRightTimelineYaxis();
+        }
+        VBox magicYMoveVBox = new VBox(10);
+        Button magicMoveRightButtonAdd = new Button("添加魔法Y移动动画");
+        Button magicMoveRightButtonShow = new Button("播放魔法Y移动动画");
+        magicMoveRightButtonShow.setOnAction(event -> {
+            if (this.magicMoveRightImagesNameYaxis != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.MAGIC_MOVE_Y);
+            }
+        });
+        magicMoveRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.magicMoveRightImagesNameYaxis == null) {
+                    ResourceAnimation.this.magicMoveRightImagesNameYaxis = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.magicMoveRightImagesNameYaxis.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "magicMoveRightYaxis", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.magicMoveRightImagesNameYaxis.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addMagicMoveRightTimelineYaxis();
+            }
+        });
+        magicYMoveVBox.getChildren().addAll(magicMoveRightButtonAdd, magicMoveRightButtonShow);
+        return magicYMoveVBox;
+    }
+
+    private VBox initMagicDestructionImagesYaxis() {
+        if (this.magicDestructionRightImagesNameYaxis != null) {
+            addMagicDestructionRightTimelineYaxis();
+        }
+        VBox magicDestructionVBox = new VBox(10);
+        Button magicDestructionRightButtonAdd = new Button("添加魔法Y销毁动画");
+        Button magicDestructionRightButtonShow = new Button("播放魔法Y销毁动画");
+        magicDestructionRightButtonShow.setOnAction(event -> {
+            if (this.magicDestructionRightImagesNameYaxis != null) {
+                ResourceAnimation.this.integrationAnimation.startAnimation(IntegrationAnimation.AnimationType.MAGIC_D_Y);
+            }
+        });
+        magicDestructionRightButtonAdd.setOnAction(event -> {
+            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                if (ResourceAnimation.this.magicDestructionRightImagesNameYaxis == null) {
+                    ResourceAnimation.this.magicDestructionRightImagesNameYaxis = new ArrayList<>();
+                } else {
+                    ResourceAnimation.this.magicDestructionRightImagesNameYaxis.clear();
+                }
+                for (File selectedFile : selectedFiles) {
+                    try {
+                        File idleDirectory = Path.of(ResourceAnimation.this.directoryFullPath, ResourceAnimation.this.tabName, "magicDestructionRightYaxis", selectedFile.getName()).toFile();
+                        if (!idleDirectory.getParentFile().exists()) {
+                            idleDirectory.mkdirs();
+                        }
+                        Files.copy(selectedFile.toPath(), idleDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+                        ResourceAnimation.this.magicDestructionRightImagesNameYaxis.add(selectedFile.getName());
+                    } catch (IOException e) {
+                        LogService.printLog(LogService.LogLevel.ERROR, ResourceAnimation.class, "保存动画资源文件", e);
+                    }
+                }
+                ResourceAnimation.this.addMagicDestructionRightTimelineYaxis();
+            }
+        });
+        magicDestructionVBox.getChildren().addAll(magicDestructionRightButtonAdd, magicDestructionRightButtonShow);
+        return magicDestructionVBox;
+    }
+
     private void addIdleTimeline() {
         if (!this.idleImagesName.isEmpty()) {
             List<Image> idleImages = new ArrayList<>();
@@ -927,6 +1062,28 @@ public class ResourceAnimation {
                 magicDestructionRightImg.add(new Image(file.toUri().toString()));
             }
             this.integrationAnimation.addMagicDestructionTimeline(this.magicDestructionRightImageView, magicDestructionRightImg, 100, 0);
+        }
+    }
+
+    private void addMagicMoveRightTimelineYaxis() {
+        if (!this.magicMoveRightImagesNameYaxis.isEmpty()) {
+            List<Image> magicMoveRightImg = new ArrayList<>();
+            for (String imageName : this.magicMoveRightImagesNameYaxis) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "magicMoveRightYaxis", imageName);
+                magicMoveRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addMagicMoveTimelineYaxis(this.magicMoveRightImageViewYaxis, magicMoveRightImg, 100, 0);
+        }
+    }
+
+    private void addMagicDestructionRightTimelineYaxis() {
+        if (!this.magicDestructionRightImagesNameYaxis.isEmpty()) {
+            List<Image> magicDestructionRightImg = new ArrayList<>();
+            for (String imageName : this.magicDestructionRightImagesNameYaxis) {
+                Path file = Path.of(this.directoryFullPath, this.tabName, "magicDestructionRightYaxis", imageName);
+                magicDestructionRightImg.add(new Image(file.toUri().toString()));
+            }
+            this.integrationAnimation.addMagicDestructionTimelineYaxis(this.magicDestructionRightImageViewYaxis, magicDestructionRightImg, 100, 0);
         }
     }
 }

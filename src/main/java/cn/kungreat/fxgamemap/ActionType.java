@@ -5,5 +5,5 @@ package cn.kungreat.fxgamemap;
 * LONG_RANGE 远程
 * */
 public enum ActionType {
-    CLOSE_COMBAT, LONG_RANGE
+    CLOSE_COMBAT, LONG_RANGE,BOSS
 }

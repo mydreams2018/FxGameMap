@@ -49,9 +49,15 @@ public class IntegrationAnimation {
     //魔法移动
     private Timeline magicMoveTimeline;
     private VariableAnimation magicMoveVariableAnimation;
+    //魔法移动Y
+    private Timeline magicMoveTimelineYaxis;
+    private VariableAnimation magicMoveVariableAnimationYaxis;
     //魔法销毁
     private Timeline magicDestructionTimeline;
     private VariableAnimation magicDestructionVariableAnimation;
+    //魔法销毁
+    private Timeline magicDestructionTimelineY;
+    private VariableAnimation magicDestructionVariableAnimationY;
     //当前播放的动画类型标识
     private AnimationType animationType;
 
@@ -213,6 +219,17 @@ public class IntegrationAnimation {
         }
     }
 
+    public void addMagicMoveTimelineYaxis(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
+        if (this.magicMoveTimelineYaxis == null) {
+            this.magicMoveTimelineYaxis = new Timeline();
+            this.magicMoveTimelineYaxis.setCycleCount(1);
+            this.magicMoveTimelineYaxis.setAutoReverse(false);
+            this.magicMoveVariableAnimationYaxis = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
+                    this.operationHistoryThreadLocal, this.magicMoveTimelineYaxis, 0);
+            this.magicMoveTimelineYaxis.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
     public void addMagicDestructionTimeline(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
         if (this.magicDestructionTimeline == null) {
             this.magicDestructionTimeline = new Timeline();
@@ -221,6 +238,17 @@ public class IntegrationAnimation {
             this.magicDestructionVariableAnimation = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
                     this.operationHistoryThreadLocal, this.magicDestructionTimeline, 0);
             this.magicDestructionTimeline.setDelay(Duration.millis(delayMillis));
+        }
+    }
+
+    public void addMagicDestructionTimelineYaxis(ImageView imageView, List<Image> imagesRight, int durationMillis, int delayMillis) {
+        if (this.magicDestructionTimelineY == null) {
+            this.magicDestructionTimelineY = new Timeline();
+            this.magicDestructionTimelineY.setCycleCount(1);
+            this.magicDestructionTimelineY.setAutoReverse(false);
+            this.magicDestructionVariableAnimationY = new VariableAnimation(imageView, imagesRight, durationMillis, 0,
+                    this.operationHistoryThreadLocal, this.magicDestructionTimelineY, 0);
+            this.magicDestructionTimelineY.setDelay(Duration.millis(delayMillis));
         }
     }
 
@@ -403,6 +431,18 @@ public class IntegrationAnimation {
                     this.magicDestructionTimeline.playFromStart();
                 }
             }
+            case MAGIC_MOVE_Y -> {
+                if (this.magicMoveTimelineYaxis != null) {
+                    this.magicMoveVariableAnimationYaxis.startBaseVariableAnimation();
+                    this.magicMoveTimelineYaxis.playFromStart();
+                }
+            }
+            case MAGIC_D_Y -> {
+                if (this.magicDestructionTimelineY != null) {
+                    this.magicDestructionVariableAnimationY.startBaseVariableAnimation();
+                    this.magicDestructionTimelineY.playFromStart();
+                }
+            }
         }
     }
 
@@ -460,7 +500,7 @@ public class IntegrationAnimation {
     }
 
     public static enum AnimationType {
-        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP,RUN_ATTACK;
+        IDLE, ATTACK, HIGH_ATTACK, CLIMB, DEATH, HURT, JUMP, RUN, WALK,MAGIC_MOVE,MAGIC_D,HIGH_JUMP,RUN_ATTACK,MAGIC_MOVE_Y,MAGIC_D_Y;
     }
 
     public static enum OperationHistory {

@@ -64,9 +64,9 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField hurtIntervalMilliView = new TextField();
     @JsonIgnore
-    private final TextField closerAttackRangeView = new TextField();
+    private final TextField attackRangeView = new TextField();
     @JsonIgnore
-    private final TextField longAttackRangeView = new TextField();
+    private final TextField otherAttackRangeView = new TextField();
     @JsonIgnore
     private final TextField imagePropertiesView = new TextField();
     @JsonIgnore
@@ -126,8 +126,8 @@ public class ResourceAnimation {
     private Integer attackIntervalMilli;
     private Integer highAttackIntervalMilli;
     private Integer hurtIntervalMilli;
-    private Integer closerAttackRange;
-    private Integer longAttackRange;
+    private Integer attackRange;
+    private Integer otherAttackRange;
     private String imageProperties;
     private String attackAudio;
     private String highAttackAudio;
@@ -216,26 +216,26 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("重击间隔"), 0, 4);
         gridPane.add(this.highAttackIntervalMilliView, 1, 4);
-        if (this.closerAttackRange != null) {
-            this.closerAttackRangeView.setText(this.closerAttackRange.toString());
+        if (this.attackRange != null) {
+            this.attackRangeView.setText(this.attackRange.toString());
         }
-        this.closerAttackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
+        this.attackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
-                ResourceAnimation.this.closerAttackRange = Integer.parseInt(newValue);
+                ResourceAnimation.this.attackRange = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("近战功击范围"), 0, 5);
-        gridPane.add(this.closerAttackRangeView, 1, 5);
-        if (this.longAttackRange != null) {
-            this.longAttackRangeView.setText(this.longAttackRange.toString());
+        gridPane.add(new Label("默认功击范围"), 0, 5);
+        gridPane.add(this.attackRangeView, 1, 5);
+        if (this.otherAttackRange != null) {
+            this.otherAttackRangeView.setText(this.otherAttackRange.toString());
         }
-        this.longAttackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
+        this.otherAttackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
-                ResourceAnimation.this.longAttackRange = Integer.parseInt(newValue);
+                ResourceAnimation.this.otherAttackRange = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("远程功击范围"), 0, 6);
-        gridPane.add(this.longAttackRangeView, 1, 6);
+        gridPane.add(new Label("其它功击范围"), 0, 6);
+        gridPane.add(this.otherAttackRangeView, 1, 6);
         if (this.hurtIntervalMilli != null) {
             this.hurtIntervalMilliView.setText(this.hurtIntervalMilli.toString());
         }

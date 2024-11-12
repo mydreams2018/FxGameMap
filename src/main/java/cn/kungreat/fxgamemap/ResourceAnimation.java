@@ -64,7 +64,9 @@ public class ResourceAnimation {
     @JsonIgnore
     private final TextField hurtIntervalMilliView = new TextField();
     @JsonIgnore
-    private final TextField attackRangeView = new TextField();
+    private final TextField closerAttackRangeView = new TextField();
+    @JsonIgnore
+    private final TextField longAttackRangeView = new TextField();
     @JsonIgnore
     private final TextField imagePropertiesView = new TextField();
     @JsonIgnore
@@ -124,7 +126,8 @@ public class ResourceAnimation {
     private Integer attackIntervalMilli;
     private Integer highAttackIntervalMilli;
     private Integer hurtIntervalMilli;
-    private Integer attackRange;
+    private Integer closerAttackRange;
+    private Integer longAttackRange;
     private String imageProperties;
     private String attackAudio;
     private String highAttackAudio;
@@ -213,16 +216,26 @@ public class ResourceAnimation {
         });
         gridPane.add(new Label("重击间隔"), 0, 4);
         gridPane.add(this.highAttackIntervalMilliView, 1, 4);
-        if (this.attackRange != null) {
-            this.attackRangeView.setText(this.attackRange.toString());
+        if (this.closerAttackRange != null) {
+            this.closerAttackRangeView.setText(this.closerAttackRange.toString());
         }
-        this.attackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
+        this.closerAttackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
-                ResourceAnimation.this.attackRange = Integer.parseInt(newValue);
+                ResourceAnimation.this.closerAttackRange = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("功击范围"), 0, 5);
-        gridPane.add(this.attackRangeView, 1, 5);
+        gridPane.add(new Label("近战功击范围"), 0, 5);
+        gridPane.add(this.closerAttackRangeView, 1, 5);
+        if (this.longAttackRange != null) {
+            this.longAttackRangeView.setText(this.longAttackRange.toString());
+        }
+        this.longAttackRangeView.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && PatternUtils.NumberRegex.matcher(newValue).matches()) {
+                ResourceAnimation.this.longAttackRange = Integer.parseInt(newValue);
+            }
+        });
+        gridPane.add(new Label("远程功击范围"), 0, 6);
+        gridPane.add(this.longAttackRangeView, 1, 6);
         if (this.hurtIntervalMilli != null) {
             this.hurtIntervalMilliView.setText(this.hurtIntervalMilli.toString());
         }
@@ -231,8 +244,8 @@ public class ResourceAnimation {
                 ResourceAnimation.this.hurtIntervalMilli = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("受伤间隔"), 0, 6);
-        gridPane.add(this.hurtIntervalMilliView, 1, 6);
+        gridPane.add(new Label("受伤间隔"), 0, 7);
+        gridPane.add(this.hurtIntervalMilliView, 1, 7);
         if (this.operationHistoryDistance != null) {
             this.operationHistoryDistanceView.setText(this.operationHistoryDistance.toString());
         }
@@ -241,38 +254,38 @@ public class ResourceAnimation {
                 ResourceAnimation.this.operationHistoryDistance = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 7);
-        gridPane.add(this.operationHistoryDistanceView, 1, 7);
+        gridPane.add(new Label("左右转换时的一个间隔像素"), 0, 8);
+        gridPane.add(this.operationHistoryDistanceView, 1, 8);
         if (this.imageProperties != null && !this.imageProperties.isEmpty()) {
             this.imagePropertiesView.setText(this.imageProperties);
         }
         this.imagePropertiesView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.imageProperties = newValue);
-        gridPane.add(new Label("图片边距属性"), 0, 8);
-        gridPane.add(this.imagePropertiesView, 1, 8);
+        gridPane.add(new Label("图片边距属性"), 0, 9);
+        gridPane.add(this.imagePropertiesView, 1, 9);
         if (this.attackAudio != null && !this.attackAudio.isEmpty()) {
             this.attackAudioView.setText(this.attackAudio);
         }
         this.attackAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.attackAudio = newValue);
-        gridPane.add(new Label("功击音乐"), 0, 9);
-        gridPane.add(this.attackAudioView, 1, 9);
+        gridPane.add(new Label("功击音乐"), 0, 10);
+        gridPane.add(this.attackAudioView, 1, 10);
         if (this.highAttackAudio != null && !this.highAttackAudio.isEmpty()) {
             this.highAttackAudioView.setText(this.highAttackAudio);
         }
         this.highAttackAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.highAttackAudio = newValue);
-        gridPane.add(new Label("重击音乐"), 0, 10);
-        gridPane.add(this.highAttackAudioView, 1, 10);
+        gridPane.add(new Label("重击音乐"), 0, 11);
+        gridPane.add(this.highAttackAudioView, 1, 11);
         if (this.hurtAudio != null && !this.hurtAudio.isEmpty()) {
             this.hurtAudioView.setText(this.hurtAudio);
         }
         this.hurtAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.hurtAudio = newValue);
-        gridPane.add(new Label("受伤音乐"), 0, 11);
-        gridPane.add(this.hurtAudioView, 1, 11);
+        gridPane.add(new Label("受伤音乐"), 0, 12);
+        gridPane.add(this.hurtAudioView, 1, 12);
         if (this.moveAudio != null && !this.moveAudio.isEmpty()) {
             this.moveAudioView.setText(this.moveAudio);
         }
         this.moveAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.moveAudio = newValue);
-        gridPane.add(new Label("移动音乐"), 0, 12);
-        gridPane.add(this.moveAudioView, 1, 12);
+        gridPane.add(new Label("移动音乐"), 0, 13);
+        gridPane.add(this.moveAudioView, 1, 13);
         if (this.highJumpIntervalMilli != null) {
             this.highJumpIntervalMilliView.setText(this.highJumpIntervalMilli.toString());
         }
@@ -281,21 +294,21 @@ public class ResourceAnimation {
                 ResourceAnimation.this.highJumpIntervalMilli = Integer.parseInt(newValue);
             }
         });
-        gridPane.add(new Label("大跳跃间隔"), 0, 13);
-        gridPane.add(this.highJumpIntervalMilliView, 1, 13);
+        gridPane.add(new Label("大跳跃间隔"), 0, 14);
+        gridPane.add(this.highJumpIntervalMilliView, 1, 14);
         if (this.runAttackAudio != null && !this.runAttackAudio.isEmpty()) {
             this.runAttackAudioView.setText(this.runAttackAudio);
         }
         this.runAttackAudioView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.runAttackAudio = newValue);
-        gridPane.add(new Label("跑功音乐"), 0, 14);
-        gridPane.add(this.runAttackAudioView, 1, 14);
+        gridPane.add(new Label("跑功音乐"), 0, 15);
+        gridPane.add(this.runAttackAudioView, 1, 15);
         if (this.monsterIconName != null && !this.monsterIconName.isEmpty()) {
             this.monsterIconNameView.setText(this.monsterIconName);
         }
         this.monsterIconNameView.textProperty().addListener((observable, oldValue, newValue) -> ResourceAnimation.this.monsterIconName = newValue);
-        gridPane.add(new Label("怪物图标名称"), 0, 15);
-        gridPane.add(this.monsterIconNameView, 1, 15);
-        this.gridPaneAuto(gridPane, 16);
+        gridPane.add(new Label("怪物图标名称"), 0, 16);
+        gridPane.add(this.monsterIconNameView, 1, 16);
+        this.gridPaneAuto(gridPane, 17);
         scrollPane.setContent(gridPane);
         tab.setContent(scrollPane);
     }

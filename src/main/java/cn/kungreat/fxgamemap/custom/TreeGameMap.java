@@ -129,18 +129,12 @@ public class TreeGameMap {
                         imagePath = chooseResourceImage.getId();
                     }
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        Optional<String> optional = IMAGE_OBJECT_DIALOG.showAndWait();
-                        if (optional.isPresent() && optional.get().equals("OK")) {
-                            String objectNameText = BaseDialog.IMAGE_OBJECT_NAME.getText();
-                            if (objectNameText != null && !objectNameText.isBlank()) {
-                                ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
-                                changeImageObject.setTitle(objectNameText);
-                                changeImageObject.initTitledPane();
-                                controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
-                                imageObjectList.add(changeImageObject);
-                                PropertyListener.changeIsSaved(false);
-                            }
-                        }
+                        ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
+                        changeImageObject.setTitle(changeImageObject.getImagePath());
+                        changeImageObject.initTitledPane();
+                        controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
+                        imageObjectList.add(changeImageObject);
+                        PropertyListener.changeIsSaved(false);
                     } else {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
                         PropertyListener.changeIsSaved(false);

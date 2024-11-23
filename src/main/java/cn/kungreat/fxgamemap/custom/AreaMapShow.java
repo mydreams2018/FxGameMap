@@ -82,7 +82,7 @@ public class AreaMapShow {
             clipRect.setHeight(groupHeight);
             clipRect.setSmooth(true);
             mainPane.setClip(clipRect);//超出的子无素修剪掉
-            mainPane.getChildren().addAll(SUBSTRATE_PANE,SUBSTRATE_IMAGE_PANE, FIXED_BODY_PANE, TOP_PANE);
+            mainPane.getChildren().addAll(SUBSTRATE_PANE, SUBSTRATE_IMAGE_PANE, FIXED_BODY_PANE, TOP_PANE);
             currentX = 0;
             currentY = 0;
             initView(treeArea);
@@ -320,12 +320,19 @@ public class AreaMapShow {
                 imageObject.initImage(gameMap.getBackgroundImagePath());
                 imageObject.setTempStartX(globalX + imageObject.getStartX());
                 imageObject.setTempStartY(globalY + imageObject.getStartY());
-                if (imageObject.getType() != null && imageObject.getType() == ImageObjectType.FIXED_BODY_TOP) {
-                    this.allTopImageObject.add(imageObject);
-                } else if (imageObject.getType() != null && imageObject.getType() == ImageObjectType.FIXED_BODY) {
-                    this.allFixedImageObject.add(imageObject);
-                } else {
-                    this.allImageObject.add(imageObject);
+                if (imageObject.getType() != null) {
+                    if (imageObject.getType() == ImageObjectType.FIXED_BODY_TOP) {
+                        this.allTopImageObject.add(imageObject);
+                    } else if (imageObject.getType() == ImageObjectType.FIXED_BODY
+                            || imageObject.getType() == ImageObjectType.FIXED_ANIMATION
+                            || imageObject.getType() == ImageObjectType.FIXED_ANIMATION_NM
+                            || imageObject.getType() == ImageObjectType.FIXED_ANIMATION_FOOD
+                            || imageObject.getType() == ImageObjectType.FIXED_MOVE_LR
+                            || imageObject.getType() == ImageObjectType.FIXED_MOVE_TB
+                            || imageObject.getType() == ImageObjectType.FIXED_ANIMATION_STAR
+                            || imageObject.getType() == ImageObjectType.FIXED_ANIMATION_NU) {
+                        this.allFixedImageObject.add(imageObject);
+                    }
                 }
             }
         }

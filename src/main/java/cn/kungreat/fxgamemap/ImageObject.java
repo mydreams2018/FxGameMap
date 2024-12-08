@@ -171,7 +171,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         if (this.baseAnimationName != null) {
             this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
         }
-        this.baseAnimationNameText.setEditable(false);
+        this.baseAnimationNameText.setEditable(true);
         this.baseAnimationButton.setOnAction(event -> {
             List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
             if (selectedFiles == null || selectedFiles.isEmpty()) {

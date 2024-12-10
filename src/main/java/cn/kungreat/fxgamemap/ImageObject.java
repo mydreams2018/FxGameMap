@@ -4,6 +4,8 @@ import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -171,7 +173,11 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         if (this.baseAnimationName != null) {
             this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
         }
-        this.baseAnimationNameText.setEditable(true);
+        this.baseAnimationNameText.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                this.baseAnimationName = RootApplication.MAP_JSON.readValue(newValue, new TypeReference<List<String>>() {});
+            } catch (JsonProcessingException e) {}
+        });
         this.baseAnimationButton.setOnAction(event -> {
             List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
             if (selectedFiles == null || selectedFiles.isEmpty()) {

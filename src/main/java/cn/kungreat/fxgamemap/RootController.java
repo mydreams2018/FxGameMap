@@ -170,8 +170,9 @@ public class RootController implements Initializable {
                     treeWorld.getChildrenArea().add(treeArea);
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
+                    treeArea.autoFillChildData(treeItem);
                     item.getChildren().add(treeItem);
-                    item.setExpanded(true);
+                    item.setExpanded(false);
                     PropertyListener.changeIsSaved(false);
                 }
             }

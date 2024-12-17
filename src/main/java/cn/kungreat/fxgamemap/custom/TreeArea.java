@@ -14,9 +14,11 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -138,4 +140,21 @@ public class TreeArea {
         }
     }
 
+    //自动填充区域数据
+    public void autoFillChildData(TreeItem<Object> treeAreaItem) {
+        if (this.childrenPointName == null) {
+            this.childrenPointName = new String[xNumber][yNumber];
+        }
+        for (int y = 0; y < this.yNumber; y++) {
+            for (int x = 0; x < this.xNumber; x++) {
+                TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), "x" + x + "y" + y,
+                        this.getWidth(), this.getHeight(), this.getImageDirectory());
+                this.getChildrenMap().add(treeGameMap);
+                TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
+                treeItem.setGraphic(new FontIcon("fas-map"));
+                treeAreaItem.getChildren().add(treeItem);
+                this.childrenPointName[x][y] = treeGameMap.getTitle();
+            }
+        }
+    }
 }

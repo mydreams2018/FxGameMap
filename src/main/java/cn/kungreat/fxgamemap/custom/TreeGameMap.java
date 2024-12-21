@@ -313,6 +313,14 @@ public class TreeGameMap {
                 }
             }
         }
+
+        public double getStartX() {
+            return Math.floor(startX);
+        }
+
+        public double getStartY() {
+            return Math.floor(startY);
+        }
     }
 
     @Setter

@@ -119,6 +119,8 @@ public class TreeGameMap {
                         startX = event.getX() - (image.getWidth() / 2);
                         startY = event.getY() - (image.getHeight() / 2);
                     }
+                    int locatorX = (int) (event.getX() / 48);
+                    int locatorY = (int) (event.getY() / 32);
                     String imagePath;
                     if (image.getUrl() != null) {
                         saveImgPaths.add(image.getUrl());
@@ -129,14 +131,14 @@ public class TreeGameMap {
                         imagePath = chooseResourceImage.getId();
                     }
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath);
+                        ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                         changeImageObject.setTitle(changeImageObject.getImagePath());
                         changeImageObject.initTitledPane();
                         controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
                         imageObjectList.add(changeImageObject);
                         PropertyListener.changeIsSaved(false);
                     } else {
-                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath));
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
                         PropertyListener.changeIsSaved(false);
                     }
                 } else if (controller.getTopMovingMode().isSelected()) {
@@ -286,14 +288,19 @@ public class TreeGameMap {
 
         private double startX;
         private double startY;
+        //定位XY的索引坐标系
+        private int locatorX;
+        private int locatorY;
 
-        public BackgroundImageData(Image image, double startX, double startY, String imagePath) {
+        public BackgroundImageData(Image image, double startX, double startY, String imagePath, int locatorX, int locatorY) {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
             String[] split = imagePath.split("/");
             this.imagePath = split[split.length - 1];
             this.imageView = new ImageView(image);
+            this.locatorX = locatorX;
+            this.locatorY = locatorY;
         }
 
         public void initImage(String backgroundImagePath) {

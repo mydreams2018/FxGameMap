@@ -78,8 +78,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private Integer baseAttackValue;
     private List<String> baseAnimationName;
 
-    public ImageObject(String id, Image image, double startX, double startY, String imagePath) {
-        super(image, startX, startY, imagePath);
+    public ImageObject(String id, Image image, double startX, double startY, String imagePath, int locatorX, int locatorY) {
+        super(image, startX, startY, imagePath, locatorX, locatorY);
         this.id = id;
     }
 
@@ -175,8 +175,10 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         this.baseAnimationNameText.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                this.baseAnimationName = RootApplication.MAP_JSON.readValue(newValue, new TypeReference<List<String>>() {});
-            } catch (JsonProcessingException e) {}
+                this.baseAnimationName = RootApplication.MAP_JSON.readValue(newValue, new TypeReference<List<String>>() {
+                });
+            } catch (JsonProcessingException e) {
+            }
         });
         this.baseAnimationButton.setOnAction(event -> {
             List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);

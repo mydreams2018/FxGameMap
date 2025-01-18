@@ -53,6 +53,11 @@
                         <FontIcon iconLiteral="fas-exchange-alt" />
                     </graphic>
                 </Button>
+                <Button text="自动读取mir地图" onAction="#autoReadMirMap">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-mask" />
+                    </graphic>
+                </Button>
             </HBox>
         </HBox>
     </top>

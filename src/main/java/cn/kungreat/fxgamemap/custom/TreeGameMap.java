@@ -218,7 +218,26 @@ public class TreeGameMap {
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);
-        backgroundImages.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
+        backgroundImages.forEach(image -> {
+            if (image.getMirImageMark() == 5) {
+                graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
+            }
+        });
+        backgroundImages.forEach(image -> {
+            if (image.getMirImageMark() == 4) {
+                graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
+            }
+        });
+        backgroundImages.forEach(image -> {
+            if (image.getMirImageMark() == 3) {
+                graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
+            }
+        });
+        backgroundImages.forEach(image -> {
+            if (image.getMirImageMark() == 2) {
+                graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
+            }
+        });
         imageObjectList.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
         drawMarkLine();
     }
@@ -291,6 +310,10 @@ public class TreeGameMap {
         //定位XY的索引坐标系
         private int locatorX;
         private int locatorY;
+        /*  back = 5 middle = 4 front = 3 frontBlend = 2
+            用来表示图层 在这里先存在一起 在游戏引擎中可以分开存储
+            */
+        private int mirImageMark = 0;
 
         public BackgroundImageData(Image image, double startX, double startY, String imagePath, int locatorX, int locatorY) {
             this.image = image;
@@ -303,16 +326,25 @@ public class TreeGameMap {
             this.locatorY = locatorY;
         }
 
+        //导入mir地图用
+        public BackgroundImageData(double startX, double startY, String imagePath, int locatorX, int locatorY, int mirImageMark) {
+            this.startX = startX;
+            this.startY = startY;
+            this.imagePath = imagePath;
+            this.locatorX = locatorX;
+            this.locatorY = locatorY;
+            this.mirImageMark = mirImageMark;
+        }
+
         public void initImage(String backgroundImagePath) {
             if (this.imageView == null) {
                 try {
                     File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
                     if (outFile.exists() && outFile.isDirectory()) {
-                        for (File file : outFile.listFiles()) {
-                            if (file.getName().equals(this.imagePath)) {
-                                this.image = new Image(file.toURI().toString());
-                                this.imageView = new ImageView(image);
-                            }
+                        File imageSrFile = new File(outFile, this.imagePath);
+                        if (imageSrFile.exists()) {
+                            this.image = new Image(imageSrFile.toURI().toString());
+                            this.imageView = new ImageView(image);
                         }
                     }
                 } catch (Exception e) {

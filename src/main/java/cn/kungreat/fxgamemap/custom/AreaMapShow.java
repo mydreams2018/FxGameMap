@@ -358,7 +358,7 @@ public class AreaMapShow {
         return backgroundColor;
     }
 
-    private TreeGameMap findTreeGameMap(String title, TreeArea treeArea) {
+    public static TreeGameMap findTreeGameMap(String title, TreeArea treeArea) {
         List<TreeGameMap> childrenMap = treeArea.getChildrenMap();
         if (childrenMap != null && !childrenMap.isEmpty()) {
             for (TreeGameMap treeGameMap : childrenMap) {

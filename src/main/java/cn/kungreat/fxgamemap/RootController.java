@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.AreaMapShow;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
@@ -11,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -398,5 +400,67 @@ public class RootController implements Initializable {
         Button imageObjectBatchCancel = (Button) BATCH_CHANGE_IMAGE_OBJECT.getDialogPane().lookupButton(BaseDialog.BATCH_IMAGE_CANCEL);
         imageObjectBatchOk.setOnAction(event -> BATCH_CHANGE_IMAGE_OBJECT.setResult(true));
         imageObjectBatchCancel.setOnAction(event -> BATCH_CHANGE_IMAGE_OBJECT.setResult(false));
+    }
+
+    @FXML
+    public void autoReadMirMap() {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        if (item != null && item.getValue() instanceof TreeArea treeArea) {
+            File file = ResourceAnimation.DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
+            if (file != null && file.exists()) {
+                for (int y = 0; y < treeArea.getYNumber(); y++) {
+                    for (int x = 0; x < treeArea.getXNumber(); x++) {
+                        String mapName = treeArea.getChildrenPointName()[x][y];
+                        TreeGameMap treeGameMap = AreaMapShow.findTreeGameMap(mapName, treeArea);
+                        List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
+                        backgroundImages.clear();//清理旧数据
+                        int singleLocatorXNumber = (int) Math.ceil((double) treeArea.getWidth() / 48);
+                        int singleLocatorYNumber = (int) Math.ceil((double) treeArea.getHeight() / 32);
+                        for (int iy = 0; iy < singleLocatorYNumber; iy++) {
+                            for (int ix = 0; ix < singleLocatorXNumber; ix++) {
+                                int tempLocatorX = (x * singleLocatorXNumber + ix);
+                                int tempLocatorY = (y * singleLocatorYNumber + iy);
+                                String imageName = tempLocatorX + "_" + tempLocatorY + ".png";
+                                File backFile = new File(file, "back");
+                                File middleFile = new File(file, "middle");
+                                File frontFile = new File(file, "front");
+                                File frontBlendFile = new File(file, "frontBlend");
+                                if (backFile.exists()) {
+                                    File mirSrcImage = new File(backFile, imageName);
+                                    if (mirSrcImage.exists()) {
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32,
+                                                "back/" + imageName, tempLocatorX, tempLocatorY, 5));
+                                    }
+                                }
+                                if (middleFile.exists()) {
+                                    File mirSrcImage = new File(middleFile, imageName);
+                                    if (mirSrcImage.exists()) {
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32,
+                                                "middle/" + imageName, tempLocatorX, tempLocatorY, 4));
+                                    }
+                                }
+                                if (frontFile.exists()) {
+                                    File mirSrcImage = new File(frontFile, imageName);
+                                    if (mirSrcImage.exists()) {
+                                        Image image = new Image(mirSrcImage.toURI().toString());
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
+                                                "front/" + imageName, tempLocatorX, tempLocatorY, 3));
+                                    }
+                                }
+                                if (frontBlendFile.exists()) {
+                                    File mirSrcImage = new File(frontBlendFile, imageName);
+                                    if (mirSrcImage.exists()) {
+                                        Image image = new Image(mirSrcImage.toURI().toString());
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
+                                                "frontBlend/" + imageName, tempLocatorX, tempLocatorY, 2));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("autoReadMirMap - success");
+        }
     }
 }

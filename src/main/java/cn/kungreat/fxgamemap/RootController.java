@@ -414,13 +414,13 @@ public class RootController implements Initializable {
                         TreeGameMap treeGameMap = AreaMapShow.findTreeGameMap(mapName, treeArea);
                         List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
                         backgroundImages.clear();//清理旧数据
-                        int singleLocatorXNumber = (int) Math.ceil((double) treeArea.getWidth() / 48);
-                        int singleLocatorYNumber = (int) Math.ceil((double) treeArea.getHeight() / 32);
+                        int singleLocatorXNumber = treeArea.getWidth() / 48;
+                        int singleLocatorYNumber = treeArea.getHeight() / 32;
                         for (int iy = 0; iy < singleLocatorYNumber; iy++) {
                             for (int ix = 0; ix < singleLocatorXNumber; ix++) {
-                                int tempLocatorX = (x * singleLocatorXNumber + ix);
-                                int tempLocatorY = (y * singleLocatorYNumber + iy);
-                                String imageName = tempLocatorX + "_" + tempLocatorY + ".png";
+                                int globalLocatorX = (x * singleLocatorXNumber + ix);
+                                int globalLocatorY = (y * singleLocatorYNumber + iy);
+                                String imageName = globalLocatorX + "_" + globalLocatorY + ".png";
                                 File backFile = new File(file, "back");
                                 File middleFile = new File(file, "middle");
                                 File frontFile = new File(file, "front");
@@ -429,14 +429,14 @@ public class RootController implements Initializable {
                                     File mirSrcImage = new File(backFile, imageName);
                                     if (mirSrcImage.exists()) {
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32,
-                                                "back/" + imageName, tempLocatorX, tempLocatorY, 5));
+                                                "back/" + imageName, globalLocatorX, globalLocatorY, 5));
                                     }
                                 }
                                 if (middleFile.exists()) {
                                     File mirSrcImage = new File(middleFile, imageName);
                                     if (mirSrcImage.exists()) {
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32,
-                                                "middle/" + imageName, tempLocatorX, tempLocatorY, 4));
+                                                "middle/" + imageName, globalLocatorX, globalLocatorY, 4));
                                     }
                                 }
                                 if (frontFile.exists()) {
@@ -444,7 +444,7 @@ public class RootController implements Initializable {
                                     if (mirSrcImage.exists()) {
                                         Image image = new Image(mirSrcImage.toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "front/" + imageName, tempLocatorX, tempLocatorY, 3));
+                                                "front/" + imageName, globalLocatorX, globalLocatorY, 3));
                                     }
                                 }
                                 if (frontBlendFile.exists()) {
@@ -452,7 +452,7 @@ public class RootController implements Initializable {
                                     if (mirSrcImage.exists()) {
                                         Image image = new Image(mirSrcImage.toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "frontBlend/" + imageName, tempLocatorX, tempLocatorY, 2));
+                                                "frontBlend/" + imageName, globalLocatorX, globalLocatorY, 2));
                                     }
                                 }
                             }

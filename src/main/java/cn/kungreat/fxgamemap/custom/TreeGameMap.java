@@ -313,7 +313,7 @@ public class TreeGameMap {
         /*  back = 5 middle = 4 front = 3 frontBlend = 2
             用来表示图层 在这里先存在一起 在游戏引擎中可以分开存储
             */
-        private int mirImageMark = 0;
+        private int mirImageMark = 5;
 
         public BackgroundImageData(Image image, double startX, double startY, String imagePath, int locatorX, int locatorY) {
             this.image = image;

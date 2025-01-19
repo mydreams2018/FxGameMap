@@ -119,8 +119,8 @@ public class TreeGameMap {
                         startX = event.getX() - (image.getWidth() / 2);
                         startY = event.getY() - (image.getHeight() / 2);
                     }
-                    int locatorX = (int) (event.getX() / 48);
-                    int locatorY = (int) (event.getY() / 32);
+                    int locatorX = (int) ((startX + image.getWidth()) / 48);
+                    int locatorY = (int) ((startY + image.getHeight()) / 32);
                     String imagePath;
                     if (image.getUrl() != null) {
                         saveImgPaths.add(image.getUrl());
@@ -143,17 +143,17 @@ public class TreeGameMap {
                     }
                 } else if (controller.getTopMovingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        ImageObject imageObject = getImageObjectData(event);
+                        ImageObject imageObject = getImageObjectData(event.getX(), event.getY());
                         PropertyListener.setChooseCanvasImage(imageObject);
                         if (imageObject != null) {
                             controller.getRightTopScrollPaneAccordion().setExpandedPane(imageObject.getTitledPane());
                         }
                     } else {
-                        PropertyListener.setChooseCanvasImage(getBackgroundImageData(event));
+                        PropertyListener.setChooseCanvasImage(getBackgroundImageData(event.getX(), event.getY()));
                     }
                 } else if (controller.getTopDeletingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
-                        ImageObject removeImageObject = getImageObjectData(event);
+                        ImageObject removeImageObject = getImageObjectData(event.getX(), event.getY());
                         if (removeImageObject != null) {
                             imageObjectList.remove(removeImageObject);
                             controller.getRightTopScrollPaneAccordion().getPanes().remove(removeImageObject.getTitledPane());
@@ -162,7 +162,7 @@ public class TreeGameMap {
                                     event.getY() - (DELETE_IMAGE.getHeight() / 2));
                         }
                     } else {
-                        BackgroundImageData backgroundImageData = getBackgroundImageData(event);
+                        BackgroundImageData backgroundImageData = getBackgroundImageData(event.getX(), event.getY());
                         if (backgroundImageData != null) {
                             backgroundImages.remove(backgroundImageData);
                             clearAndDraw();
@@ -187,9 +187,7 @@ public class TreeGameMap {
     }
 
     //拿到当前选中的对象
-    private BackgroundImageData getBackgroundImageData(MouseEvent event) {
-        double currentX = event.getX();
-        double currentY = event.getY();
+    public BackgroundImageData getBackgroundImageData(double currentX, double currentY) {
         BackgroundImageData chooseBackgroundImageData = null;
         for (BackgroundImageData backgroundImage : backgroundImages) {
             if (backgroundImage.getStartX() < currentX && backgroundImage.getStartY() < currentY &&
@@ -201,9 +199,7 @@ public class TreeGameMap {
         return chooseBackgroundImageData;
     }
 
-    private ImageObject getImageObjectData(MouseEvent event) {
-        double currentX = event.getX();
-        double currentY = event.getY();
+    private ImageObject getImageObjectData(double currentX, double currentY) {
         ImageObject chooseImageObject = null;
         for (ImageObject imageObject : imageObjectList) {
             if (imageObject.getStartX() < currentX && imageObject.getStartY() < currentY &&
@@ -273,6 +269,10 @@ public class TreeGameMap {
         });
         saveImgPaths.clear();
         return saveImgPaths;
+    }
+
+    public void addSaveImgPaths(String getUrl) {
+        saveImgPaths.add(getUrl);
     }
 
     /*

@@ -1,10 +1,14 @@
 package cn.kungreat.fxgamemap.custom;
 
+import cn.kungreat.fxgamemap.RootApplication;
+import cn.kungreat.fxgamemap.RootController;
+import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import lombok.Getter;
@@ -17,9 +21,7 @@ import java.util.*;
 public class AreaMapShow {
 
     /*
-     * SUBSTRATE_PANE 底图层
-     * FIXED_BODY_PANE 固定图像层
-     * TOP_PANE 顶图层
+     * 没有清理TreeGameMap内的Image ImageView数据 [在正式的游戏引擎要清理]
      * */
     private static final Pane BACK_PANE = new Pane();
     private static final Pane MIDDLE_PANE = new Pane();
@@ -55,9 +57,69 @@ public class AreaMapShow {
             currentY = 0;
             treeAreaShow = treeArea;
             initView();
+            mainPaneMouseEvent();
         }
         treeArea.setSwitchTypeName("areaMapShow");
         clearAndDraw();
+    }
+
+    private void mainPaneMouseEvent() {
+        mainPane.setOnMouseMoved(event -> {
+            RootController controller = RootApplication.mainFXMLLoader.getController();
+            ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
+            clearAndDraw();
+            if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                Image image = chooseResourceImage.getImage();
+                ImageView imageView = new ImageView(image);
+                imageView.setLayoutX(event.getX() - (image.getWidth() / 2));
+                imageView.setLayoutY(event.getY() - (image.getHeight() / 2));
+                FRONT_PANE.getChildren().add(imageView);
+            } else if (controller.getTopDeletingMode().isSelected()) {
+                ImageView imageView = new ImageView(TreeGameMap.DELETE_IMAGE);
+                imageView.setLayoutX(event.getX() - (TreeGameMap.DELETE_IMAGE.getWidth() / 2));
+                imageView.setLayoutY(event.getY() - (TreeGameMap.DELETE_IMAGE.getHeight() / 2));
+                FRONT_PANE.getChildren().add(imageView);
+            }
+        });
+        mainPane.setOnMouseExited(event -> clearAndDraw());
+        mainPane.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                RootController controller = RootApplication.mainFXMLLoader.getController();
+                ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
+                //拿到当前的TreeGameMap
+                int currentGlobalStartX = (int) (currentX + event.getX());
+                int currentGlobalStartY = (int) (currentY + event.getY());
+                Integer areaWidth = treeAreaShow.getWidth();
+                Integer areaHeight = treeAreaShow.getHeight();
+                TreeGameMap currentTreeGameMap = findTreeGameMap(treeAreaShow.getChildrenPointName()[currentGlobalStartX / areaWidth][currentGlobalStartY / areaHeight], treeAreaShow);
+                if (currentTreeGameMap != null) {
+                    if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                        Image image = chooseResourceImage.getImage();
+                        double startX = currentGlobalStartX % areaWidth - (image.getWidth() / 2);
+                        double startY = currentGlobalStartY % areaHeight - (image.getHeight() / 2);
+                        int locatorX = (int) ((startX + image.getWidth()) / 48);
+                        int locatorY = (int) ((startY + image.getHeight()) / 32);
+                        String imagePath;
+                        if (image.getUrl() != null) {
+                            currentTreeGameMap.addSaveImgPaths(image.getUrl());
+                            imagePath = image.getUrl();
+                        } else {
+                            //分割图片时用Id暂存的图片路径
+                            currentTreeGameMap.addSaveImgPaths(chooseResourceImage.getId());
+                            imagePath = chooseResourceImage.getId();
+                        }
+                        currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
+                        PropertyListener.changeIsSaved(false);
+                    } else if (controller.getTopDeletingMode().isSelected()) {
+                        TreeGameMap.BackgroundImageData backgroundImageData = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                        if (backgroundImageData != null) {
+                            currentTreeGameMap.getBackgroundImages().remove(backgroundImageData);
+                            clearAndDraw();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void initView() {
@@ -118,7 +180,6 @@ public class AreaMapShow {
     public void clearAndDraw() {
         findCurrentWindowData();
         startDrawAllPane();
-        System.out.println(currentX + "-" + currentY);
     }
 
     private void startDrawAllPane() {

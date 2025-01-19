@@ -429,14 +429,14 @@ public class RootController implements Initializable {
                                     File mirSrcImage = new File(backFile, imageName);
                                     if (mirSrcImage.exists()) {
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32,
-                                                "back/" + imageName, globalLocatorX, globalLocatorY, 5));
+                                                "back/" + imageName, ix, iy, 5));
                                     }
                                 }
                                 if (middleFile.exists()) {
                                     File mirSrcImage = new File(middleFile, imageName);
                                     if (mirSrcImage.exists()) {
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32,
-                                                "middle/" + imageName, globalLocatorX, globalLocatorY, 4));
+                                                "middle/" + imageName, ix, iy, 4));
                                     }
                                 }
                                 if (frontFile.exists()) {
@@ -444,7 +444,7 @@ public class RootController implements Initializable {
                                     if (mirSrcImage.exists()) {
                                         Image image = new Image(mirSrcImage.toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "front/" + imageName, globalLocatorX, globalLocatorY, 3));
+                                                "front/" + imageName, ix, iy, 3));
                                     }
                                 }
                                 if (frontBlendFile.exists()) {
@@ -452,7 +452,7 @@ public class RootController implements Initializable {
                                     if (mirSrcImage.exists()) {
                                         Image image = new Image(mirSrcImage.toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "frontBlend/" + imageName, globalLocatorX, globalLocatorY, 2));
+                                                "frontBlend/" + imageName, ix, iy, 2));
                                     }
                                 }
                             }

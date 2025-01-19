@@ -1,7 +1,11 @@
 package cn.kungreat.fxgamemap.custom;
 
 import cn.kungreat.fxgamemap.BaseDialog;
+import cn.kungreat.fxgamemap.Configuration;
+import cn.kungreat.fxgamemap.RootApplication;
+import cn.kungreat.fxgamemap.util.LogService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -16,6 +20,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,6 +60,8 @@ public class TreeArea {
     private String switchTypeName;
     @JsonIgnore
     private AreaMapShow areaMapShow;
+    @JsonIgnore
+    private List<PointLock> pointLockList;
 
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
@@ -155,6 +168,33 @@ public class TreeArea {
                 treeAreaItem.getChildren().add(treeItem);
                 this.childrenPointName[x][y] = treeGameMap.getTitle();
             }
+        }
+    }
+
+    public void initPointLockListData() {
+        try {
+            File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), this.imageDirectory);
+            File imageSrFile = new File(outFile, "point_lock.json");
+            BufferedReader readerLPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(imageSrFile)));
+            String readLine = readerLPointLock.readLine();
+            if (readLine != null && !readLine.isEmpty()) {
+                this.pointLockList = RootApplication.MAP_JSON.readValue(readLine, new TypeReference<List<PointLock>>() {
+                });
+            }
+            readerLPointLock.close();
+        } catch (Exception e) {
+            LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "initPointLockListData", e);
+        }
+    }
+
+    public void savePointLockListData() {
+        try {
+            File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), this.imageDirectory);
+            File imageSrFile = new File(outFile, "point_lock.json");
+            Files.write(imageSrFile.toPath(), RootApplication.MAP_JSON.writeValueAsString(this.pointLockList).getBytes(),
+                    StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "savePointLockListData", e);
         }
     }
 }

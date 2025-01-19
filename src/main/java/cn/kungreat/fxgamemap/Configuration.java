@@ -116,6 +116,7 @@ public class Configuration {
         List<TreeArea> childrenArea = treeWorld.getChildrenArea();
         if (childrenArea != null && !childrenArea.isEmpty()) {
             for (TreeArea treeArea : childrenArea) {
+                treeArea.initPointLockListData();//读取区域配置文件
                 TreeItem<Object> areaTreeItem = new TreeItem<>(treeArea);
                 areaTreeItem.setGraphic(new FontIcon("fas-chart-area"));
                 treeItem.getChildren().add(areaTreeItem);

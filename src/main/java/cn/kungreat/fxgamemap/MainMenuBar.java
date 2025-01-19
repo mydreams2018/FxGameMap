@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap;
 
+import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
@@ -87,6 +88,9 @@ public class MainMenuBar extends MenuBar {
         StringBuilder stringBuilder = new StringBuilder();
         for (TreeItem<Object> child : children) {
             TreeWorld treeWorld = (TreeWorld) child.getValue();
+            for (TreeArea treeArea : treeWorld.getChildrenArea()) {
+                treeArea.savePointLockListData();//保存区域配置文件
+            }
             stringBuilder.append(RootApplication.MAP_JSON.writeValueAsString(treeWorld));
             stringBuilder.append(System.lineSeparator());
         }

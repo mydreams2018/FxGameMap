@@ -10,7 +10,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,6 +43,8 @@ public class AreaMapShow {
     private HBox innerHBox;
     private ScrollBar scrollBarY;
     private ScrollBar scrollBarX;
+
+    private static final Image POINT_SHOW_IMAGE = new Image(RootApplication.class.getResourceAsStream("pointImage.png"));
 
     public void initAreaMapShow(TreeArea treeArea) {
         if (mainPane == null) {
@@ -116,6 +119,8 @@ public class AreaMapShow {
                             currentTreeGameMap.getBackgroundImages().remove(backgroundImageData);
                             clearAndDraw();
                         }
+                    } else if (controller.getTopMovingMode().isSelected()) {
+                        System.out.println((int) ((currentX + event.getX()) / 48) + "_" + (int) ((currentY + event.getY()) / 32));
                     }
                 }
             }
@@ -180,26 +185,74 @@ public class AreaMapShow {
     public void clearAndDraw() {
         findCurrentWindowData();
         startDrawAllPane();
+        startDrawPointLock();
     }
 
     private void startDrawAllPane() {
-        for (TreeGameMap.BackgroundImageData backgroundColor : SHOW_BACK_IMAGE) {
-            ImageView view = backgroundColor.getImageView();
-            view.setLayoutX(backgroundColor.getChangeX());
-            view.setLayoutY(backgroundColor.getChangeY());
+        for (TreeGameMap.BackgroundImageData backImage : SHOW_BACK_IMAGE) {
+            ImageView view = backImage.getImageView();
+            view.setLayoutX(backImage.getChangeX());
+            view.setLayoutY(backImage.getChangeY());
             BACK_PANE.getChildren().add(view);
         }
-        for (TreeGameMap.BackgroundImageData showBackgroundImage : SHOW_MIDDLE_IMAGE) {
-            ImageView view = showBackgroundImage.getImageView();
-            view.setLayoutX(showBackgroundImage.getChangeX());
-            view.setLayoutY(showBackgroundImage.getChangeY());
+        for (TreeGameMap.BackgroundImageData middleImage : SHOW_MIDDLE_IMAGE) {
+            ImageView view = middleImage.getImageView();
+            view.setLayoutX(middleImage.getChangeX());
+            view.setLayoutY(middleImage.getChangeY());
             MIDDLE_PANE.getChildren().add(view);
         }
-        for (TreeGameMap.BackgroundImageData interObject : SHOW_FRONT_IMAGE) {
-            ImageView view = interObject.getImageView();
-            view.setLayoutX(interObject.getChangeX());
-            view.setLayoutY(interObject.getChangeY());
+        for (TreeGameMap.BackgroundImageData frontImage : SHOW_FRONT_IMAGE) {
+            ImageView view = frontImage.getImageView();
+            view.setLayoutX(frontImage.getChangeX());
+            view.setLayoutY(frontImage.getChangeY());
             FRONT_PANE.getChildren().add(view);
+        }
+    }
+
+    private void startDrawPointLock() {
+        if (RootController.showPointLocks) {
+            Path path = new Path();
+            int blockWidthX = treeAreaShow.getWidth() / 48;
+            int blockHeightY = treeAreaShow.getHeight() / 32;
+            int remainderX = currentX % 48;
+            int remainderY = currentY % 32;
+            for (int i = 0; i < blockHeightY; i++) {
+                int tempStartY = i * 32 - remainderY;
+                MoveTo moveTo = new MoveTo(0, tempStartY);
+                HLineTo hLineTo = new HLineTo(treeAreaShow.getWidth());
+                path.getElements().addAll(moveTo, hLineTo);
+            }
+            for (int i = 0; i < blockWidthX; i++) {
+                int tempStartX = i * 48 - remainderX;
+                MoveTo moveTo = new MoveTo(tempStartX, 0);
+                VLineTo hLineTo = new VLineTo(treeAreaShow.getHeight());
+                path.getElements().addAll(moveTo, hLineTo);
+            }
+            path.getElements().add(new ClosePath());
+            path.setFillRule(FillRule.NON_ZERO);
+            path.setStroke(Color.RED);
+            path.setStrokeWidth(1);
+            FRONT_PANE.getChildren().add(path);
+            addPointLockImage();
+        }
+    }
+
+    //占位图显示
+    private void addPointLockImage() {
+        int singleLocatorXNumber = treeAreaShow.getWidth() / 48;
+        int singleLocatorYNumber = treeAreaShow.getHeight() / 32;
+        int currentLocatorXNumber = currentX / 48;
+        int currentLocatorYNumber = currentY / 32;
+        boolean[][] basePointLockList = treeAreaShow.getBasePointLockList();
+        for (int y = 0; y <= singleLocatorYNumber; y++) {
+            for (int x = 0; x <= singleLocatorXNumber; x++) {
+                if (basePointLockList[currentLocatorXNumber + x][currentLocatorYNumber + y]) {
+                    ImageView tempView = new ImageView(POINT_SHOW_IMAGE);
+                    tempView.setLayoutX((currentLocatorXNumber + x) * 48 - currentX);
+                    tempView.setLayoutY((currentLocatorYNumber + y) * 32 - currentY);
+                    FRONT_PANE.getChildren().add(tempView);
+                }
+            }
         }
     }
 

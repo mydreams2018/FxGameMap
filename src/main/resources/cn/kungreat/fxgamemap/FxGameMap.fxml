@@ -58,6 +58,11 @@
                         <FontIcon iconLiteral="fas-mask" />
                     </graphic>
                 </Button>
+                <Button text="切换显示占位坐标信息" onAction="#changeShowPointLocks">
+                    <graphic>
+                        <FontIcon iconLiteral="far-times-circle" />
+                    </graphic>
+                </Button>
             </HBox>
         </HBox>
     </top>

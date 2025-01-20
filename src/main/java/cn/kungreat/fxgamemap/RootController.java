@@ -55,6 +55,8 @@ public class RootController implements Initializable {
 
     public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
 
+    public static boolean showPointLocks = false;
+
     @FXML
     private HBox topHBox;
     @FXML
@@ -463,5 +465,10 @@ public class RootController implements Initializable {
             }
             System.out.println("autoReadMirMap - success");
         }
+    }
+
+    @FXML
+    public void changeShowPointLocks() {
+        showPointLocks = !showPointLocks;
     }
 }

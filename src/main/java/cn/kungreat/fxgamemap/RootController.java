@@ -288,17 +288,18 @@ public class RootController implements Initializable {
             if (topMovingMode.isSelected() && chooseCanvasImage != null) {
                 if (event.getCode() == KeyCode.W) {
                     chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() - 1);
-                    canvasClearAndDraw();
                 } else if (event.getCode() == KeyCode.S) {
                     chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() + 1);
-                    canvasClearAndDraw();
                 } else if (event.getCode() == KeyCode.D) {
                     chooseCanvasImage.setStartX(chooseCanvasImage.getStartX() + 1);
-                    canvasClearAndDraw();
                 } else if (event.getCode() == KeyCode.A) {
                     chooseCanvasImage.setStartX(chooseCanvasImage.getStartX() - 1);
-                    canvasClearAndDraw();
                 }
+                int locatorX = (int) ((chooseCanvasImage.getStartX() + chooseCanvasImage.getImage().getWidth()) / 48);
+                int locatorY = (int) ((chooseCanvasImage.getStartY() + chooseCanvasImage.getImage().getHeight()) / 32);
+                chooseCanvasImage.setLocatorX(locatorX);
+                chooseCanvasImage.setLocatorY(locatorY);
+                canvasClearAndDraw();
             }
         });
     }

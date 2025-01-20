@@ -8,4 +8,5 @@ import lombok.Setter;
 public class PointLock {
     private int x;
     private int y;
+    private boolean b;
 }

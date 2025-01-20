@@ -191,7 +191,7 @@ public class TreeArea {
             //替换数据
             if (this.openPointLockList != null && !this.openPointLockList.isEmpty()) {
                 for (PointLock tempPointLock : this.openPointLockList) {
-                    this.basePointLockList[tempPointLock.getX()][tempPointLock.getY()] = false;
+                    this.basePointLockList[tempPointLock.getX()][tempPointLock.getY()] = tempPointLock.isB();
                 }
             }
             openPointLock.close();

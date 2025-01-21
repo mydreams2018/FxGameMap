@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -411,6 +411,10 @@ public class RootController implements Initializable {
         if (item != null && item.getValue() instanceof TreeArea treeArea) {
             File file = ResourceAnimation.DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
             if (file != null && file.exists()) {
+                String[] backData = readFileData(new File(file, "back\\point.txt"));
+                String[] middleData = readFileData(new File(file, "middle\\point.txt"));
+                String[] frontData = readFileData(new File(file, "front\\point.txt"));
+                String[] frontBlendData = readFileData(new File(file, "frontBlend\\point.txt"));
                 for (int y = 0; y < treeArea.getYNumber(); y++) {
                     for (int x = 0; x < treeArea.getXNumber(); x++) {
                         String mapName = treeArea.getChildrenPointName()[x][y];
@@ -423,39 +427,33 @@ public class RootController implements Initializable {
                             for (int ix = 0; ix < singleLocatorXNumber; ix++) {
                                 int globalLocatorX = (x * singleLocatorXNumber + ix);
                                 int globalLocatorY = (y * singleLocatorYNumber + iy);
-                                String imageName = globalLocatorX + "_" + globalLocatorY + ".png";
-                                File backFile = new File(file, "back");
-                                File middleFile = new File(file, "middle");
-                                File frontFile = new File(file, "front");
-                                File frontBlendFile = new File(file, "frontBlend");
-                                if (backFile.exists()) {
-                                    File mirSrcImage = new File(backFile, imageName);
-                                    if (mirSrcImage.exists()) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32,
-                                                "back/" + imageName, ix, iy, 5));
+                                String imageNamePrefix = globalLocatorX + "_" + globalLocatorY + "=";
+                                if (backData != null) {
+                                    String imageName = checkDataExists(backData, imageNamePrefix);
+                                    if (imageName != null) {
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32, imageName, ix, iy, 5));
                                     }
                                 }
-                                if (middleFile.exists()) {
-                                    File mirSrcImage = new File(middleFile, imageName);
-                                    if (mirSrcImage.exists()) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32,
-                                                "middle/" + imageName, ix, iy, 4));
+                                if (middleData != null) {
+                                    String imageName = checkDataExists(middleData, imageNamePrefix);
+                                    if (imageName != null) {
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix, iy, 4));
                                     }
                                 }
-                                if (frontFile.exists()) {
-                                    File mirSrcImage = new File(frontFile, imageName);
-                                    if (mirSrcImage.exists()) {
-                                        Image image = new Image(mirSrcImage.toURI().toString());
+                                if (frontData != null) {
+                                    String imageName = checkDataExists(frontData, imageNamePrefix);
+                                    if (imageName != null) {
+                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "front/" + imageName, ix, iy, 3));
+                                                imageName, ix, iy, 3));
                                     }
                                 }
-                                if (frontBlendFile.exists()) {
-                                    File mirSrcImage = new File(frontBlendFile, imageName);
-                                    if (mirSrcImage.exists()) {
-                                        Image image = new Image(mirSrcImage.toURI().toString());
+                                if (frontBlendData != null) {
+                                    String imageName = checkDataExists(frontBlendData, imageNamePrefix);
+                                    if (imageName != null) {
+                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
                                         backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                "frontBlend/" + imageName, ix, iy, 2));
+                                                imageName, ix, iy, 2));
                                     }
                                 }
                             }
@@ -465,6 +463,28 @@ public class RootController implements Initializable {
             }
             System.out.println("autoReadMirMap - success");
         }
+    }
+
+    private String[] readFileData(File filePath) {
+        String[] fileData = null;
+        try (BufferedReader openPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)))) {
+            String openLine = openPointLock.readLine();
+            if (openLine != null && !openLine.isEmpty()) {
+                fileData = openLine.split(",");
+            }
+        } catch (Exception e) {
+            System.out.println("readFileData - error");
+        }
+        return fileData;
+    }
+
+    private String checkDataExists(String[] data, String prefixXY) {
+        for (String datum : data) {
+            if (datum.startsWith(prefixXY)) {
+                return datum.split("=")[1];
+            }
+        }
+        return null;
     }
 
     @FXML

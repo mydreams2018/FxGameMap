@@ -33,6 +33,8 @@ public class TreeGameMap {
     private Integer width;
     private Integer height;
 
+    //从mir地图导出的所有图片资源目录
+    public static final String MIR_SHARE_IMAGE_DIRECTORY = "mir2AllIMages\\";
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
     public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));
     public static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"
@@ -340,10 +342,18 @@ public class TreeGameMap {
                 try {
                     File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), backgroundImagePath);
                     if (outFile.exists() && outFile.isDirectory()) {
-                        File imageSrFile = new File(outFile, this.imagePath);
-                        if (imageSrFile.exists()) {
-                            this.image = new Image(imageSrFile.toURI().toString());
+                        File imageSrcFile = new File(outFile, this.imagePath);
+                        if (imageSrcFile.exists()) {
+                            this.image = new Image(imageSrcFile.toURI().toString());
                             this.imageView = new ImageView(image);
+                        } else {
+                            File mirSrcFile = new File(outFile.getParent(), MIR_SHARE_IMAGE_DIRECTORY + this.imagePath);
+                            if (mirSrcFile.exists()) {
+                                this.image = new Image(mirSrcFile.toURI().toString());
+                                this.imageView = new ImageView(image);
+                            } else {
+                                LogService.writerLog(LogService.LogLevel.ERROR, TreeGameMap.class, "image not found=" + this.imagePath);
+                            }
                         }
                     }
                 } catch (Exception e) {

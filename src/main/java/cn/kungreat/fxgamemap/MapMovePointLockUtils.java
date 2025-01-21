@@ -1,6 +1,6 @@
 package cn.kungreat.fxgamemap;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
@@ -14,19 +14,35 @@ public class MapMovePointLockUtils {
     private static final boolean[][] basePointLocks = new boolean[800][800];
 
     public static void main(String[] args) throws Exception {
-        File readBackLimit = new File("F:\\mir-map-export\\backLimit");
-        File readFrontMask = new File("F:\\mir-map-export\\frontMask");
-        File outPointLocks = new File("F:\\mir2-sources\\mirBrother\\PeachGarden\\base_point_lock.json");
-        for (File file : readBackLimit.listFiles()) {
-            String[] split = file.getName().split("\\.")[0].split("_");
-            basePointLocks[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = true;
-        }
-        for (File file : readFrontMask.listFiles()) {
-            String[] split = file.getName().split("\\.")[0].split("_");
-            basePointLocks[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = true;
-        }
+        File readBackLimit = new File("F:\\mir-map-history\\PeachGarden\\backLimit\\point.txt");
+        File readFrontMask = new File("F:\\mir-map-history\\PeachGarden\\frontMask\\point.txt");
+        File outPointLocks = new File("F:\\mir\\mirBrother\\PeachGarden\\base_point_lock.json");
+        readFileTxt(readBackLimit);
+        readFileTxt(readFrontMask);
         Files.write(outPointLocks.toPath(), RootApplication.MAP_JSON.writeValueAsString(basePointLocks).getBytes(),
                 StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         System.out.println("down");
+    }
+
+    public static void readFileTxt(File fileLimit) throws Exception {
+        BufferedReader openBackLimit = new BufferedReader(new InputStreamReader(new FileInputStream(fileLimit)));
+        String backLine = openBackLimit.readLine();
+        if (backLine != null && !backLine.isEmpty()) {
+            String[] split = backLine.split(",");
+            for (String pointXY : split) {
+                int[] realPoint = explainDataXY(pointXY);
+                if (realPoint != null) {
+                    basePointLocks[realPoint[0]][realPoint[1]] = true;
+                }
+            }
+        }
+    }
+
+    public static int[] explainDataXY(String pointXY) {
+        if (!pointXY.contains("max")) {
+            String[] split = pointXY.split("=")[0].split("_");
+            return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1])};
+        }
+        return null;
     }
 }

@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -173,30 +175,51 @@ public class TreeArea {
 
     public void initPointLockListData() {
         try {
-            File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), this.imageDirectory);
-            File lockFile = new File(outFile, "base_point_lock.json");
-            BufferedReader readerLPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(lockFile)));
-            String readLine = readerLPointLock.readLine();
-            if (readLine != null && !readLine.isEmpty()) {
-                this.basePointLockList = RootApplication.MAP_JSON.readValue(readLine, boolean[][].class);
-            }
-            readerLPointLock.close();
-            File openFile = new File(outFile, "open_point_lock.json");
-            BufferedReader openPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(openFile)));
-            String openLine = openPointLock.readLine();
-            if (openLine != null && !openLine.isEmpty()) {
-                this.openPointLockList = RootApplication.MAP_JSON.readValue(readLine, new TypeReference<List<PointLock>>() {
-                });
-            }
-            //替换数据
-            if (this.openPointLockList != null && !this.openPointLockList.isEmpty()) {
-                for (PointLock tempPointLock : this.openPointLockList) {
-                    this.basePointLockList[tempPointLock.getX()][tempPointLock.getY()] = tempPointLock.isB();
+            File baseDirectory = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), this.imageDirectory);
+            File lockFile = new File(baseDirectory, "base_point_lock.json");
+            if (lockFile.exists()) {
+                BufferedReader readerLPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(lockFile)));
+                String readLine = readerLPointLock.readLine();
+                if (readLine != null && !readLine.isEmpty()) {
+                    this.basePointLockList = RootApplication.MAP_JSON.readValue(readLine, boolean[][].class);
                 }
+                readerLPointLock.close();
             }
-            openPointLock.close();
+            File openFile = new File(baseDirectory, "open_point_lock.json");
+            if (openFile.exists()) {
+                BufferedReader openPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(openFile)));
+                String openLine = openPointLock.readLine();
+                if (openLine != null && !openLine.isEmpty()) {
+                    this.openPointLockList = RootApplication.MAP_JSON.readValue(openLine, new TypeReference<List<PointLock>>() {
+                    });
+                }
+                //替换数据
+                if (this.openPointLockList != null && !this.openPointLockList.isEmpty()) {
+                    for (PointLock tempPointLock : this.openPointLockList) {
+                        this.basePointLockList[tempPointLock.getX()][tempPointLock.getY()] = tempPointLock.isB();
+                    }
+                }
+                openPointLock.close();
+            }
         } catch (Exception e) {
             LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "initPointLockListData", e);
+        }
+    }
+
+    public void writeJsonData() {
+        try {
+            File areaJson = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), this.imageDirectory);
+            if (!areaJson.exists()) {
+                areaJson.mkdir();
+            }
+            File areaJsonFile = new File(areaJson, "area.json");
+            if (!areaJsonFile.exists()) {
+                areaJsonFile.createNewFile();
+            }
+            Files.write(areaJsonFile.toPath(), RootApplication.MAP_JSON.writeValueAsString(this).getBytes(),
+                    StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "writeJsonData", e);
         }
     }
 }

@@ -3,6 +3,7 @@ package cn.kungreat.fxgamemap.custom;
 import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.RootController;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Setter
 @Getter
@@ -19,7 +20,9 @@ import java.util.List;
 public class TreeWorld {
     private String title;
     private String id;
-    private List<TreeArea> childrenArea;
+    @JsonIgnore
+    private ArrayList<TreeArea> childrenArea;
+    private ArrayList<String> childrenAreaTitle;
 
     public static StringConverter<Object> treeConverter() {
         return new StringConverter<>() {

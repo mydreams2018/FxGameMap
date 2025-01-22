@@ -110,6 +110,13 @@ public class Configuration {
 
     private static void loadTreeWorld(TreeItem<Object> root, String s) throws Exception {
         TreeWorld treeWorld = RootApplication.MAP_JSON.readValue(s, TreeWorld.class);
+        List<String> childrenAreaTitle = treeWorld.getChildrenAreaTitle();
+        if (childrenAreaTitle != null && !childrenAreaTitle.isEmpty()) {
+            treeWorld.setChildrenArea(new ArrayList<>());
+            for (String string : childrenAreaTitle) {
+                treeWorld.getChildrenArea().add(loadAreaByTitle(treeWorld.getTitle() + File.separator + string));
+            }
+        }
         TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
         treeItem.setGraphic(new FontIcon("fas-globe"));
         root.getChildren().add(treeItem);
@@ -155,5 +162,20 @@ public class Configuration {
                 tabPaneRight.getTabs().add(resourceAnimation.getTab());
             });
         }
+    }
+
+    private static TreeArea loadAreaByTitle(String imageDirectory) {
+        try {
+            File areaJson = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), imageDirectory);
+            File areaJsonFile = new File(areaJson, "area.json");
+            BufferedReader readerLPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(areaJsonFile)));
+            String readLine = readerLPointLock.readLine();
+            if (readLine != null && !readLine.isEmpty()) {
+                return RootApplication.MAP_JSON.readValue(readLine, TreeArea.class);
+            }
+        } catch (Exception e) {
+            LogService.printLog(LogService.LogLevel.ERROR, Configuration.class, "loadAreaByTitle", e);
+        }
+        return null;
     }
 }

@@ -12,11 +12,15 @@ public class MapMovePointLockUtils {
      * open_point_lock.json 自已手动修改地图的占位数据
      * */
     private static final boolean[][] basePointLocks = new boolean[800][800];
+    private static final String FILE_NAME = "Zhongzhou\\";
 
     public static void main(String[] args) throws Exception {
-        File readBackLimit = new File("F:\\mir-map-history\\PeachGarden\\backLimit\\point.txt");
-        File readFrontMask = new File("F:\\mir-map-history\\PeachGarden\\frontMask\\point.txt");
-        File outPointLocks = new File("F:\\mir\\mirBrother\\PeachGarden\\base_point_lock.json");
+        File readBackLimit = new File("F:\\mir-map-history\\" + FILE_NAME + "backLimit\\point.txt");
+        File readFrontMask = new File("F:\\mir-map-history\\" + FILE_NAME + "frontMask\\point.txt");
+        File outPointLocks = new File("F:\\mir\\mirBrother\\" + FILE_NAME + "base_point_lock.json");
+        if (!outPointLocks.exists()) {
+            outPointLocks.createNewFile();
+        }
         readFileTxt(readBackLimit);
         readFileTxt(readFrontMask);
         Files.write(outPointLocks.toPath(), RootApplication.MAP_JSON.writeValueAsString(basePointLocks).getBytes(),

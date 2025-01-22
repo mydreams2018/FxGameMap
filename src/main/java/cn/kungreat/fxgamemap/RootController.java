@@ -143,7 +143,7 @@ public class RootController implements Initializable {
             String newWorld = BaseDialog.TEXT_WORLD.getText();
             if (!newWorld.isBlank()) {
                 TreeItem<Object> root = treeView.getRoot();
-                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), new ArrayList<>());
+                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), new ArrayList<>(),new ArrayList<>());
                 TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
                 treeItem.setGraphic(new FontIcon("fas-globe"));
                 root.getChildren().add(treeItem);
@@ -172,6 +172,7 @@ public class RootController implements Initializable {
                             treeWorld.getTitle() + File.separator + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight), bgAudio,
                             Integer.parseInt(roleStartX), Integer.parseInt(roleStartY));
                     treeWorld.getChildrenArea().add(treeArea);
+                    treeWorld.getChildrenAreaTitle().add(treeArea.getTitle());
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
                     treeArea.autoFillChildData(treeItem);

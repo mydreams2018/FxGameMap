@@ -32,7 +32,7 @@ public class RootApplication extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         Scene scene = new Scene(mainFXMLLoader.load());
         scene.getStylesheets().add(RootApplication.class.getResource("FxGameMap.css").toExternalForm());
         stage.setTitle("FxGameMap");
@@ -47,6 +47,7 @@ public class RootApplication extends Application {
         stage.show();
         mainStage = stage;
         Configuration.loadTreeMenu();
+        Configuration.loadAllMirImage();
         PropertyListener.initIsSavedListener(stage);
         PropertyListener.initChooseResourceImageListener();
         RootController rootController = mainFXMLLoader.getController();

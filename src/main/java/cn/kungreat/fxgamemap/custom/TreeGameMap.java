@@ -345,9 +345,10 @@ public class TreeGameMap {
                             this.image = new Image(imageSrcFile.toURI().toString());
                             this.imageView = new ImageView(image);
                         } else {
-                            File mirSrcFile = new File(outFile.getParent(), MIR_SHARE_IMAGE_DIRECTORY + this.imagePath);
-                            if (mirSrcFile.exists()) {
-                                this.image = new Image(mirSrcFile.toURI().toString());
+                            //利用mir导出的图片缓存
+                            Image mirCacheImage = Configuration.MIR_IMAGE_CACHE.get(this.imagePath);
+                            if (mirCacheImage != null) {
+                                this.image = mirCacheImage;
                                 this.imageView = new ImageView(image);
                             } else {
                                 LogService.writerLog(LogService.LogLevel.ERROR, TreeGameMap.class, "image not found=" + this.imagePath);

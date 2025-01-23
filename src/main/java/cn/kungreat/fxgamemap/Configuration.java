@@ -8,6 +8,7 @@ import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.*;
@@ -17,7 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -28,6 +31,7 @@ public class Configuration {
     public static List<String> historyProject = new ArrayList<>();
     public static String logDirectory;
     public static String errorPrint;
+    public static final Map<String, Image> MIR_IMAGE_CACHE = new LinkedHashMap<>();
 
     static {
         try (InputStream inputStream = ClassLoader.getSystemResourceAsStream(MAIN_PROPERTIES);
@@ -105,6 +109,14 @@ public class Configuration {
             } catch (Exception e) {
                 LogService.printLog(LogService.LogLevel.ERROR, Configuration.class, "加载当前的树项目文件", e);
             }
+        }
+    }
+
+    //读所有从mir导出的图片信息,在使用的时个不用每次都new图片对象
+    public static void loadAllMirImage() throws Exception {
+        File imageFileDirectory = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), "mirBrother\\mir2AllIMages");
+        for (File file : imageFileDirectory.listFiles()) {
+            MIR_IMAGE_CACHE.put(file.getName(), new Image(file.toURI().toString()));
         }
     }
 

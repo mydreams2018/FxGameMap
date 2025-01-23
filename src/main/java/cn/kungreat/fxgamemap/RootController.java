@@ -435,7 +435,7 @@ public class RootController implements Initializable {
                                 if (backData != null) {
                                     String imageName = checkDataExists(backData, imageNamePrefix);
                                     if (imageName != null) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 32, imageName, ix, iy, 5));
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix, iy, 5));
                                     }
                                 }
                                 if (middleData != null) {
@@ -448,16 +448,22 @@ public class RootController implements Initializable {
                                     String imageName = checkDataExists(frontData, imageNamePrefix);
                                     if (imageName != null) {
                                         Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                imageName, ix, iy, 3));
+                                        //Width < 48 的情况
+                                        //Height < 32 的情况
+                                        int offsetX = Math.max((int) image.getWidth() - 48, 0);
+                                        int offsetY = Math.max((int) image.getHeight() - 32, 0);
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 3));
                                     }
                                 }
                                 if (frontBlendData != null) {
                                     String imageName = checkDataExists(frontBlendData, imageNamePrefix);
                                     if (imageName != null) {
                                         Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - image.getWidth() + 48, iy * 32 - image.getHeight() + 32,
-                                                imageName, ix, iy, 2));
+                                        //Width < 48 的情况
+                                        //Height < 32 的情况
+                                        int offsetX = Math.max((int) image.getWidth() - 48, 0);
+                                        int offsetY = Math.max((int) image.getHeight() - 32, 0);
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 2));
                                     }
                                 }
                             }

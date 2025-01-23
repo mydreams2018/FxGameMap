@@ -11,8 +11,8 @@ public class MapMovePointLockUtils {
      * base_point_lock.json 默认读取的mir地图的占位数据
      * open_point_lock.json 自已手动修改地图的占位数据
      * */
-    private static final boolean[][] basePointLocks = new boolean[800][800];
-    private static final String FILE_NAME = "Zhongzhou\\";
+    private static final boolean[][] basePointLocks = new boolean[200][200];
+    private static final String FILE_NAME = "boss4\\";
 
     public static void main(String[] args) throws Exception {
         File readBackLimit = new File("F:\\mir-map-history\\" + FILE_NAME + "backLimit\\point.txt");
@@ -25,7 +25,7 @@ public class MapMovePointLockUtils {
         readFileTxt(readFrontMask);
         Files.write(outPointLocks.toPath(), RootApplication.MAP_JSON.writeValueAsString(basePointLocks).getBytes(),
                 StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        System.out.println("down");
+        System.out.println(FILE_NAME + " down");
     }
 
     public static void readFileTxt(File fileLimit) throws Exception {

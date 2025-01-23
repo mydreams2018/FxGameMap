@@ -165,6 +165,8 @@ public class AreaMapShow {
         //start
         int xStartNumber = currentX / treeAreaShow.getWidth();
         int yStartNumber = currentY / treeAreaShow.getHeight();
+        xStartNumber = xStartNumber > 0 ? xStartNumber - 1 : 0;
+        yStartNumber = yStartNumber > 0 ? yStartNumber - 1 : 0;
         //end
         int xEndNumber = xStartNumber + 3 > treeAreaShow.getXNumber() ? treeAreaShow.getXNumber() : xStartNumber + 3;
         int yEndNumber = yStartNumber + 3 > treeAreaShow.getYNumber() ? treeAreaShow.getYNumber() : yStartNumber + 3;

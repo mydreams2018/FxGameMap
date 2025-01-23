@@ -143,7 +143,7 @@ public class RootController implements Initializable {
             String newWorld = BaseDialog.TEXT_WORLD.getText();
             if (!newWorld.isBlank()) {
                 TreeItem<Object> root = treeView.getRoot();
-                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), new ArrayList<>(),new ArrayList<>());
+                TreeWorld treeWorld = new TreeWorld(newWorld, UUID.randomUUID().toString(), new ArrayList<>(), new ArrayList<>());
                 TreeItem<Object> treeItem = new TreeItem<>(treeWorld);
                 treeItem.setGraphic(new FontIcon("fas-globe"));
                 root.getChildren().add(treeItem);
@@ -311,6 +311,9 @@ public class RootController implements Initializable {
         TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
         if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
             treeGameMap.clearAndDraw();
+            PropertyListener.changeIsSaved(false);
+        } else if (item != null && item.getValue() instanceof TreeArea treeArea) {
+            treeArea.getAreaMapShow().clearAndDraw();
             PropertyListener.changeIsSaved(false);
         }
     }

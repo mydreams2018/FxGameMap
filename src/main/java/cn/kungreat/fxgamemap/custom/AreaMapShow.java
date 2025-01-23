@@ -120,7 +120,7 @@ public class AreaMapShow {
                             clearAndDraw();
                         }
                     } else if (controller.getTopMovingMode().isSelected()) {
-                        System.out.println((int) ((currentX + event.getX()) / 48) + "_" + (int) ((currentY + event.getY()) / 32));
+                        PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
                     }
                 }
             }

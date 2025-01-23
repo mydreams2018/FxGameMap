@@ -17,7 +17,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
 
 public class RootApplication extends Application {
 
@@ -55,6 +54,7 @@ public class RootApplication extends Application {
         TreeGameMap.addImageObjectEvent();
         TreeArea.addChildrenPointDialogEvent();
         PropertyListener.initSwitchTreeAreaListener();
+        PropertyListener.initChooseCanvasImageListener();
         RootController.addBatchChangeImageObjectEvent();
         new FrameTimer().start();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");

@@ -174,7 +174,6 @@ public class TreeGameMap {
                 }
             }
         });
-        PropertyListener.initChooseCanvasImageListener();
     }
 
     public static void addImageObjectEvent() {
@@ -187,16 +186,21 @@ public class TreeGameMap {
         imageObjectCancel.setOnAction(event -> IMAGE_OBJECT_DIALOG.setResult("CANCEL"));
     }
 
-    //拿到当前选中的对象
+    //拿到当前选中的对象[优先返回上层对象]
     public BackgroundImageData getBackgroundImageData(double currentX, double currentY) {
+        BackgroundImageData resultBack = null;
         for (BackgroundImageData backgroundImage : backgroundImages) {
             if (backgroundImage.getStartX() < currentX && backgroundImage.getStartY() < currentY &&
                     backgroundImage.getStartX() + backgroundImage.getImage().getWidth() > currentX &&
                     backgroundImage.getStartY() + backgroundImage.getImage().getHeight() > currentY) {
-                return backgroundImage;
+                if (backgroundImage.getMirImageMark() == 2 || backgroundImage.getMirImageMark() == 3) {
+                    return backgroundImage;
+                } else {
+                    resultBack = backgroundImage;
+                }
             }
         }
-        return null;
+        return resultBack;
     }
 
     private ImageObject getImageObjectData(double currentX, double currentY) {

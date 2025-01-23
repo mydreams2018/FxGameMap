@@ -189,27 +189,25 @@ public class TreeGameMap {
 
     //拿到当前选中的对象
     public BackgroundImageData getBackgroundImageData(double currentX, double currentY) {
-        BackgroundImageData chooseBackgroundImageData = null;
         for (BackgroundImageData backgroundImage : backgroundImages) {
             if (backgroundImage.getStartX() < currentX && backgroundImage.getStartY() < currentY &&
                     backgroundImage.getStartX() + backgroundImage.getImage().getWidth() > currentX &&
                     backgroundImage.getStartY() + backgroundImage.getImage().getHeight() > currentY) {
-                chooseBackgroundImageData = backgroundImage;
+                return backgroundImage;
             }
         }
-        return chooseBackgroundImageData;
+        return null;
     }
 
     private ImageObject getImageObjectData(double currentX, double currentY) {
-        ImageObject chooseImageObject = null;
         for (ImageObject imageObject : imageObjectList) {
             if (imageObject.getStartX() < currentX && imageObject.getStartY() < currentY &&
                     imageObject.getStartX() + imageObject.getImage().getWidth() > currentX &&
                     imageObject.getStartY() + imageObject.getImage().getHeight() > currentY) {
-                chooseImageObject = imageObject;
+                return imageObject;
             }
         }
-        return chooseImageObject;
+        return null;
     }
 
     //全部内容刷新

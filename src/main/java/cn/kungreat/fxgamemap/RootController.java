@@ -435,7 +435,7 @@ public class RootController implements Initializable {
                                 if (backData != null) {
                                     String imageName = checkDataExists(backData, imageNamePrefix);
                                     if (imageName != null) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix, iy, 5));
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix + 1, iy + 1, 5));
                                     }
                                 }
                                 if (middleData != null) {
@@ -458,12 +458,17 @@ public class RootController implements Initializable {
                                 if (frontBlendData != null) {
                                     String imageName = checkDataExists(frontBlendData, imageNamePrefix);
                                     if (imageName != null) {
+                                        int libIndex = Integer.parseInt(imageName.split("_")[0]);
                                         Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
                                         //Width < 48 的情况
                                         //Height < 32 的情况
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
                                         int offsetY = Math.max((int) image.getHeight() - 32, 0);
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 2));
+                                        if (libIndex > 99 && libIndex < 199) {
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 64, imageName, ix, iy, 2));
+                                        } else {
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 2));
+                                        }
                                     }
                                 }
                             }

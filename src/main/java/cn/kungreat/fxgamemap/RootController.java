@@ -441,7 +441,12 @@ public class RootController implements Initializable {
                                 if (middleData != null) {
                                     String imageName = checkDataExists(middleData, imageNamePrefix);
                                     if (imageName != null) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix, iy, 4));
+                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
+                                        //Width < 48 的情况
+                                        //Height < 32 的情况
+                                        int offsetX = Math.max((int) image.getWidth() - 48, 0);
+                                        int offsetY = Math.max((int) image.getHeight() - 32, 0);
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 4));
                                     }
                                 }
                                 if (frontData != null) {

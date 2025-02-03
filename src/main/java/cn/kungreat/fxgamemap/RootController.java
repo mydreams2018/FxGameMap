@@ -465,9 +465,10 @@ public class RootController implements Initializable {
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
                                         int offsetY = Math.max((int) image.getHeight() - 32, 0);
                                         if (libIndex > 99 && libIndex < 199) {
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - 64, imageName, ix, iy, 2));
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, ix, iy, 2));
                                         } else {
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 2));
+                                            System.out.println("frontBlendOther " + imageName);
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, ix, iy, 2));
                                         }
                                     }
                                 }

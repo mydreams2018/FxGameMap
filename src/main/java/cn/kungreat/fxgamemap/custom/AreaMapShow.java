@@ -283,9 +283,10 @@ public class AreaMapShow {
                 if (addShowImages(backgroundImage)) {
                     if (backgroundImage.getMirImageMark() == 4) {
                         SHOW_MIDDLE_IMAGE.add(backgroundImage);
-                        backgroundImage.getImageView().setViewOrder(1000 - backgroundImage.getLocatorY());
-                    } else if (backgroundImage.getMirImageMark() == 3 || backgroundImage.getMirImageMark() == 2) {
-                        if (backgroundImage.getMirImageMark() == 3) {
+                    } else if (backgroundImage.getMirImageMark() == 9 || backgroundImage.getMirImageMark() == 3 || backgroundImage.getMirImageMark() == 2) {
+                        if (backgroundImage.getMirImageMark() == 9) {
+                            backgroundImage.getImageView().setViewOrder(9);
+                        } else if (backgroundImage.getMirImageMark() == 3) {
                             backgroundImage.getImageView().setViewOrder(3);
                         } else {
                             backgroundImage.getImageView().setViewOrder(2);

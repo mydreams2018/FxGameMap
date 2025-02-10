@@ -311,9 +311,9 @@ public class TreeGameMap {
         private double startX;
         private double startY;
         //定位XY的索引坐标系
-        private int locatorX;
-        private int locatorY;
-        /*  back = 5 middle = 4 front = 3 frontBlend = 2
+        private Integer locatorX;
+        private Integer locatorY;
+        /*  back = 5 middle = 4  frontTiles = 9  role-monster front = 3 frontBlend = 2
             用来表示图层 在这里先存在一起 在游戏引擎中可以分开存储
             */
         private int mirImageMark = 5;

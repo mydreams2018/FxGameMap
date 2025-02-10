@@ -512,4 +512,40 @@ public class RootController implements Initializable {
     public void changeShowPointLocks() {
         showPointLocks = !showPointLocks;
     }
+
+    //修改frontTiles 标记为9
+    @FXML
+    public void changeFrontTileImageMark() {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
+            ArrayList<TreeArea> childrenArea = treeWorld.getChildrenArea();
+            if (childrenArea != null) {
+                for (TreeArea treeArea : childrenArea) {
+                    List<TreeGameMap> childrenMap = treeArea.getChildrenMap();
+                    if (childrenMap != null) {
+                        for (TreeGameMap treeGameMap : childrenMap) {
+                            List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
+                            if (backgroundImages != null) {
+                                for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
+                                    if (backgroundImage != null) {
+                                        if (backgroundImage.getMirImageMark() == 3) {
+                                            backgroundImage.initImage(treeGameMap.getBackgroundImagePath());
+                                            Image image = backgroundImage.getImage();
+                                            boolean isTile = (image.getWidth() != 48 || image.getHeight() != 32) && (image.getWidth() != 48 * 2 || image.getHeight() != 32 * 2);
+                                            if (!isTile) {
+                                                backgroundImage.setMirImageMark(9);
+                                            }
+                                        }
+                                        backgroundImage.setLocatorX(null);//显示图层不用这个
+                                        backgroundImage.setLocatorY(null);//显示图层不用这个
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("changeFrontTileImageMark - end");
+        }
+    }
 }

@@ -5,7 +5,6 @@ import cn.kungreat.fxgamemap.Configuration;
 import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.util.LogService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -62,8 +61,6 @@ public class TreeArea {
     private AreaMapShow areaMapShow;
     @JsonIgnore
     private boolean[][] basePointLockList;
-    @JsonIgnore
-    private List<PointLock> openPointLockList;
 
     public static final ObservableList<String> STRING_OBSERVABLE_LIST = FXCollections.observableArrayList();
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
@@ -185,22 +182,6 @@ public class TreeArea {
                 }
                 readerLPointLock.close();
             }
-            File openFile = new File(baseDirectory, "open_point_lock.json");
-            if (openFile.exists()) {
-                BufferedReader openPointLock = new BufferedReader(new InputStreamReader(new FileInputStream(openFile)));
-                String openLine = openPointLock.readLine();
-                if (openLine != null && !openLine.isEmpty()) {
-                    this.openPointLockList = RootApplication.MAP_JSON.readValue(openLine, new TypeReference<List<PointLock>>() {
-                    });
-                }
-                //替换数据
-                if (this.openPointLockList != null && !this.openPointLockList.isEmpty()) {
-                    for (PointLock tempPointLock : this.openPointLockList) {
-                        this.basePointLockList[tempPointLock.getX()][tempPointLock.getY()] = tempPointLock.isB();
-                    }
-                }
-                openPointLock.close();
-            }
         } catch (Exception e) {
             LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "initPointLockListData", e);
         }
@@ -218,6 +199,11 @@ public class TreeArea {
             }
             Files.write(areaJsonFile.toPath(), RootApplication.MAP_JSON.writeValueAsString(this).getBytes(),
                     StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            File lockFile = new File(areaJson, "base_point_lock.json");
+            if (lockFile.exists()) {
+                Files.write(lockFile.toPath(), RootApplication.MAP_JSON.writeValueAsString(this.basePointLockList).getBytes(),
+                        StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
         } catch (Exception e) {
             LogService.printLog(LogService.LogLevel.ERROR, TreeArea.class, "writeJsonData", e);
         }

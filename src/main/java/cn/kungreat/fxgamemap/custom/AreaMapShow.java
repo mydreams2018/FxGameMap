@@ -121,6 +121,11 @@ public class AreaMapShow {
                         }
                     } else if (controller.getTopMovingMode().isSelected()) {
                         PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                    } else if (controller.getMapLockEditMode().isSelected()) {
+                        //切换当前锁
+                        boolean[][] basePointLockList = treeAreaShow.getBasePointLockList();
+                        boolean bl = basePointLockList[currentGlobalStartX / 48][currentGlobalStartY / 32];
+                        basePointLockList[currentGlobalStartX / 48][currentGlobalStartY / 32] = !bl;
                     }
                 }
             }

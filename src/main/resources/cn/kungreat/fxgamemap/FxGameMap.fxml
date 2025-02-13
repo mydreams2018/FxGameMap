@@ -40,6 +40,11 @@
                         <FontIcon iconLiteral="fas-remove-format" />
                     </graphic>
                 </RadioButton>
+                <RadioButton text="锁模式" fx:id="mapLockEditMode" toggleGroup="$handlerTypeGroup">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-unlock-alt" />
+                    </graphic>
+                </RadioButton>
                 <ColorPicker fx:id="canvasColorPicker"></ColorPicker>
                 <TextField fx:id="canvasMarkLineWidth" prefWidth="50"></TextField>
                 <TextField fx:id="canvasMarkLineHeight" prefWidth="50"></TextField>

@@ -66,6 +66,8 @@ public class RootController implements Initializable {
     @FXML
     private RadioButton topDeletingMode;
     @FXML
+    private RadioButton mapLockEditMode;
+    @FXML
     private TextField canvasMarkLineWidth;
     @FXML
     private TextField canvasMarkLineHeight;

@@ -173,8 +173,8 @@ public class AreaMapShow {
         xStartNumber = xStartNumber > 0 ? xStartNumber - 1 : 0;
         yStartNumber = yStartNumber > 0 ? yStartNumber - 1 : 0;
         //end
-        int xEndNumber = xStartNumber + 3 > treeAreaShow.getXNumber() ? treeAreaShow.getXNumber() : xStartNumber + 3;
-        int yEndNumber = yStartNumber + 3 > treeAreaShow.getYNumber() ? treeAreaShow.getYNumber() : yStartNumber + 3;
+        int xEndNumber = xStartNumber + 4 > treeAreaShow.getXNumber() ? treeAreaShow.getXNumber() : xStartNumber + 4;
+        int yEndNumber = yStartNumber + 4 > treeAreaShow.getYNumber() ? treeAreaShow.getYNumber() : yStartNumber + 4;
         for (int y = yStartNumber; y < yEndNumber; y++) {
             for (int x = xStartNumber; x < xEndNumber; x++) {
                 String[][] childrenPointName = treeAreaShow.getChildrenPointName();

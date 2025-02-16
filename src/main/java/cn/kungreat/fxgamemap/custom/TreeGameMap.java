@@ -137,11 +137,10 @@ public class TreeGameMap {
                         changeImageObject.initTitledPane();
                         controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
                         imageObjectList.add(changeImageObject);
-                        PropertyListener.changeIsSaved(false);
                     } else {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
-                        PropertyListener.changeIsSaved(false);
                     }
+                    PropertyListener.changeIsSaved(false);
                 } else if (controller.getTopMovingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
                         ImageObject imageObject = getImageObjectData(event.getX(), event.getY());
@@ -203,11 +202,12 @@ public class TreeGameMap {
         return resultBack;
     }
 
-    private ImageObject getImageObjectData(double currentX, double currentY) {
+    public ImageObject getImageObjectData(double currentX, double currentY) {
         for (ImageObject imageObject : imageObjectList) {
             if (imageObject.getStartX() < currentX && imageObject.getStartY() < currentY &&
                     imageObject.getStartX() + imageObject.getImage().getWidth() > currentX &&
                     imageObject.getStartY() + imageObject.getImage().getHeight() > currentY) {
+                System.out.println(imageObject.getId());
                 return imageObject;
             }
         }

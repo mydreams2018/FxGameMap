@@ -84,6 +84,9 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     }
 
     public void initTitledPane() {
+        if (this.titledPane != null) {
+            return;
+        }
         this.titledPane = new TitledPane();
         this.titledPane.setText(this.title);
         VBox outVBox = new VBox(10);
@@ -201,6 +204,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         });
         gridPane.add(this.baseAnimationButton, 0, 10);
         gridPane.add(this.baseAnimationNameText, 1, 10);
+        gridPane.add(new Label("id"), 0, 11);
+        gridPane.add(new TextField(this.id), 1, 11);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }

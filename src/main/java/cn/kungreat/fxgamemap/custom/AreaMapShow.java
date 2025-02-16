@@ -1,5 +1,6 @@
 package cn.kungreat.fxgamemap.custom;
 
+import cn.kungreat.fxgamemap.ImageObject;
 import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.RootController;
 import cn.kungreat.fxgamemap.util.PropertyListener;
@@ -111,16 +112,34 @@ public class AreaMapShow {
                             currentTreeGameMap.addSaveImgPaths(chooseResourceImage.getId());
                             imagePath = chooseResourceImage.getId();
                         }
-                        currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
+                        if (controller.getRadioButtonIsObject().isSelected()) {
+                            ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
+                            changeImageObject.setTitle(changeImageObject.getImagePath());
+                            currentTreeGameMap.getImageObjectList().add(changeImageObject);
+                        } else {
+                            currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
+                        }
                         PropertyListener.changeIsSaved(false);
                     } else if (controller.getTopDeletingMode().isSelected()) {
-                        TreeGameMap.BackgroundImageData backgroundImageData = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
-                        if (backgroundImageData != null) {
-                            currentTreeGameMap.getBackgroundImages().remove(backgroundImageData);
-                            clearAndDraw();
+                        if (controller.getRadioButtonIsObject().isSelected()) {
+                            ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                            if (removeImageObject != null) {
+                                currentTreeGameMap.getImageObjectList().remove(removeImageObject);
+                                clearAndDraw();
+                            }
+                        } else {
+                            TreeGameMap.BackgroundImageData backgroundImageData = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                            if (backgroundImageData != null) {
+                                currentTreeGameMap.getBackgroundImages().remove(backgroundImageData);
+                                clearAndDraw();
+                            }
                         }
                     } else if (controller.getTopMovingMode().isSelected()) {
-                        PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                        if (controller.getRadioButtonIsObject().isSelected()) {
+                            PropertyListener.setChooseCanvasImage(currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                        } else {
+                            PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                        }
                     } else if (controller.getMapLockEditMode().isSelected()) {
                         //切换当前锁
                         boolean[][] basePointLockList = treeAreaShow.getBasePointLockList();
@@ -167,6 +186,9 @@ public class AreaMapShow {
         BACK_PANE.getChildren().clear();
         MIDDLE_PANE.getChildren().clear();
         FRONT_PANE.getChildren().clear();
+        //清空右侧对象图片
+        RootController controller = RootApplication.mainFXMLLoader.getController();
+        controller.getRightTopScrollPaneAccordion().getPanes().clear();
         //start
         int xStartNumber = currentX / treeAreaShow.getWidth();
         int yStartNumber = currentY / treeAreaShow.getHeight();
@@ -301,6 +323,22 @@ public class AreaMapShow {
                     } else {
                         SHOW_BACK_IMAGE.add(backgroundImage);
                     }
+                }
+            }
+        }
+        List<ImageObject> imageObjectList = gameMap.getImageObjectList();
+        if (imageObjectList != null && !imageObjectList.isEmpty()) {
+            RootController controller = RootApplication.mainFXMLLoader.getController();
+            for (ImageObject imageObject : imageObjectList) {
+                imageObject.initImage(gameMap.getBackgroundImagePath());
+                imageObject.setTempStartX(globalX + imageObject.getStartX());
+                imageObject.setTempStartY(globalY + imageObject.getStartY());
+                if (addShowImages(imageObject)) {
+                    imageObject.initTitledPane();
+                    controller.getRightTopScrollPaneAccordion().getPanes().add(imageObject.getTitledPane());
+                    imageObject.getImageView().setViewOrder(2);
+                    imageObject.getImageView().setBlendMode(BlendMode.ADD);
+                    SHOW_FRONT_IMAGE.add(imageObject);
                 }
             }
         }

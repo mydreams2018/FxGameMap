@@ -68,7 +68,6 @@
                         <FontIcon iconLiteral="far-times-circle" />
                     </graphic>
                 </Button>
-                <Button text="修改frontTile数据" onAction="#changeFrontTileImageMark" />
             </HBox>
         </HBox>
     </top>

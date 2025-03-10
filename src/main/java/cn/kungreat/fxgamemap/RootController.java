@@ -437,7 +437,7 @@ public class RootController implements Initializable {
                                 if (backData != null) {
                                     String imageName = checkDataExists(backData, imageNamePrefix);
                                     if (imageName != null) {
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, ix + 1, iy + 1, 5));
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32, imageName, null, null, 5));
                                     }
                                 }
                                 if (middleData != null) {
@@ -448,7 +448,7 @@ public class RootController implements Initializable {
                                         //Height < 32 的情况
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
                                         int offsetY = Math.max((int) image.getHeight() - 32, 0);
-                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 4));
+                                        backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, null, null, 4));
                                     }
                                 }
                                 if (frontData != null) {
@@ -462,9 +462,9 @@ public class RootController implements Initializable {
                                         boolean isTile = (image.getWidth() != 48 || image.getHeight() != 32) && (image.getWidth() != 48 * 2 || image.getHeight() != 32 * 2);
                                         if (!isTile) {
                                             //9是后面添加的上层地板层
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 9));
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, null, null, 9));
                                         } else {
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, ix, iy, 3));
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48 - offsetX, iy * 32 - offsetY, imageName, null, null, 3));
                                         }
                                     }
                                 }
@@ -478,10 +478,10 @@ public class RootController implements Initializable {
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
                                         int offsetY = Math.max((int) image.getHeight() - 32, 0);
                                         if (libIndex > 99 && libIndex < 199) {
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, ix, iy, 2));
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, null, null, 2));
                                         } else {
                                             System.out.println("frontBlendOther " + imageName);
-                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, ix, iy, 2));
+                                            backgroundImages.add(new TreeGameMap.BackgroundImageData(ix * 48, iy * 32 - offsetY, imageName, null, null, 2));
                                         }
                                     }
                                 }

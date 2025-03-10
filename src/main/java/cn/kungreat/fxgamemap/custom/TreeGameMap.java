@@ -330,7 +330,7 @@ public class TreeGameMap {
         }
 
         //导入mir地图用
-        public BackgroundImageData(double startX, double startY, String imagePath, int locatorX, int locatorY, int mirImageMark) {
+        public BackgroundImageData(double startX, double startY, String imagePath, Integer locatorX, Integer locatorY, int mirImageMark) {
             this.startX = startX;
             this.startY = startY;
             this.imagePath = imagePath;

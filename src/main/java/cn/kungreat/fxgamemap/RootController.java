@@ -88,6 +88,10 @@ public class RootController implements Initializable {
     @FXML
     private RadioButton radioButtonIsObject;
     @FXML
+    private RadioButton radioButtonMonster;
+    @FXML
+    private ChoiceBox<String> monsterChoiceBox;
+    @FXML
     private ScrollPane rightTopScrollPane;
     @FXML
     private Accordion rightTopScrollPaneAccordion;
@@ -118,6 +122,8 @@ public class RootController implements Initializable {
         addSegmentResourceImgEvent();
         addScrollPaneCenterEvent();
         addCanvasColorPickerEvent();
+        monsterChoiceBox.getItems().addAll("003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018");
+        monsterChoiceBox.getItems().addAll("899", "900", "901", "902", "903", "904");
     }
 
     public ContextMenu getTreeContextMenu() {
@@ -374,13 +380,10 @@ public class RootController implements Initializable {
                                 ImageObject findResult = findImageObjectByTitle(radioButton.getText(), treeGameMap.getImageObjectList());
                                 if (findResult != null) {
                                     findResult.setType(BaseDialog.BATCH_IMAGE_OBJECT.getType());
-                                    findResult.setLevel(BaseDialog.BATCH_IMAGE_OBJECT.getLevel());
                                     findResult.setPhysical(BaseDialog.BATCH_IMAGE_OBJECT.isPhysical());
                                     findResult.setMaxActivityScope(BaseDialog.BATCH_IMAGE_OBJECT.getMaxActivityScope());
-                                    findResult.setMoveSpeed(BaseDialog.BATCH_IMAGE_OBJECT.getMoveSpeed());
-                                    findResult.setRunSpeed(BaseDialog.BATCH_IMAGE_OBJECT.getRunSpeed());
-                                    findResult.setActionType(BaseDialog.BATCH_IMAGE_OBJECT.getActionType());
-                                    findResult.setAnimationName(BaseDialog.BATCH_IMAGE_OBJECT.getAnimationName());
+                                    findResult.setMonsterType(BaseDialog.BATCH_IMAGE_OBJECT.getMonsterType());
+                                    findResult.setAnimationIndex(BaseDialog.BATCH_IMAGE_OBJECT.getAnimationIndex());
                                     findResult.setBaseAnimationName(BaseDialog.BATCH_IMAGE_OBJECT.getBaseAnimationName());
                                     findResult.setFixedAnimationFileSrc(BaseDialog.BATCH_IMAGE_OBJECT.getFixedAnimationFileSrc());
                                     findResult.refresh();

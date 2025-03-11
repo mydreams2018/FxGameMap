@@ -137,6 +137,8 @@ public class TreeGameMap {
                         changeImageObject.initTitledPane();
                         controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
                         imageObjectList.add(changeImageObject);
+                    } else if (controller.getRadioButtonMonster().isSelected()) {
+
                     } else {
                         backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
                     }
@@ -148,6 +150,8 @@ public class TreeGameMap {
                         if (imageObject != null) {
                             controller.getRightTopScrollPaneAccordion().setExpandedPane(imageObject.getTitledPane());
                         }
+                    } else if (controller.getRadioButtonMonster().isSelected()) {
+
                     } else {
                         PropertyListener.setChooseCanvasImage(getBackgroundImageData(event.getX(), event.getY()));
                     }
@@ -161,6 +165,8 @@ public class TreeGameMap {
                             graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2),
                                     event.getY() - (DELETE_IMAGE.getHeight() / 2));
                         }
+                    } else if (controller.getRadioButtonMonster().isSelected()) {
+
                     } else {
                         BackgroundImageData backgroundImageData = getBackgroundImageData(event.getX(), event.getY());
                         if (backgroundImageData != null) {

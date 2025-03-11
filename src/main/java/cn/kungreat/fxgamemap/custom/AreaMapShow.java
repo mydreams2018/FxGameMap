@@ -116,6 +116,8 @@ public class AreaMapShow {
                             ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                             changeImageObject.setTitle(changeImageObject.getImagePath());
                             currentTreeGameMap.getImageObjectList().add(changeImageObject);
+                        } else if (controller.getRadioButtonMonster().isSelected()) {
+
                         } else {
                             currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
                         }
@@ -127,6 +129,8 @@ public class AreaMapShow {
                                 currentTreeGameMap.getImageObjectList().remove(removeImageObject);
                                 clearAndDraw();
                             }
+                        } else if (controller.getRadioButtonMonster().isSelected()) {
+
                         } else {
                             TreeGameMap.BackgroundImageData backgroundImageData = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
                             if (backgroundImageData != null) {
@@ -137,6 +141,8 @@ public class AreaMapShow {
                     } else if (controller.getTopMovingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
                             PropertyListener.setChooseCanvasImage(currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                        } else if (controller.getRadioButtonMonster().isSelected()) {
+
                         } else {
                             PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
                         }

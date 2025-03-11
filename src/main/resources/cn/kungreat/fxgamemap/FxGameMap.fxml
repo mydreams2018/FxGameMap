@@ -18,6 +18,8 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import java.lang.String?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
         <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">
@@ -106,6 +108,8 @@
                                 </Button>
                                 <RadioButton text="背景图片" selected="true" toggleGroup="$imgTypeGroup"/>
                                 <RadioButton text="对象图片" fx:id="radioButtonIsObject" toggleGroup="$imgTypeGroup"/>
+                                <RadioButton text="怪物标记" fx:id="radioButtonMonster" toggleGroup="$imgTypeGroup"/>
+                                <ChoiceBox fx:id="monsterChoiceBox"/>
                             </HBox>
                             <ScrollPane fx:id="rightTopScrollPane" styleClass="customBgColor">
                                 <Accordion fx:id="rightTopScrollPaneAccordion"></Accordion>

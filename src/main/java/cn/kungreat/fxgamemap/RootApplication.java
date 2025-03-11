@@ -7,6 +7,7 @@ import cn.kungreat.fxgamemap.frame.FrameTimer;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +29,7 @@ public class RootApplication extends Application {
     static {
         //序列化时过滤掉为null的对象
         MAP_JSON.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        MAP_JSON.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override

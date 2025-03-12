@@ -55,7 +55,6 @@ public class RootApplication extends Application {
         stage.show();
         mainStage = stage;
         Configuration.loadTreeMenu();
-        Configuration.loadAllMirImage();
         PropertyListener.initIsSavedListener(stage);
         PropertyListener.initChooseResourceImageListener();
         RootController rootController = mainFXMLLoader.getController();

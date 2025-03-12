@@ -217,6 +217,7 @@ public class RootController implements Initializable {
                     treeGameMap.initCanvas();
                     scrollPaneCenterInHBox.getChildren().add(treeGameMap.getCanvas());
                 } else if (value instanceof TreeArea treeArea) {
+                    Configuration.loadAllMirImageCache(treeArea);
                     scrollPaneCenterInHBox.getChildren().clear();
                     treeArea.initGridPane();
                     scrollPaneCenterInHBox.getChildren().add(treeArea.getGridPane());

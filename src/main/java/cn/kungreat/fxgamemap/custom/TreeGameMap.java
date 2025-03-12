@@ -397,7 +397,7 @@ public class TreeGameMap {
                             this.imageView = new ImageView(image);
                         } else {
                             //利用mir导出的图片缓存
-                            Image mirCacheImage = Configuration.MIR_IMAGE_CACHE.get(this.imagePath);
+                            Image mirCacheImage = Configuration.useMirImageCache(this.imagePath);
                             if (mirCacheImage != null) {
                                 this.image = mirCacheImage;
                                 this.imageView = new ImageView(image);

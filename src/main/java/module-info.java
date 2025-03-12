@@ -9,5 +9,4 @@ open module cn.kungreat.fxgamemap {
     requires org.kordamp.ikonli.fontawesome5;
     requires static lombok;
     requires com.fasterxml.jackson.databind;
-    requires java.desktop;
 }

@@ -8,6 +8,7 @@ import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -112,12 +113,43 @@ public class Configuration {
         }
     }
 
-    //读所有从mir导出的图片信息,在使用的时个不用每次都new图片对象
-    public static void loadAllMirImage() throws Exception {
-        File imageFileDirectory = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), "mirBrother\\mir2AllIMages");
-        for (File file : imageFileDirectory.listFiles()) {
-            MIR_IMAGE_CACHE.put(file.getName(), new Image(file.toURI().toString()));
+    //跑图的时候会出现微卡的情况,地图资源按区域全加载缓存
+    public static void loadAllMirImageCache(TreeArea currentTreeArea) {
+        List<TreeGameMap> childrenMap = currentTreeArea.getChildrenMap();
+        for (TreeGameMap treeGameMap : childrenMap) {
+            List<TreeGameMap.BackgroundImageData> backgroundImages = treeGameMap.getBackgroundImages();
+            if (backgroundImages != null && !backgroundImages.isEmpty()) {
+                for (TreeGameMap.BackgroundImageData backgroundImage : backgroundImages) {
+                    backgroundImage.initImage(treeGameMap.getBackgroundImagePath());
+                }
+            }
+            List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
+            if (imageObjectList != null && !imageObjectList.isEmpty()) {
+                for (ImageObject imageObject : imageObjectList) {
+                    if (imageObject.getType() != ImageObjectType.MONSTER) {
+                        imageObject.initImage(treeGameMap.getBackgroundImagePath());
+                        if (imageObject.getType() == ImageObjectType.FIXED_ANIMATION) {
+                            imageObject.getImageView().setBlendMode(BlendMode.ADD);
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    //使用后缓存mir地图里的图片数据
+    public static Image useMirImageCache(String imgName) {
+        Image imageCache = MIR_IMAGE_CACHE.get(imgName);
+        if (imageCache != null) {
+            return imageCache;
+        }
+        File imageFile = new File("F:\\mir\\mirBrother\\mir2AllIMages", imgName);
+        if (imageFile.exists()) {
+            Image readImage = new Image(imageFile.toURI().toString());
+            MIR_IMAGE_CACHE.put(imgName, readImage);
+            return readImage;
+        }
+        return null;
     }
 
     private static void loadTreeWorld(TreeItem<Object> root, String s) throws Exception {

@@ -19,7 +19,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import java.lang.String?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>
         <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="20.0" styleClass="customBgColor">

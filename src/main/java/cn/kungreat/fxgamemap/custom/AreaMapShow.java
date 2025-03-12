@@ -1,10 +1,13 @@
 package cn.kungreat.fxgamemap.custom;
 
 import cn.kungreat.fxgamemap.ImageObject;
+import cn.kungreat.fxgamemap.ImageObjectType;
 import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.RootController;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
@@ -97,12 +100,10 @@ public class AreaMapShow {
                 Integer areaHeight = treeAreaShow.getHeight();
                 TreeGameMap currentTreeGameMap = findTreeGameMap(treeAreaShow.getChildrenPointName()[currentGlobalStartX / areaWidth][currentGlobalStartY / areaHeight], treeAreaShow);
                 if (currentTreeGameMap != null) {
-                    if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                    if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null && !controller.getRadioButtonMonster().isSelected()) {
                         Image image = chooseResourceImage.getImage();
                         double startX = currentGlobalStartX % areaWidth - (image.getWidth() / 2);
                         double startY = currentGlobalStartY % areaHeight - (image.getHeight() / 2);
-                        int locatorX = (int) ((startX + image.getWidth()) / 48);
-                        int locatorY = (int) ((startY + image.getHeight()) / 32);
                         String imagePath;
                         if (image.getUrl() != null) {
                             currentTreeGameMap.addSaveImgPaths(image.getUrl());
@@ -113,15 +114,20 @@ public class AreaMapShow {
                             imagePath = chooseResourceImage.getId();
                         }
                         if (controller.getRadioButtonIsObject().isSelected()) {
+                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
                             ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                             changeImageObject.setTitle(changeImageObject.getImagePath());
                             currentTreeGameMap.getImageObjectList().add(changeImageObject);
-                        } else if (controller.getRadioButtonMonster().isSelected()) {
-
                         } else {
-                            currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
+                            currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, null, null));
                         }
                         PropertyListener.changeIsSaved(false);
+                    } else if (controller.getTopPaintingMode().isSelected() && controller.getRadioButtonMonster().isSelected()) {
+                        //怪物标记模式
+                        int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                        int locatorY = (currentGlobalStartY % areaHeight) / 32;
+                        currentTreeGameMap.getImageObjectList().add(TreeGameMap.addMonster(controller, locatorX, locatorY));
                     } else if (controller.getTopDeletingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
                             ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
@@ -130,7 +136,14 @@ public class AreaMapShow {
                                 clearAndDraw();
                             }
                         } else if (controller.getRadioButtonMonster().isSelected()) {
-
+                            //怪物标记delete模式
+                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
+                            ImageObject monsterObject = currentTreeGameMap.getMonsterObject(locatorX, locatorY);
+                            if (monsterObject != null) {
+                                currentTreeGameMap.getImageObjectList().remove(monsterObject);
+                                clearAndDraw();
+                            }
                         } else {
                             TreeGameMap.BackgroundImageData backgroundImageData = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
                             if (backgroundImageData != null) {
@@ -141,9 +154,7 @@ public class AreaMapShow {
                     } else if (controller.getTopMovingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
                             PropertyListener.setChooseCanvasImage(currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
-                        } else if (controller.getRadioButtonMonster().isSelected()) {
-
-                        } else {
+                        } else if (!controller.getRadioButtonMonster().isSelected()) {
                             PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
                         }
                     } else if (controller.getMapLockEditMode().isSelected()) {
@@ -237,10 +248,20 @@ public class AreaMapShow {
             MIDDLE_PANE.getChildren().add(view);
         }
         for (TreeGameMap.BackgroundImageData frontImage : SHOW_FRONT_IMAGE) {
-            ImageView view = frontImage.getImageView();
-            view.setLayoutX(frontImage.getChangeX());
-            view.setLayoutY(frontImage.getChangeY());
-            FRONT_PANE.getChildren().add(view);
+            if (frontImage instanceof ImageObject imageObject && imageObject.getType() == ImageObjectType.MONSTER) {
+                Label monsterLabel = new Label(imageObject.getAnimationIndex());
+                monsterLabel.setPrefWidth(48);
+                monsterLabel.setPrefHeight(32);
+                monsterLabel.setAlignment(Pos.CENTER);
+                monsterLabel.setLayoutX(frontImage.getChangeX());
+                monsterLabel.setLayoutY(frontImage.getChangeY());
+                FRONT_PANE.getChildren().add(monsterLabel);
+            } else {
+                ImageView view = frontImage.getImageView();
+                view.setLayoutX(frontImage.getChangeX());
+                view.setLayoutY(frontImage.getChangeY());
+                FRONT_PANE.getChildren().add(view);
+            }
         }
     }
 
@@ -292,10 +313,18 @@ public class AreaMapShow {
     }
 
     private boolean addShowImages(TreeGameMap.BackgroundImageData backgroundImage) {
-        Image image = backgroundImage.getImageView().getImage();
+        double imageWidth;
+        double imageHeight;
+        if (backgroundImage.getImageView() == null) {
+            imageWidth = 48;
+            imageHeight = 32;
+        } else {
+            imageWidth = backgroundImage.getImageView().getImage().getWidth();
+            imageHeight = backgroundImage.getImageView().getImage().getHeight();
+        }
         double startX = backgroundImage.getTempStartX();
         double startY = backgroundImage.getTempStartY();
-        if (startY + image.getHeight() > this.currentY && startX + image.getWidth() > this.currentX &&
+        if (startY + imageHeight > this.currentY && startX + imageWidth > this.currentX &&
                 startY < this.currentY + treeAreaShow.getHeight() && startX < this.currentX + treeAreaShow.getWidth()) {
             backgroundImage.setChangeX(startX - this.currentX);
             backgroundImage.setChangeY(startY - this.currentY);
@@ -342,8 +371,10 @@ public class AreaMapShow {
                 if (addShowImages(imageObject)) {
                     imageObject.initTitledPane();
                     controller.getRightTopScrollPaneAccordion().getPanes().add(imageObject.getTitledPane());
-                    imageObject.getImageView().setViewOrder(2);
-                    imageObject.getImageView().setBlendMode(BlendMode.ADD);
+                    if (imageObject.getType() != ImageObjectType.MONSTER) {
+                        imageObject.getImageView().setViewOrder(2);
+                        imageObject.getImageView().setBlendMode(BlendMode.ADD);
+                    }
                     SHOW_FRONT_IMAGE.add(imageObject);
                 }
             }

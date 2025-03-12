@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -109,7 +110,7 @@ public class TreeGameMap {
             if (event.getButton() == MouseButton.PRIMARY) {
                 RootController controller = RootApplication.mainFXMLLoader.getController();
                 ImageView chooseResourceImage = PropertyListener.getChooseResourceImage();
-                if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null) {
+                if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null && !controller.getRadioButtonMonster().isSelected()) {
                     Image image = chooseResourceImage.getImage();
                     double startX;
                     double startY;
@@ -120,8 +121,6 @@ public class TreeGameMap {
                         startX = event.getX() - (image.getWidth() / 2);
                         startY = event.getY() - (image.getHeight() / 2);
                     }
-                    int locatorX = (int) ((startX + image.getWidth()) / 48);
-                    int locatorY = (int) ((startY + image.getHeight()) / 32);
                     String imagePath;
                     if (image.getUrl() != null) {
                         saveImgPaths.add(image.getUrl());
@@ -132,17 +131,22 @@ public class TreeGameMap {
                         imagePath = chooseResourceImage.getId();
                     }
                     if (controller.getRadioButtonIsObject().isSelected()) {
+                        int locatorX = (int) event.getX() / 48;
+                        int locatorY = (int) event.getY() / 32;
                         ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                         changeImageObject.setTitle(changeImageObject.getImagePath());
                         changeImageObject.initTitledPane();
                         controller.getRightTopScrollPaneAccordion().getPanes().add(changeImageObject.getTitledPane());
                         imageObjectList.add(changeImageObject);
-                    } else if (controller.getRadioButtonMonster().isSelected()) {
-
                     } else {
-                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, locatorX, locatorY));
+                        backgroundImages.add(new BackgroundImageData(image, startX, startY, imagePath, null, null));
                     }
                     PropertyListener.changeIsSaved(false);
+                } else if (controller.getTopPaintingMode().isSelected() && controller.getRadioButtonMonster().isSelected()) {
+                    //怪物标记模式
+                    int locatorX = (int) event.getX() / 48;
+                    int locatorY = (int) event.getY() / 32;
+                    imageObjectList.add(addMonster(controller, locatorX, locatorY));
                 } else if (controller.getTopMovingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
                         ImageObject imageObject = getImageObjectData(event.getX(), event.getY());
@@ -150,23 +154,18 @@ public class TreeGameMap {
                         if (imageObject != null) {
                             controller.getRightTopScrollPaneAccordion().setExpandedPane(imageObject.getTitledPane());
                         }
-                    } else if (controller.getRadioButtonMonster().isSelected()) {
-
-                    } else {
+                    } else if (!controller.getRadioButtonMonster().isSelected()) {
                         PropertyListener.setChooseCanvasImage(getBackgroundImageData(event.getX(), event.getY()));
                     }
                 } else if (controller.getTopDeletingMode().isSelected()) {
                     if (controller.getRadioButtonIsObject().isSelected()) {
                         ImageObject removeImageObject = getImageObjectData(event.getX(), event.getY());
-                        if (removeImageObject != null) {
-                            imageObjectList.remove(removeImageObject);
-                            controller.getRightTopScrollPaneAccordion().getPanes().remove(removeImageObject.getTitledPane());
-                            clearAndDraw();
-                            graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2),
-                                    event.getY() - (DELETE_IMAGE.getHeight() / 2));
-                        }
+                        removeMonster(event, controller, removeImageObject);
                     } else if (controller.getRadioButtonMonster().isSelected()) {
-
+                        int locatorX = (int) event.getX() / 48;
+                        int locatorY = (int) event.getY() / 32;
+                        ImageObject monsterObject = getMonsterObject(locatorX, locatorY);
+                        removeMonster(event, controller, monsterObject);
                     } else {
                         BackgroundImageData backgroundImageData = getBackgroundImageData(event.getX(), event.getY());
                         if (backgroundImageData != null) {
@@ -179,6 +178,25 @@ public class TreeGameMap {
                 }
             }
         });
+    }
+
+    static ImageObject addMonster(RootController controller, int locatorX, int locatorY) {
+        ImageObject monsterObject = new ImageObject(UUID.randomUUID().toString(), locatorX * 48, locatorY * 32, locatorX, locatorY);
+        monsterObject.setType(ImageObjectType.MONSTER);
+        monsterObject.setAnimationIndex(controller.getMonsterChoiceBox().getValue());
+        monsterObject.setTitle(controller.getMonsterChoiceBox().getValue());
+        monsterObject.initTitledPane();
+        controller.getRightTopScrollPaneAccordion().getPanes().add(monsterObject.getTitledPane());
+        return monsterObject;
+    }
+
+    private void removeMonster(MouseEvent event, RootController controller, ImageObject monsterObject) {
+        if (monsterObject != null) {
+            imageObjectList.remove(monsterObject);
+            controller.getRightTopScrollPaneAccordion().getPanes().remove(monsterObject.getTitledPane());
+            clearAndDraw();
+            graphicsContext.drawImage(DELETE_IMAGE, event.getX() - (DELETE_IMAGE.getWidth() / 2), event.getY() - (DELETE_IMAGE.getHeight() / 2));
+        }
     }
 
     public static void addImageObjectEvent() {
@@ -220,6 +238,15 @@ public class TreeGameMap {
         return null;
     }
 
+    public ImageObject getMonsterObject(int locatorX, int locatorY) {
+        for (ImageObject imageObject : imageObjectList) {
+            if (imageObject.getType() == ImageObjectType.MONSTER && imageObject.getLocatorX() == locatorX && imageObject.getLocatorY() == locatorY) {
+                return imageObject;
+            }
+        }
+        return null;
+    }
+
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);
@@ -243,7 +270,13 @@ public class TreeGameMap {
                 graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
             }
         });
-        imageObjectList.forEach(image -> graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY()));
+        imageObjectList.forEach(image -> {
+            if (image.getType() == ImageObjectType.MONSTER) {
+                graphicsContext.fillText(image.getAnimationIndex(), image.getStartX(), image.getStartY());
+            } else {
+                graphicsContext.drawImage(image.getImage(), image.getStartX(), image.getStartY());
+            }
+        });
         drawMarkLine();
     }
 
@@ -324,13 +357,21 @@ public class TreeGameMap {
             */
         private int mirImageMark = 5;
 
-        public BackgroundImageData(Image image, double startX, double startY, String imagePath, int locatorX, int locatorY) {
+        public BackgroundImageData(Image image, double startX, double startY, String imagePath, Integer locatorX, Integer locatorY) {
             this.image = image;
             this.startX = startX;
             this.startY = startY;
             String[] split = imagePath.split("/");
             this.imagePath = split[split.length - 1];
             this.imageView = new ImageView(image);
+            this.locatorX = locatorX;
+            this.locatorY = locatorY;
+        }
+
+        //monster专用
+        public BackgroundImageData(double startX, double startY, int locatorX, int locatorY) {
+            this.startX = startX;
+            this.startY = startY;
             this.locatorX = locatorX;
             this.locatorY = locatorY;
         }

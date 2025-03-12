@@ -64,6 +64,18 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         this.id = id;
     }
 
+    public ImageObject(String id, double startX, double startY, int locatorX, int locatorY) {
+        super(startX, startY, locatorX, locatorY);
+        this.id = id;
+    }
+
+    @Override
+    public void initImage(String backgroundImagePath) {
+        if (this.type != ImageObjectType.MONSTER) {
+            super.initImage(backgroundImagePath);
+        }
+    }
+
     public void initTitledPane() {
         if (this.titledPane != null) {
             return;

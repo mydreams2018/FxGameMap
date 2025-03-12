@@ -249,10 +249,8 @@ public class AreaMapShow {
         }
         for (TreeGameMap.BackgroundImageData frontImage : SHOW_FRONT_IMAGE) {
             if (frontImage instanceof ImageObject imageObject && imageObject.getType() == ImageObjectType.MONSTER) {
-                Label monsterLabel = new Label(imageObject.getAnimationIndex());
-                monsterLabel.setPrefWidth(48);
-                monsterLabel.setPrefHeight(32);
-                monsterLabel.setAlignment(Pos.CENTER);
+                Label monsterLabel = imageObject.getMonsterAnimationLabel();
+                monsterLabel.setText(imageObject.getAnimationIndex());
                 monsterLabel.setLayoutX(frontImage.getChangeX());
                 monsterLabel.setLayoutY(frontImage.getChangeY());
                 FRONT_PANE.getChildren().add(monsterLabel);

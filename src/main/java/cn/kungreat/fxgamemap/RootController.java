@@ -523,4 +523,54 @@ public class RootController implements Initializable {
     public void changeShowPointLocks() {
         showPointLocks = !showPointLocks;
     }
+
+    @FXML
+    public void autoFillMonster() {
+        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
+        Random randomIndex = new Random();
+        if (item != null && item.getValue() instanceof TreeArea treeArea && this.getTopPaintingMode().isSelected() && this.getRadioButtonMonster().isSelected()) {
+            List<String> monsterIndex = RootApplication.AREA_MONSTER_FILL.get(treeArea.getTitle());
+            if (monsterIndex != null) {
+                boolean[][] basePointLockList = treeArea.getBasePointLockList();
+                int singleLocatorXNumber = treeArea.getWidth() / 48;
+                int singleLocatorYNumber = treeArea.getHeight() / 32;
+                for (int y = 0; y < treeArea.getYNumber(); y++) {
+                    for (int x = 0; x < treeArea.getXNumber(); x++) {
+                        String mapName = treeArea.getChildrenPointName()[x][y];
+                        TreeGameMap treeGameMap = AreaMapShow.findTreeGameMap(mapName, treeArea);
+                        if (treeGameMap != null && treeGameMap.getImageObjectList() != null) {
+                            //清理以前的monster数据
+                            treeGameMap.getImageObjectList().removeIf(imageObject -> imageObject.getType() == ImageObjectType.MONSTER);
+                        }
+                        int currentLocatorXNumber = x * singleLocatorXNumber;
+                        int currentLocatorYNumber = y * singleLocatorYNumber;
+                        int monsterQuota = 0;
+                        int monsterQuotaMax = 100;//一小块最大的怪数量
+                        outBreak:
+                        for (int iny = 0; iny < singleLocatorYNumber; iny++) {
+                            for (int inx = 0; inx < singleLocatorXNumber; inx++) {
+                                if (!basePointLockList[currentLocatorXNumber + inx][currentLocatorYNumber + iny] && Math.random() > 0.95) {
+                                    monsterQuota++;
+                                    String monsterAni = monsterIndex.get(randomIndex.nextInt(0, monsterIndex.size()));
+                                    ImageObject monsterObject = new ImageObject(UUID.randomUUID().toString(), inx * 48, iny * 32, inx, iny);
+                                    monsterObject.setType(ImageObjectType.MONSTER);
+                                    monsterObject.setAnimationIndex(monsterAni);
+                                    monsterObject.setTitle(monsterAni);
+                                    treeGameMap.getImageObjectList().add(monsterObject);
+                                    if (monsterQuota > monsterQuotaMax) {
+                                        break outBreak;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                System.out.println("autoFillMonster - down");
+            } else {
+                System.out.println("monsterIndex = null");
+            }
+        } else {
+            System.out.println("自动填充怪物模式不对");
+        }
+    }
 }

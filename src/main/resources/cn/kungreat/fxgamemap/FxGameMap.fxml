@@ -70,6 +70,11 @@
                         <FontIcon iconLiteral="far-times-circle" />
                     </graphic>
                 </Button>
+                <Button text="自动填充怪物数据" onAction="#autoFillMonster">
+                    <graphic>
+                        <FontIcon iconLiteral="far-times-circle" />
+                    </graphic>
+                </Button>
             </HBox>
         </HBox>
     </top>

@@ -5,10 +5,12 @@ import cn.kungreat.fxgamemap.util.LogService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,6 +51,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     public static final String FIXED_ANIMATION_DIRECTORY = "fixed_animation";
     @JsonIgnore
     private List<File> FixedAnimationFileSrc;
+    @JsonIgnore
+    private Label monsterAnimationLabel = new Label();
 
     private String id;
     private String title;
@@ -82,6 +86,10 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         this.titledPane = new TitledPane();
         this.titledPane.setText(this.title);
+        monsterAnimationLabel.setPrefWidth(48);
+        monsterAnimationLabel.setPrefHeight(32);
+        monsterAnimationLabel.setTextFill(Color.BLUE);
+        monsterAnimationLabel.setAlignment(Pos.CENTER);
         VBox outVBox = new VBox(10);
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);

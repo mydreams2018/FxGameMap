@@ -34,25 +34,25 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TitledPane titledPane;
     @JsonIgnore
-    private ChoiceBox<String> textType = new ChoiceBox<>();
+    private ChoiceBox<String> textType;
     @JsonIgnore
-    private ChoiceBox<String> textPhysical = new ChoiceBox<>();
+    private ChoiceBox<String> textPhysical;
     @JsonIgnore
-    private TextField maxActivityScopeText = new TextField();
+    private TextField maxActivityScopeText;
     @JsonIgnore
-    private ChoiceBox<String> monsterTypeCheckBox = new ChoiceBox<>();
+    private ChoiceBox<String> monsterTypeCheckBox;
     @JsonIgnore
-    private TextField animationIndexText = new TextField();
+    private TextField animationIndexText;
     @JsonIgnore
-    private TextField baseAnimationNameText = new TextField();
+    private TextField baseAnimationNameText;
     @JsonIgnore
-    private Button baseAnimationButton = new Button("添加单独动画");
+    private Button baseAnimationButton;
     @JsonIgnore
     public static final String FIXED_ANIMATION_DIRECTORY = "fixed_animation";
     @JsonIgnore
     private List<File> FixedAnimationFileSrc;
     @JsonIgnore
-    private Label monsterAnimationLabel = new Label();
+    private Label monsterAnimationLabel;
 
     private String id;
     private String title;
@@ -77,6 +77,15 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     public void initImage(String backgroundImagePath) {
         if (this.type != ImageObjectType.MONSTER) {
             super.initImage(backgroundImagePath);
+        } else {
+            if (monsterAnimationLabel == null) {
+                monsterAnimationLabel = new Label();
+                monsterAnimationLabel.setText(this.animationIndex);
+                monsterAnimationLabel.setPrefWidth(48);
+                monsterAnimationLabel.setPrefHeight(32);
+                monsterAnimationLabel.setTextFill(Color.BLUE);
+                monsterAnimationLabel.setAlignment(Pos.CENTER);
+            }
         }
     }
 
@@ -85,11 +94,14 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
             return;
         }
         this.titledPane = new TitledPane();
+        textType = new ChoiceBox<>();
+        textPhysical = new ChoiceBox<>();
+        maxActivityScopeText = new TextField();
+        monsterTypeCheckBox = new ChoiceBox<>();
+        animationIndexText = new TextField();
+        baseAnimationNameText = new TextField();
+        baseAnimationButton = new Button("添加单独动画");
         this.titledPane.setText(this.title);
-        monsterAnimationLabel.setPrefWidth(48);
-        monsterAnimationLabel.setPrefHeight(32);
-        monsterAnimationLabel.setTextFill(Color.BLUE);
-        monsterAnimationLabel.setAlignment(Pos.CENTER);
         VBox outVBox = new VBox(10);
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);

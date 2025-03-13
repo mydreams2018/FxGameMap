@@ -6,7 +6,6 @@ import cn.kungreat.fxgamemap.RootApplication;
 import cn.kungreat.fxgamemap.RootController;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.effect.BlendMode;
@@ -127,7 +126,11 @@ public class AreaMapShow {
                         //怪物标记模式
                         int locatorX = (currentGlobalStartX % areaWidth) / 48;
                         int locatorY = (currentGlobalStartY % areaHeight) / 32;
-                        currentTreeGameMap.getImageObjectList().add(TreeGameMap.addMonster(controller, locatorX, locatorY));
+                        ImageObject monsterObject = new ImageObject(UUID.randomUUID().toString(), locatorX * 48, locatorY * 32, locatorX, locatorY);
+                        monsterObject.setType(ImageObjectType.MONSTER);
+                        monsterObject.setAnimationIndex(controller.getMonsterChoiceBox().getValue());
+                        monsterObject.setTitle(controller.getMonsterChoiceBox().getValue());
+                        currentTreeGameMap.getImageObjectList().add(monsterObject);
                     } else if (controller.getTopDeletingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
                             ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
@@ -250,7 +253,6 @@ public class AreaMapShow {
         for (TreeGameMap.BackgroundImageData frontImage : SHOW_FRONT_IMAGE) {
             if (frontImage instanceof ImageObject imageObject && imageObject.getType() == ImageObjectType.MONSTER) {
                 Label monsterLabel = imageObject.getMonsterAnimationLabel();
-                monsterLabel.setText(imageObject.getAnimationIndex());
                 monsterLabel.setLayoutX(frontImage.getChangeX());
                 monsterLabel.setLayoutY(frontImage.getChangeY());
                 FRONT_PANE.getChildren().add(monsterLabel);
@@ -361,14 +363,11 @@ public class AreaMapShow {
         }
         List<ImageObject> imageObjectList = gameMap.getImageObjectList();
         if (imageObjectList != null && !imageObjectList.isEmpty()) {
-            RootController controller = RootApplication.mainFXMLLoader.getController();
             for (ImageObject imageObject : imageObjectList) {
                 imageObject.initImage(gameMap.getBackgroundImagePath());
                 imageObject.setTempStartX(globalX + imageObject.getStartX());
                 imageObject.setTempStartY(globalY + imageObject.getStartY());
                 if (addShowImages(imageObject)) {
-                    imageObject.initTitledPane();
-                    controller.getRightTopScrollPaneAccordion().getPanes().add(imageObject.getTitledPane());
                     if (imageObject.getType() != ImageObjectType.MONSTER) {
                         imageObject.getImageView().setViewOrder(2);
                         imageObject.getImageView().setBlendMode(BlendMode.ADD);

@@ -35,8 +35,7 @@ public class RootApplication extends Application {
         //序列化时过滤掉为null的对象
         MAP_JSON.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         MAP_JSON.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        AREA_MONSTER_FILL.put("PeachGarden", List.of("003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018",
-                "899", "900", "901", "902", "903", "904"));
+        AREA_MONSTER_FILL.put("PeachGarden", List.of("003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018"));
     }
 
     @Override

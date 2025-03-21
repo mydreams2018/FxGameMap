@@ -123,7 +123,6 @@ public class RootController implements Initializable {
         addScrollPaneCenterEvent();
         addCanvasColorPickerEvent();
         monsterChoiceBox.getItems().addAll("003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018");
-        monsterChoiceBox.getItems().addAll("899", "900", "901", "902", "903", "904");
     }
 
     public ContextMenu getTreeContextMenu() {

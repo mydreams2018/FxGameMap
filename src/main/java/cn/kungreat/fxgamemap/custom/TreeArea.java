@@ -51,8 +51,8 @@ public class TreeArea {
     /*
      * 区域角色初始的坐标
      * */
-    private Integer roleLocatorX;
-    private Integer roleLocatorY;
+    private Integer areaLocatorX;
+    private Integer areaLocatorY;
     @JsonIgnore
     private GridPane gridPane;
     @JsonIgnore
@@ -66,7 +66,7 @@ public class TreeArea {
     public static final Dialog<String> STRING_OBSERVABLE_DIALOG = BaseDialog.getChildrenPointDialog();
 
     public TreeArea(String title, String id, Integer xNumber, Integer yNumber, List<TreeGameMap> childrenMap, String imageDirectory,
-                    Integer width, Integer height, String bgAudioClip, Integer roleLocatorX, Integer roleLocatorY) {
+                    Integer width, Integer height, String bgAudioClip, Integer areaLocatorX, Integer areaLocatorY) {
         this.title = title;
         this.id = id;
         this.xNumber = xNumber;
@@ -76,8 +76,8 @@ public class TreeArea {
         this.width = width;
         this.height = height;
         this.bgAudioClip = bgAudioClip;
-        this.roleLocatorX = roleLocatorX;
-        this.roleLocatorY = roleLocatorY;
+        this.areaLocatorX = areaLocatorX;
+        this.areaLocatorY = areaLocatorY;
     }
 
     public void initGridPane() {

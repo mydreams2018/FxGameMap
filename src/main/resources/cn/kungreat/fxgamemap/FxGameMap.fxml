@@ -113,7 +113,9 @@
                                 <RadioButton text="背景图片" selected="true" toggleGroup="$imgTypeGroup"/>
                                 <RadioButton text="对象图片" fx:id="radioButtonIsObject" toggleGroup="$imgTypeGroup"/>
                                 <RadioButton text="怪物标记" fx:id="radioButtonMonster" toggleGroup="$imgTypeGroup"/>
+                                <RadioButton text="npc标记" fx:id="radioButtonNpc" toggleGroup="$imgTypeGroup"/>
                                 <ChoiceBox fx:id="monsterChoiceBox"/>
+                                <ChoiceBox fx:id="npcChoiceBox"/>
                             </HBox>
                             <ScrollPane fx:id="rightTopScrollPane" styleClass="customBgColor">
                                 <Accordion fx:id="rightTopScrollPaneAccordion"></Accordion>

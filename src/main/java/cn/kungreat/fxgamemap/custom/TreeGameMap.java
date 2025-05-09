@@ -247,6 +247,15 @@ public class TreeGameMap {
         return null;
     }
 
+    public ImageObject getNpcObject(int locatorX, int locatorY) {
+        for (ImageObject imageObject : imageObjectList) {
+            if (imageObject.getType() == ImageObjectType.NPC && imageObject.getLocatorX() == locatorX && imageObject.getLocatorY() == locatorY) {
+                return imageObject;
+            }
+        }
+        return null;
+    }
+
     //全部内容刷新
     public void clearAndDraw() {
         graphicsContext.fillRect(0, 0, width, height);

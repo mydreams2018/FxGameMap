@@ -75,7 +75,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
 
     @Override
     public void initImage(String backgroundImagePath) {
-        if (this.type != ImageObjectType.MONSTER) {
+        if (this.type != ImageObjectType.MONSTER && this.type != ImageObjectType.NPC) {
             super.initImage(backgroundImagePath);
         } else {
             if (monsterAnimationLabel == null) {

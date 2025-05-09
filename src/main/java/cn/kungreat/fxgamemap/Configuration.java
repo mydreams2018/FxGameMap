@@ -126,7 +126,7 @@ public class Configuration {
             List<ImageObject> imageObjectList = treeGameMap.getImageObjectList();
             if (imageObjectList != null && !imageObjectList.isEmpty()) {
                 for (ImageObject imageObject : imageObjectList) {
-                    if (imageObject.getType() != ImageObjectType.MONSTER) {
+                    if (imageObject.getType() != ImageObjectType.MONSTER && imageObject.getType() != ImageObjectType.NPC) {
                         imageObject.initImage(treeGameMap.getBackgroundImagePath());
                         if (imageObject.getType() == ImageObjectType.FIXED_ANIMATION) {
                             imageObject.getImageView().setBlendMode(BlendMode.ADD);

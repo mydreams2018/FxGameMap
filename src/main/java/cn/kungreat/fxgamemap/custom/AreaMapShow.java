@@ -99,7 +99,8 @@ public class AreaMapShow {
                 Integer areaHeight = treeAreaShow.getHeight();
                 TreeGameMap currentTreeGameMap = findTreeGameMap(treeAreaShow.getChildrenPointName()[currentGlobalStartX / areaWidth][currentGlobalStartY / areaHeight], treeAreaShow);
                 if (currentTreeGameMap != null) {
-                    if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null && !controller.getRadioButtonMonster().isSelected()) {
+                    if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null && !controller.getRadioButtonMonster().isSelected()
+                            && !controller.getRadioButtonNpc().isSelected()) {
                         Image image = chooseResourceImage.getImage();
                         double startX = currentGlobalStartX % areaWidth - (image.getWidth() / 2);
                         double startY = currentGlobalStartY % areaHeight - (image.getHeight() / 2);
@@ -131,6 +132,15 @@ public class AreaMapShow {
                         monsterObject.setAnimationIndex(controller.getMonsterChoiceBox().getValue());
                         monsterObject.setTitle(controller.getMonsterChoiceBox().getValue());
                         currentTreeGameMap.getImageObjectList().add(monsterObject);
+                    } else if (controller.getTopPaintingMode().isSelected() && controller.getRadioButtonNpc().isSelected()) {
+                        //npc标记模式
+                        int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                        int locatorY = (currentGlobalStartY % areaHeight) / 32;
+                        ImageObject npcObject = new ImageObject(UUID.randomUUID().toString(), locatorX * 48, locatorY * 32, locatorX, locatorY);
+                        npcObject.setType(ImageObjectType.NPC);
+                        npcObject.setAnimationIndex(controller.getNpcChoiceBox().getValue());
+                        npcObject.setTitle(controller.getNpcChoiceBox().getValue());
+                        currentTreeGameMap.getImageObjectList().add(npcObject);
                     } else if (controller.getTopDeletingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
                             ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
@@ -143,6 +153,15 @@ public class AreaMapShow {
                             int locatorX = (currentGlobalStartX % areaWidth) / 48;
                             int locatorY = (currentGlobalStartY % areaHeight) / 32;
                             ImageObject monsterObject = currentTreeGameMap.getMonsterObject(locatorX, locatorY);
+                            if (monsterObject != null) {
+                                currentTreeGameMap.getImageObjectList().remove(monsterObject);
+                                clearAndDraw();
+                            }
+                        } else if (controller.getRadioButtonNpc().isSelected()) {
+                            //npc标记 delete模式
+                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
+                            ImageObject monsterObject = currentTreeGameMap.getNpcObject(locatorX, locatorY);
                             if (monsterObject != null) {
                                 currentTreeGameMap.getImageObjectList().remove(monsterObject);
                                 clearAndDraw();
@@ -251,10 +270,15 @@ public class AreaMapShow {
             MIDDLE_PANE.getChildren().add(view);
         }
         for (TreeGameMap.BackgroundImageData frontImage : SHOW_FRONT_IMAGE) {
-            if (frontImage instanceof ImageObject imageObject && imageObject.getType() == ImageObjectType.MONSTER) {
+            if (frontImage instanceof ImageObject imageObject && (imageObject.getType() == ImageObjectType.MONSTER || imageObject.getType() == ImageObjectType.NPC)) {
                 Label monsterLabel = imageObject.getMonsterAnimationLabel();
                 monsterLabel.setLayoutX(frontImage.getChangeX());
                 monsterLabel.setLayoutY(frontImage.getChangeY());
+                if (imageObject.getType() == ImageObjectType.MONSTER) {
+                    monsterLabel.setTextFill(Color.RED);
+                } else {
+                    monsterLabel.setTextFill(Color.GREEN);
+                }
                 FRONT_PANE.getChildren().add(monsterLabel);
             } else {
                 ImageView view = frontImage.getImageView();
@@ -368,7 +392,7 @@ public class AreaMapShow {
                 imageObject.setTempStartX(globalX + imageObject.getStartX());
                 imageObject.setTempStartY(globalY + imageObject.getStartY());
                 if (addShowImages(imageObject)) {
-                    if (imageObject.getType() != ImageObjectType.MONSTER) {
+                    if (imageObject.getType() != ImageObjectType.MONSTER && imageObject.getType() != ImageObjectType.NPC) {
                         imageObject.getImageView().setViewOrder(2);
                         imageObject.getImageView().setBlendMode(BlendMode.ADD);
                     }

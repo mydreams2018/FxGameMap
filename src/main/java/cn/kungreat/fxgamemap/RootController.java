@@ -181,7 +181,7 @@ public class RootController implements Initializable {
                 if (item != null && item.getValue() instanceof TreeWorld treeWorld) {
                     TreeArea treeArea = new TreeArea(newArea, UUID.randomUUID().toString(),
                             Integer.parseInt(areaXText), Integer.parseInt(areaYText), new ArrayList<>(),
-                            treeWorld.getTitle() + File.separator + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight), bgAudio,
+                            treeWorld.getTitle() + "/" + newArea, Integer.parseInt(areaWidth), Integer.parseInt(areaHeight), bgAudio,
                             Integer.parseInt(roleStartX), Integer.parseInt(roleStartY));
                     treeWorld.getChildrenArea().add(treeArea);
                     treeWorld.getChildrenAreaTitle().add(treeArea.getTitle());

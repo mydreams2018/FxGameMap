@@ -34,8 +34,6 @@ public class TreeGameMap {
     private Integer width;
     private Integer height;
 
-    //从mir地图导出的所有图片资源目录
-    public static final String MIR_SHARE_IMAGE_DIRECTORY = "mir2AllIMages\\";
     public static final SnapshotParameters CANVAS_SNAPSHOT_PARAMETERS = new SnapshotParameters();
     public static final Image DELETE_IMAGE = new Image(TreeGameMap.class.getResourceAsStream("hud_x.png"));
     public static final Dialog<String> IMAGE_OBJECT_DIALOG = BaseDialog.getDialog("图片对象", "请输入图片对象信息", "确定添加此图片对象信息"

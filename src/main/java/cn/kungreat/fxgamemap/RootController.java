@@ -451,7 +451,7 @@ public class RootController implements Initializable {
                                 if (middleData != null) {
                                     String imageName = checkDataExists(middleData, imageNamePrefix);
                                     if (imageName != null) {
-                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
+                                        Image image = new Image(new File(Configuration.IMAGE_FILE, imageName).toURI().toString());
                                         //Width < 48 的情况
                                         //Height < 32 的情况
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
@@ -462,7 +462,7 @@ public class RootController implements Initializable {
                                 if (frontData != null) {
                                     String imageName = checkDataExists(frontData, imageNamePrefix);
                                     if (imageName != null) {
-                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
+                                        Image image = new Image(new File(Configuration.IMAGE_FILE, imageName).toURI().toString());
                                         //Width < 48 的情况
                                         //Height < 32 的情况
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
@@ -480,7 +480,7 @@ public class RootController implements Initializable {
                                     String imageName = checkDataExists(frontBlendData, imageNamePrefix);
                                     if (imageName != null) {
                                         int libIndex = Integer.parseInt(imageName.split("_")[0]);
-                                        Image image = new Image(new File("F:\\mir-map-export\\mir2AllIMages", imageName).toURI().toString());
+                                        Image image = new Image(new File(Configuration.IMAGE_FILE, imageName).toURI().toString());
                                         //Width < 48 的情况
                                         //Height < 32 的情况
                                         int offsetX = Math.max((int) image.getWidth() - 48, 0);
@@ -543,14 +543,16 @@ public class RootController implements Initializable {
                     for (int x = 0; x < treeArea.getXNumber(); x++) {
                         String mapName = treeArea.getChildrenPointName()[x][y];
                         TreeGameMap treeGameMap = AreaMapShow.findTreeGameMap(mapName, treeArea);
-                        if (treeGameMap != null && treeGameMap.getImageObjectList() != null) {
+                        if (treeGameMap.getImageObjectList() != null) {
                             //清理以前的monster数据
                             treeGameMap.getImageObjectList().removeIf(imageObject -> imageObject.getType() == ImageObjectType.MONSTER);
+                        } else {
+                            treeGameMap.setImageObjectList(new ArrayList<>());
                         }
                         int currentLocatorXNumber = x * singleLocatorXNumber;
                         int currentLocatorYNumber = y * singleLocatorYNumber;
                         int monsterQuota = 0;
-                        int monsterQuotaMax = 100;//一小块最大的怪数量
+                        int monsterQuotaMax = 50;//一小块最大的怪数量
                         outBreak:
                         for (int iny = 0; iny < singleLocatorYNumber; iny++) {
                             for (int inx = 0; inx < singleLocatorXNumber; inx++) {

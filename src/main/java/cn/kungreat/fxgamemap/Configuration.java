@@ -33,6 +33,7 @@ public class Configuration {
     public static String logDirectory;
     public static String errorPrint;
     public static final Map<String, Image> MIR_IMAGE_CACHE = new LinkedHashMap<>();
+    public static final String IMAGE_FILE = "E:\\mirImageMerge\\mir2AllIMages";
 
     static {
         try (InputStream inputStream = ClassLoader.getSystemResourceAsStream(MAIN_PROPERTIES);
@@ -143,7 +144,7 @@ public class Configuration {
         if (imageCache != null) {
             return imageCache;
         }
-        File imageFile = new File("F:\\mir\\mirBrother\\mir2AllIMages", imgName);
+        File imageFile = new File(IMAGE_FILE, imgName);
         if (imageFile.exists()) {
             Image readImage = new Image(imageFile.toURI().toString());
             MIR_IMAGE_CACHE.put(imgName, readImage);

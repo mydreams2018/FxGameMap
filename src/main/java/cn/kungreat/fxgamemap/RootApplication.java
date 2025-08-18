@@ -62,7 +62,6 @@ public class RootApplication extends Application {
         TreeArea.addChildrenPointDialogEvent();
         PropertyListener.initSwitchTreeAreaListener();
         PropertyListener.initChooseCanvasImageListener();
-        RootController.addBatchChangeImageObjectEvent();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }
 

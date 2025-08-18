@@ -191,22 +191,4 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         }
         return this.baseAnimationName;
     }
-
-    /*
-     * 批量修改时刷新数据
-     * */
-    public void refresh() {
-        this.textType.getSelectionModel().select(this.type.name());
-        this.textPhysical.getSelectionModel().select(this.physical ? "是" : "否");
-        this.maxActivityScopeText.setText(this.maxActivityScope);
-        if (this.monsterType != null) {
-            this.monsterTypeCheckBox.getSelectionModel().select(this.monsterType.name());
-        }
-        if (this.animationIndex != null) {
-            this.animationIndexText.setText(this.animationIndex);
-        }
-        if (this.baseAnimationName != null) {
-            this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
-        }
-    }
 }

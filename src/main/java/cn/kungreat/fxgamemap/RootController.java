@@ -18,7 +18,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -53,8 +52,6 @@ public class RootController implements Initializable {
 
     private static final Dialog<Boolean> RESOURCE_ANIMATION_DIALOG = BaseDialog.getResourceAnimationDialog();
 
-    public static final Color CANVAS_DEFAULT_COLOR = Color.LIGHTBLUE;
-
     public static boolean showPointLocks = false;
 
     @FXML
@@ -67,12 +64,6 @@ public class RootController implements Initializable {
     private RadioButton topDeletingMode;
     @FXML
     private RadioButton mapLockEditMode;
-    @FXML
-    private TextField canvasMarkLineWidth;
-    @FXML
-    private TextField canvasMarkLineHeight;
-    @FXML
-    private ColorPicker canvasColorPicker;
     @FXML
     private StackPane stackPaneLeft;
     @FXML
@@ -125,7 +116,6 @@ public class RootController implements Initializable {
         addTreeEvent();
         addSegmentResourceImgEvent();
         addScrollPaneCenterEvent();
-        addCanvasColorPickerEvent();
         monsterChoiceBox.getItems().addAll("000", "001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018");
         npcChoiceBox.getItems().addAll("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "26", "27", "30", "33", "34");
     }
@@ -194,33 +184,10 @@ public class RootController implements Initializable {
                 }
             }
         });
-        //地图事件添加
-        Button applyMap = (Button) MAP_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_MAP);
-        applyMap.setOnAction(event -> {
-            String title = BaseDialog.TEXT_MAP.getText();
-            if (!title.isBlank()) {
-                TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-                if (item != null && item.getValue() instanceof TreeArea treeArea) {
-                    TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), title,
-                            treeArea.getWidth(), treeArea.getHeight(), treeArea.getImageDirectory());
-                    treeArea.getChildrenMap().add(treeGameMap);
-                    TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
-                    treeItem.setGraphic(new FontIcon("fas-map"));
-                    item.getChildren().add(treeItem);
-                    item.setExpanded(true);
-                    PropertyListener.changeIsSaved(false);
-                }
-            }
-        });
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Object value = newValue.getValue();
-                if (value instanceof TreeGameMap treeGameMap) {
-                    rightTopScrollPaneAccordion.getPanes().clear();
-                    scrollPaneCenterInHBox.getChildren().clear();
-                    treeGameMap.initCanvas();
-                    scrollPaneCenterInHBox.getChildren().add(treeGameMap.getCanvas());
-                } else if (value instanceof TreeArea treeArea) {
+                if (value instanceof TreeArea treeArea) {
                     Configuration.loadAllMirImageCache(treeArea);
                     scrollPaneCenterInHBox.getChildren().clear();
                     treeArea.initGridPane();
@@ -322,42 +289,10 @@ public class RootController implements Initializable {
 
     private void canvasClearAndDraw() {
         TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-        if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
-            treeGameMap.clearAndDraw();
-            PropertyListener.changeIsSaved(false);
-        } else if (item != null && item.getValue() instanceof TreeArea treeArea) {
+         if (item != null && item.getValue() instanceof TreeArea treeArea) {
             treeArea.getAreaMapShow().clearAndDraw();
             PropertyListener.changeIsSaved(false);
         }
-    }
-
-    @FXML
-    public void addCanvasMarkLine() {
-        TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-        if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
-            String markLineWidth = canvasMarkLineWidth.getText();
-            String markLineHeight = canvasMarkLineHeight.getText();
-            if (PatternUtils.NumberRegex.matcher(markLineWidth).matches()
-                    && PatternUtils.NumberRegex.matcher(markLineHeight).matches()) {
-                treeGameMap.setMarkLine(new TreeGameMap.MarkLine(Integer.parseInt(markLineWidth), Integer.parseInt(markLineHeight)));
-            } else {
-                treeGameMap.setMarkLine(null);
-            }
-            treeGameMap.clearAndDraw();
-        }
-    }
-
-    public void addCanvasColorPickerEvent() {
-        canvasColorPicker.setValue(RootController.CANVAS_DEFAULT_COLOR);
-        canvasColorPicker.setOnAction(event -> {
-            TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-            if (item != null && item.getValue() instanceof TreeGameMap treeGameMap) {
-                treeGameMap.getGraphicsContext().setFill(canvasColorPicker.getValue());
-                treeGameMap.setCanvasFillColor(canvasColorPicker.getValue().toString());
-                treeGameMap.clearAndDraw();
-                PropertyListener.changeIsSaved(false);
-            }
-        });
     }
 
     @FXML

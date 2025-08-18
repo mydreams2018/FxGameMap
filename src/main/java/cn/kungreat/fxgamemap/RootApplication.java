@@ -3,7 +3,6 @@ package cn.kungreat.fxgamemap;
 import cn.kungreat.fxgamemap.custom.Resources;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
-import cn.kungreat.fxgamemap.frame.FrameTimer;
 import cn.kungreat.fxgamemap.util.LogService;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -64,7 +63,6 @@ public class RootApplication extends Application {
         PropertyListener.initSwitchTreeAreaListener();
         PropertyListener.initChooseCanvasImageListener();
         RootController.addBatchChangeImageObjectEvent();
-        new FrameTimer().start();
         LogService.writerLog(LogService.LogLevel.INFO, getClass(), "项目启动完成");
     }
 

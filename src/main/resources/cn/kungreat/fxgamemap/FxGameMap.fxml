@@ -46,14 +46,6 @@
                         <FontIcon iconLiteral="fas-unlock-alt" />
                     </graphic>
                 </RadioButton>
-                <ColorPicker fx:id="canvasColorPicker"></ColorPicker>
-                <TextField fx:id="canvasMarkLineWidth" prefWidth="50"></TextField>
-                <TextField fx:id="canvasMarkLineHeight" prefWidth="50"></TextField>
-                <Button text="临时协助分割线" onAction="#addCanvasMarkLine">
-                    <graphic>
-                        <FontIcon iconLiteral="fas-marker" />
-                    </graphic>
-                </Button>
                 <Button text="切换区域显示模式" onAction="#switchTreeAreaView">
                     <graphic>
                         <FontIcon iconLiteral="fas-exchange-alt" />

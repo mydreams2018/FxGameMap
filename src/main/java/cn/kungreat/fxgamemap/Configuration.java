@@ -172,14 +172,6 @@ public class Configuration {
                 TreeItem<Object> areaTreeItem = new TreeItem<>(treeArea);
                 areaTreeItem.setGraphic(new FontIcon("fas-chart-area"));
                 treeItem.getChildren().add(areaTreeItem);
-                List<TreeGameMap> childrenMap = treeArea.getChildrenMap();
-                if (childrenMap != null && !childrenMap.isEmpty()) {
-                    for (TreeGameMap treeGameMap : childrenMap) {
-                        TreeItem<Object> gameMapTreeItem = new TreeItem<>(treeGameMap);
-                        gameMapTreeItem.setGraphic(new FontIcon("fas-map"));
-                        areaTreeItem.getChildren().add(gameMapTreeItem);
-                    }
-                }
             }
         }
     }

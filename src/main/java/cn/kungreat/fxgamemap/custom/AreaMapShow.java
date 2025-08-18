@@ -97,6 +97,8 @@ public class AreaMapShow {
                 int currentGlobalStartY = (int) (currentY + event.getY());
                 Integer areaWidth = treeAreaShow.getWidth();
                 Integer areaHeight = treeAreaShow.getHeight();
+                int locatorX = (currentGlobalStartX % areaWidth) / 48;
+                int locatorY = (currentGlobalStartY % areaHeight) / 32;
                 TreeGameMap currentTreeGameMap = findTreeGameMap(treeAreaShow.getChildrenPointName()[currentGlobalStartX / areaWidth][currentGlobalStartY / areaHeight], treeAreaShow);
                 if (currentTreeGameMap != null) {
                     if (controller.getTopPaintingMode().isSelected() && chooseResourceImage != null && !controller.getRadioButtonMonster().isSelected()
@@ -114,8 +116,6 @@ public class AreaMapShow {
                             imagePath = chooseResourceImage.getId();
                         }
                         if (controller.getRadioButtonIsObject().isSelected()) {
-                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
-                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
                             ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                             changeImageObject.setTitle(changeImageObject.getImagePath());
                             currentTreeGameMap.getImageObjectList().add(changeImageObject);
@@ -125,8 +125,6 @@ public class AreaMapShow {
                         PropertyListener.changeIsSaved(false);
                     } else if (controller.getTopPaintingMode().isSelected() && controller.getRadioButtonMonster().isSelected()) {
                         //怪物标记模式
-                        int locatorX = (currentGlobalStartX % areaWidth) / 48;
-                        int locatorY = (currentGlobalStartY % areaHeight) / 32;
                         ImageObject monsterObject = new ImageObject(UUID.randomUUID().toString(), locatorX * 48, locatorY * 32, locatorX, locatorY);
                         monsterObject.setType(ImageObjectType.MONSTER);
                         monsterObject.setAnimationIndex(controller.getMonsterChoiceBox().getValue());
@@ -134,8 +132,6 @@ public class AreaMapShow {
                         currentTreeGameMap.getImageObjectList().add(monsterObject);
                     } else if (controller.getTopPaintingMode().isSelected() && controller.getRadioButtonNpc().isSelected()) {
                         //npc标记模式
-                        int locatorX = (currentGlobalStartX % areaWidth) / 48;
-                        int locatorY = (currentGlobalStartY % areaHeight) / 32;
                         ImageObject npcObject = new ImageObject(UUID.randomUUID().toString(), locatorX * 48, locatorY * 32, locatorX, locatorY);
                         npcObject.setType(ImageObjectType.NPC);
                         npcObject.setAnimationIndex(controller.getNpcChoiceBox().getValue());
@@ -143,15 +139,13 @@ public class AreaMapShow {
                         currentTreeGameMap.getImageObjectList().add(npcObject);
                     } else if (controller.getTopDeletingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
-                            ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                            ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(locatorX, locatorY);
                             if (removeImageObject != null) {
                                 currentTreeGameMap.getImageObjectList().remove(removeImageObject);
                                 clearAndDraw();
                             }
                         } else if (controller.getRadioButtonMonster().isSelected()) {
                             //怪物标记delete模式
-                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
-                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
                             ImageObject monsterObject = currentTreeGameMap.getMonsterObject(locatorX, locatorY);
                             if (monsterObject != null) {
                                 currentTreeGameMap.getImageObjectList().remove(monsterObject);
@@ -159,8 +153,6 @@ public class AreaMapShow {
                             }
                         } else if (controller.getRadioButtonNpc().isSelected()) {
                             //npc标记 delete模式
-                            int locatorX = (currentGlobalStartX % areaWidth) / 48;
-                            int locatorY = (currentGlobalStartY % areaHeight) / 32;
                             ImageObject monsterObject = currentTreeGameMap.getNpcObject(locatorX, locatorY);
                             if (monsterObject != null) {
                                 currentTreeGameMap.getImageObjectList().remove(monsterObject);
@@ -174,10 +166,21 @@ public class AreaMapShow {
                             }
                         }
                     } else if (controller.getTopMovingMode().isSelected()) {
+                        ImageObject chooserObject = null;
                         if (controller.getRadioButtonIsObject().isSelected()) {
-                            PropertyListener.setChooseCanvasImage(currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
-                        } else if (!controller.getRadioButtonMonster().isSelected()) {
+                            chooserObject = currentTreeGameMap.getImageObjectData(locatorX, locatorY);
+                        } else if (controller.getRadioButtonMonster().isSelected()) {
+                            chooserObject = currentTreeGameMap.getMonsterObject(locatorX, locatorY);
+                        } else if (controller.getRadioButtonNpc().isSelected()) {
+                            chooserObject = currentTreeGameMap.getNpcObject(locatorX, locatorY);
+                        } else {
+                            //背景图片
                             PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                        }
+                        if (chooserObject != null) {
+                            chooserObject.initTitledPane();
+                            controller.getRightTopScrollPaneAccordion().getPanes().clear();
+                            controller.getRightTopScrollPaneAccordion().getPanes().add(chooserObject.getTitledPane());
                         }
                     } else if (controller.getMapLockEditMode().isSelected()) {
                         //切换当前锁
@@ -225,9 +228,6 @@ public class AreaMapShow {
         BACK_PANE.getChildren().clear();
         MIDDLE_PANE.getChildren().clear();
         FRONT_PANE.getChildren().clear();
-        //清空右侧对象图片
-        RootController controller = RootApplication.mainFXMLLoader.getController();
-        controller.getRightTopScrollPaneAccordion().getPanes().clear();
         //start
         int xStartNumber = currentX / treeAreaShow.getWidth();
         int yStartNumber = currentY / treeAreaShow.getHeight();

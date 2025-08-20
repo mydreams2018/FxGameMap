@@ -27,9 +27,9 @@ public class AreaMapShow {
     /*
      * 没有清理TreeGameMap内的Image ImageView数据 [在正式的游戏引擎要清理]
      * */
-    private static final Pane BACK_PANE = new Pane();
-    private static final Pane MIDDLE_PANE = new Pane();
-    private static final Pane FRONT_PANE = new Pane();
+    private final Pane BACK_PANE = new Pane();
+    private final Pane MIDDLE_PANE = new Pane();
+    private final Pane FRONT_PANE = new Pane();
 
     /*
      * 存放每次需要处理的图片

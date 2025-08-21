@@ -34,8 +34,6 @@ public class BaseDialog {
     public static final TextField TEXT_AREA_ROLE_STARTX = BaseDialog.getTextField("角色初始坐标X");
     public static final TextField TEXT_AREA_ROLE_STARTY = BaseDialog.getTextField("角色初始坐标Y");
 
-    public static final TextField TEXT_MAP = BaseDialog.getTextField("请输入名称");
-
     //SegmentResourceImagesDialog
     public static final TextField SRID_NAME = BaseDialog.getTextField("请输入资源名称");
     public static final TextField SRID_PATH = BaseDialog.getTextField("请选择资源文件");
@@ -83,12 +81,6 @@ public class BaseDialog {
         TextField tf = new TextField();
         tf.setPromptText(promptText);
         return tf;
-    }
-
-    public static VBox getMapRectangular() {
-        VBox vb = new VBox();
-        vb.getChildren().addAll(TEXT_MAP);
-        return vb;
     }
 
     public static VBox getAreaRectangular() {

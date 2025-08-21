@@ -9,10 +9,9 @@ public class MapMovePointLockUtils {
     /*
      * 保存区域配置文件 此配置表示xy坐标是否可移动
      * base_point_lock.json 默认读取的mir地图的占位数据
-     * open_point_lock.json 自已手动修改地图的占位数据
      * */
     private static final boolean[][] basePointLocks = new boolean[200][200];
-    private static final String FILE_NAME = "boss4\\";
+    private static final String FILE_NAME = "WomaTemple1\\";
 
     public static void main(String[] args) throws Exception {
         File readBackLimit = new File("F:\\mir-map-history\\" + FILE_NAME + "backLimit\\point.txt");

@@ -153,7 +153,7 @@ public class TreeArea {
     }
 
     //自动填充区域数据
-    public void autoFillChildData(TreeItem<Object> treeAreaItem) {
+    public void autoFillChildData() {
         if (this.childrenPointName == null) {
             this.childrenPointName = new String[xNumber][yNumber];
         }
@@ -162,9 +162,6 @@ public class TreeArea {
                 TreeGameMap treeGameMap = new TreeGameMap(UUID.randomUUID().toString(), "x" + x + "y" + y,
                         this.getWidth(), this.getHeight(), this.getImageDirectory());
                 this.getChildrenMap().add(treeGameMap);
-                TreeItem<Object> treeItem = new TreeItem<>(treeGameMap);
-                treeItem.setGraphic(new FontIcon("fas-map"));
-                treeAreaItem.getChildren().add(treeItem);
                 this.childrenPointName[x][y] = treeGameMap.getTitle();
             }
         }

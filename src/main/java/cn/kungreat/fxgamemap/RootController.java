@@ -32,9 +32,6 @@ public class RootController implements Initializable {
     private static final Dialog<String> AREA_DIALOG = BaseDialog.getDialog("区域地图", "请输入区域地图信息:", "是否需要添加区域地图层级"
             , BaseDialog.getAreaRectangular(), BaseDialog.APPLY_AREA, BaseDialog.CANCEL_AREA);
 
-    private static final Dialog<String> MAP_DIALOG = BaseDialog.getDialog("分块地图", "请输入分块地图信息:", "是否需要添加分块地图"
-            , BaseDialog.getMapRectangular(), BaseDialog.APPLY_MAP, BaseDialog.CANCEL_MAP);
-
     private static final Dialog<String> LINK_MAP_BOOK_DIALOG = BaseDialog.getDialog("使用说明", "地图完整的使用说明",
             """
                     1.世界地图是一个完整游戏地图的概念
@@ -124,17 +121,13 @@ public class RootController implements Initializable {
         MenuItem menuArea = new MenuItem("add Area");
         menuArea.setGraphic(new FontIcon("fas-chart-area"));
         menuArea.setOnAction(event -> AREA_DIALOG.showAndWait());
-        MenuItem menuMap = new MenuItem("add Map");
-        menuMap.setGraphic(new FontIcon("fas-map"));
-        menuMap.setOnAction(event -> MAP_DIALOG.showAndWait());
-        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea, new SeparatorMenuItem(), menuMap);
+        contextMenu.getItems().addAll(menuWorld, new SeparatorMenuItem(), menuArea);
         return contextMenu;
     }
 
     public void addTreeEvent() {
         WORLD_DIALOG.setOnShowing(event -> BaseDialog.TEXT_WORLD.clear());
         AREA_DIALOG.setOnShowing(event -> BaseDialog.TEXT_AREA.clear());
-        MAP_DIALOG.setOnShowing(event -> BaseDialog.TEXT_MAP.clear());
         //世界地图事件添加
         Button applyWorld = (Button) WORLD_DIALOG.getDialogPane().lookupButton(BaseDialog.APPLY_WORLD);
         applyWorld.setOnAction(event -> {
@@ -173,7 +166,7 @@ public class RootController implements Initializable {
                     treeWorld.getChildrenAreaTitle().add(treeArea.getTitle());
                     TreeItem<Object> treeItem = new TreeItem<>(treeArea);
                     treeItem.setGraphic(new FontIcon("fas-chart-area"));
-                    treeArea.autoFillChildData(treeItem);
+                    treeArea.autoFillChildData();
                     item.getChildren().add(treeItem);
                     item.setExpanded(false);
                     PropertyListener.changeIsSaved(false);

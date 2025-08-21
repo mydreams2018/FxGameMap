@@ -422,11 +422,11 @@ public class RootController implements Initializable {
                         int currentLocatorXNumber = x * singleLocatorXNumber;
                         int currentLocatorYNumber = y * singleLocatorYNumber;
                         int monsterQuota = 0;
-                        int monsterQuotaMax = 50;//一小块最大的怪数量
+                        int monsterQuotaMax = 30;//一小块最大的怪数量
                         outBreak:
                         for (int iny = 0; iny < singleLocatorYNumber; iny++) {
                             for (int inx = 0; inx < singleLocatorXNumber; inx++) {
-                                if (!basePointLockList[currentLocatorXNumber + inx][currentLocatorYNumber + iny] && Math.random() > 0.95) {
+                                if (!basePointLockList[currentLocatorXNumber + inx][currentLocatorYNumber + iny] && Math.random() > 0.96) {
                                     monsterQuota++;
                                     String monsterAni = monsterIndex.get(randomIndex.nextInt(0, monsterIndex.size()));
                                     ImageObject monsterObject = new ImageObject(UUID.randomUUID().toString(), inx * 48, iny * 32, inx, iny);

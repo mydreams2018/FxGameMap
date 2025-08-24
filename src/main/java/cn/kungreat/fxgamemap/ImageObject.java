@@ -40,6 +40,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     @JsonIgnore
     private TextField maxActivityScopeText;
     @JsonIgnore
+    private TextField targetXYText;
+    @JsonIgnore
     private ChoiceBox<String> monsterTypeCheckBox;
     @JsonIgnore
     private TextField animationIndexText;
@@ -59,6 +61,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private ImageObjectType type = ImageObjectType.FIXED_ANIMATION;
     private boolean physical = true;
     private String maxActivityScope;
+    private String targetXY;
     private MonsterType monsterType;
     private String animationIndex;
     private List<String> baseAnimationName;
@@ -97,6 +100,7 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         textType = new ChoiceBox<>();
         textPhysical = new ChoiceBox<>();
         maxActivityScopeText = new TextField();
+        targetXYText = new TextField();
         monsterTypeCheckBox = new ChoiceBox<>();
         animationIndexText = new TextField();
         baseAnimationNameText = new TextField();
@@ -172,6 +176,12 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         gridPane.add(this.baseAnimationNameText, 1, 5);
         gridPane.add(new Label("id"), 0, 6);
         gridPane.add(new TextField(this.id), 1, 6);
+        if (this.targetXY != null && !this.targetXY.isBlank()) {
+            this.targetXYText.setText(this.targetXY);
+        }
+        this.targetXYText.textProperty().addListener((observable, oldValue, newValue) -> ImageObject.this.targetXY = newValue);
+        gridPane.add(new Label("目标XY"), 0, 7);
+        gridPane.add(this.targetXYText, 1, 7);
         outVBox.getChildren().add(gridPane);
         titledPane.setContent(outVBox);
     }

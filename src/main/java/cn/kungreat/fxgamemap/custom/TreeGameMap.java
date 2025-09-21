@@ -73,10 +73,12 @@ public class TreeGameMap {
         return resultBack;
     }
 
-    public ImageObject getImageObjectData(int locatorX, int locatorY) {
+    public ImageObject getImageObjectData(double currentX, double currentY) {
         for (ImageObject imageObject : imageObjectList) {
             if (imageObject.getType() != ImageObjectType.MONSTER && imageObject.getType() != ImageObjectType.NPC &&
-                    imageObject.getLocatorX() == locatorX && imageObject.getLocatorY() == locatorY) {
+                    imageObject.getStartX() < currentX && imageObject.getStartY() < currentY &&
+                    imageObject.getStartX() + imageObject.getImage().getWidth() > currentX &&
+                    imageObject.getStartY() + imageObject.getImage().getHeight() > currentY) {
                 System.out.println(imageObject.getId());
                 return imageObject;
             }

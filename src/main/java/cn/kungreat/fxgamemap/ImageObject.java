@@ -1,7 +1,6 @@
 package cn.kungreat.fxgamemap;
 
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
-import cn.kungreat.fxgamemap.util.LogService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,13 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -47,12 +39,6 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private TextField animationIndexText;
     @JsonIgnore
     private TextField baseAnimationNameText;
-    @JsonIgnore
-    private Button baseAnimationButton;
-    @JsonIgnore
-    public static final String FIXED_ANIMATION_DIRECTORY = "fixed_animation";
-    @JsonIgnore
-    private List<File> FixedAnimationFileSrc;
     @JsonIgnore
     private Label monsterAnimationLabel;
 
@@ -104,7 +90,6 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         monsterTypeCheckBox = new ChoiceBox<>();
         animationIndexText = new TextField();
         baseAnimationNameText = new TextField();
-        baseAnimationButton = new Button("添加单独动画");
         this.titledPane.setText(this.title);
         VBox outVBox = new VBox(10);
         GridPane gridPane = new GridPane();
@@ -144,35 +129,21 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         gridPane.add(new Label("动画名称"), 0, 4);
         gridPane.add(this.animationIndexText, 1, 4);
         if (this.baseAnimationName != null) {
-            this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
+            this.refreshAnimationNameText();
         }
         this.baseAnimationNameText.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                this.baseAnimationName = RootApplication.MAP_JSON.readValue(newValue, new TypeReference<List<String>>() {
-                });
+                if (newValue == null || newValue.isBlank()) {
+                    this.baseAnimationNameText.setText("");
+                    this.baseAnimationName = null;
+                } else {
+                    this.baseAnimationName = RootApplication.MAP_JSON.readValue(newValue, new TypeReference<List<String>>() {
+                    });
+                }
             } catch (JsonProcessingException e) {
             }
         });
-        this.baseAnimationButton.setOnAction(event -> {
-            List<File> selectedFiles = ResourceTab.FILE_CHOOSER.showOpenMultipleDialog(RootApplication.mainStage);
-            if (selectedFiles == null || selectedFiles.isEmpty()) {
-                this.FixedAnimationFileSrc = null;
-                this.baseAnimationNameText.setText("");
-                this.baseAnimationName = null;
-            } else {
-                this.FixedAnimationFileSrc = selectedFiles;
-                if (this.baseAnimationName == null) {
-                    this.baseAnimationName = new ArrayList<>();
-                } else {
-                    this.baseAnimationName.clear();
-                }
-                for (File selectedFile : selectedFiles) {
-                    this.baseAnimationName.add(selectedFile.getName());
-                }
-                this.baseAnimationNameText.setText(Arrays.toString(this.baseAnimationName.toArray()));
-            }
-        });
-        gridPane.add(this.baseAnimationButton, 0, 5);
+        gridPane.add(new Label("动画图片数据"), 0, 5);
         gridPane.add(this.baseAnimationNameText, 1, 5);
         gridPane.add(new Label("id"), 0, 6);
         gridPane.add(new TextField(this.id), 1, 6);
@@ -186,19 +157,11 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
         titledPane.setContent(outVBox);
     }
 
-    public List<String> getBaseAnimationName() {
-        if (this.FixedAnimationFileSrc != null) {
-            this.FixedAnimationFileSrc.forEach(imageSrcPath -> {
-                try {
-                    File outFile = new File(new File(new URI(Configuration.currentProject).getPath()).getParentFile(), FIXED_ANIMATION_DIRECTORY);
-                    outFile.mkdirs();
-                    Files.copy(imageSrcPath.toPath(), Path.of(outFile.toString(), imageSrcPath.getName()),
-                            StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-                } catch (Exception e) {
-                    LogService.printLog(LogService.LogLevel.ERROR, ImageObject.class, "保存图片资源文件", e);
-                }
-            });
+    public void refreshAnimationNameText() {
+        try {
+            this.baseAnimationNameText.setText(RootApplication.MAP_JSON.writeValueAsString(this.baseAnimationName));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-        return this.baseAnimationName;
     }
 }

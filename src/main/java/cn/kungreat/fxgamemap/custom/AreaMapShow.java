@@ -116,8 +116,12 @@ public class AreaMapShow {
                             imagePath = chooseResourceImage.getId();
                         }
                         if (controller.getRadioButtonIsObject().isSelected()) {
+                            //默认是动画 FIXED_ANIMATION
                             ImageObject changeImageObject = new ImageObject(UUID.randomUUID().toString(), image, startX, startY, imagePath, locatorX, locatorY);
                             changeImageObject.setTitle(changeImageObject.getImagePath());
+                            if (AnimationConfig.ANIMTATION_MAP.get(changeImageObject.getImagePath()) != null) {
+                                changeImageObject.setBaseAnimationName(AnimationConfig.ANIMTATION_MAP.get(changeImageObject.getImagePath()));
+                            }
                             currentTreeGameMap.getImageObjectList().add(changeImageObject);
                         } else {
                             currentTreeGameMap.getBackgroundImages().add(new TreeGameMap.BackgroundImageData(image, startX, startY, imagePath, null, null));
@@ -139,7 +143,7 @@ public class AreaMapShow {
                         currentTreeGameMap.getImageObjectList().add(npcObject);
                     } else if (controller.getTopDeletingMode().isSelected()) {
                         if (controller.getRadioButtonIsObject().isSelected()) {
-                            ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(locatorX, locatorY);
+                            ImageObject removeImageObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
                             if (removeImageObject != null) {
                                 currentTreeGameMap.getImageObjectList().remove(removeImageObject);
                                 clearAndDraw();
@@ -168,7 +172,8 @@ public class AreaMapShow {
                     } else if (controller.getTopMovingMode().isSelected()) {
                         ImageObject chooserObject = null;
                         if (controller.getRadioButtonIsObject().isSelected()) {
-                            chooserObject = currentTreeGameMap.getImageObjectData(locatorX, locatorY);
+                            chooserObject = currentTreeGameMap.getImageObjectData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                            PropertyListener.setChooseCanvasImage(chooserObject);
                         } else if (controller.getRadioButtonMonster().isSelected()) {
                             chooserObject = currentTreeGameMap.getMonsterObject(locatorX, locatorY);
                         } else if (controller.getRadioButtonNpc().isSelected()) {

@@ -16,8 +16,6 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ChoiceBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cn.kungreat.fxgamemap.RootController">
     <top>

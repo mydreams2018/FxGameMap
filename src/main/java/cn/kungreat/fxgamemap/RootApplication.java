@@ -82,6 +82,7 @@ public class RootApplication extends Application {
         AREA_MONSTER_FILL.put("ZumaTemple3", List.of("063", "065", "066",  "064"));
         AREA_MONSTER_FILL.put("ZumaTemple4", List.of("063", "065", "066",  "064"));
         AREA_MONSTER_FILL.put("ZumaTemple5", List.of("063", "065", "066",  "064"));
+        AREA_MONSTER_FILL.put("SpecialMap", List.of("121", "122"));
     }
 
     @Override

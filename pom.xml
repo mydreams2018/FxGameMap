@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javaFxVersion>25.0.1</javaFxVersion>
+        <javaFxVersion>25.0.2</javaFxVersion>
         <lombokVersion>1.18.42</lombokVersion>
     </properties>
 

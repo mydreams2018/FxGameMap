@@ -37,13 +37,12 @@ public class AreaMapShow {
     private static final List<TreeGameMap.BackgroundImageData> SHOW_BACK_IMAGE = new LinkedList<>();
     private static final List<TreeGameMap.BackgroundImageData> SHOW_MIDDLE_IMAGE = new LinkedList<>();
     private static final List<TreeGameMap.BackgroundImageData> SHOW_FRONT_IMAGE = new LinkedList<>();
-    private Integer currentX;
-    private Integer currentY;
+    private int currentX;
+    private int currentY;
     private TreeArea treeAreaShow;
 
-    private StackPane mainPane;
-    private VBox outVBox;
-    private HBox innerHBox;
+    private Pane mainPane;
+    private BorderPane mapBorderPane;
     private ScrollBar scrollBarY;
     private ScrollBar scrollBarX;
 
@@ -51,7 +50,7 @@ public class AreaMapShow {
 
     public void initAreaMapShow(TreeArea treeArea) {
         if (mainPane == null) {
-            mainPane = new StackPane();
+            mainPane = new Pane();
             mainPane.setPrefSize(treeArea.getWidth(), treeArea.getHeight());
             Rectangle clipRect = new Rectangle();
             clipRect.setWidth(treeArea.getWidth());
@@ -199,22 +198,23 @@ public class AreaMapShow {
     }
 
     private void initView() {
-        outVBox = new VBox();
-        innerHBox = new HBox();
+        mapBorderPane = new BorderPane();
         scrollBarY = new ScrollBar();
         scrollBarY.setOrientation(Orientation.VERTICAL);
         scrollBarY.setMin(0);
         scrollBarY.setMax(treeAreaShow.getYNumber() * treeAreaShow.getHeight() - treeAreaShow.getHeight());
         scrollBarY.setBlockIncrement(treeAreaShow.getHeight());
-        innerHBox.getChildren().addAll(mainPane, scrollBarY);
         scrollBarX = new ScrollBar();
         scrollBarX.setOrientation(Orientation.HORIZONTAL);
         scrollBarX.setMin(0);
         scrollBarX.setMax(treeAreaShow.getXNumber() * treeAreaShow.getWidth() - treeAreaShow.getWidth());
         scrollBarX.setBlockIncrement(treeAreaShow.getWidth());
-        outVBox.getChildren().addAll(innerHBox, scrollBarX);
-        outVBox.setMaxWidth(Region.USE_PREF_SIZE);
-        outVBox.setMaxHeight(Region.USE_PREF_SIZE);
+        mapBorderPane.setBottom(scrollBarX);
+        mapBorderPane.setRight(scrollBarY);
+        mapBorderPane.setCenter(mainPane);
+        //限制 VBox 的最大尺寸 防止它被父容器无限拉伸 让它的大小始终由它内部的内容来决定
+//      setMaxWidth(Region.USE_PREF_SIZE);
+//      setMaxHeight(Region.USE_PREF_SIZE);
         scrollBarY.valueProperty().addListener((observable, oldValue, newValue) -> {
             currentY = newValue.intValue();
             clearAndDraw();

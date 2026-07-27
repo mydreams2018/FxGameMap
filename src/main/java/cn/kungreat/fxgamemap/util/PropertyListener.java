@@ -153,12 +153,10 @@ public class PropertyListener {
                         treeArea.setAreaMapShow(areaMapShow);
                     }
                     areaMapShow.initAreaMapShow(treeArea);
-                    controller.getScrollPaneCenterInHBox().getChildren().clear();
-                    controller.getScrollPaneCenterInHBox().getChildren().add(areaMapShow.getOutVBox());
+                    controller.getScrollPaneCenter().setContent(areaMapShow.getMapBorderPane());
                 }else {
-                    controller.getScrollPaneCenterInHBox().getChildren().clear();
                     treeArea.initGridPane();
-                    controller.getScrollPaneCenterInHBox().getChildren().add(treeArea.getGridPane());
+                    controller.getScrollPaneCenter().setContent(treeArea.getGridPane());
                 }
             }
         });

@@ -13,6 +13,7 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -63,8 +64,6 @@ public class RootController implements Initializable {
     private HBox stackPaneLeftHBox;
     @FXML
     private ScrollPane scrollPaneCenter;
-    @FXML
-    private HBox scrollPaneCenterInHBox;
     @FXML
     private VBox rightTopOutVBox;
     @FXML
@@ -178,9 +177,8 @@ public class RootController implements Initializable {
                 Object value = newValue.getValue();
                 if (value instanceof TreeArea treeArea) {
                     Configuration.loadAllMirImageCache(treeArea);
-                    scrollPaneCenterInHBox.getChildren().clear();
                     treeArea.initGridPane();
-                    scrollPaneCenterInHBox.getChildren().add(treeArea.getGridPane());
+                    scrollPaneCenter.setContent(treeArea.getGridPane());
                 } else if (value instanceof TreeWorld treeWorld) {
                     System.out.println(treeWorld);
                 }
@@ -257,7 +255,7 @@ public class RootController implements Initializable {
     public void addScrollPaneCenterEvent() {
         scrollPaneCenter.setOnKeyPressed(event -> {
             TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
-            if (topMovingMode.isSelected() && chooseCanvasImage != null) {
+            if (topMovingMode.isSelected() && chooseCanvasImage != null && scrollPaneCenter.getContent() != null && scrollPaneCenter.getContent() instanceof BorderPane) {
                 if (event.getCode() == KeyCode.W) {
                     chooseCanvasImage.setStartY(chooseCanvasImage.getStartY() - 1);
                 } else if (event.getCode() == KeyCode.S) {

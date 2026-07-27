@@ -83,8 +83,7 @@
                 </VBox>
             </StackPane>
             <StackPane>
-                <ScrollPane fx:id="scrollPaneCenter" styleClass="customBgColor" fitToWidth="true" fitToHeight="true">
-                    <HBox fx:id="scrollPaneCenterInHBox" alignment="CENTER"></HBox>
+                <ScrollPane fx:id="scrollPaneCenter" styleClass="customBgColor" fitToWidth="false" fitToHeight="false">
                 </ScrollPane>
             </StackPane>
             <StackPane minWidth="300">

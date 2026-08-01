@@ -1,9 +1,6 @@
 package cn.kungreat.fxgamemap.custom;
 
-import cn.kungreat.fxgamemap.ImageObject;
-import cn.kungreat.fxgamemap.ImageObjectType;
-import cn.kungreat.fxgamemap.RootApplication;
-import cn.kungreat.fxgamemap.RootController;
+import cn.kungreat.fxgamemap.*;
 import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
@@ -41,8 +38,8 @@ public class AreaMapShow {
     private int currentY;
     private TreeArea treeAreaShow;
 
-    private Pane mainPane;
     private BorderPane mapBorderPane;
+    private Pane mainPane;
     private ScrollBar scrollBarY;
     private ScrollBar scrollBarX;
 
@@ -227,9 +224,7 @@ public class AreaMapShow {
 
     //清空 过滤 添加 -> 数据
     private void findCurrentWindowData() {
-        SHOW_BACK_IMAGE.clear();
-        SHOW_MIDDLE_IMAGE.clear();
-        SHOW_FRONT_IMAGE.clear();
+        AreaMapShow.cleanCache();
         BACK_PANE.getChildren().clear();
         MIDDLE_PANE.getChildren().clear();
         FRONT_PANE.getChildren().clear();
@@ -253,6 +248,12 @@ public class AreaMapShow {
                 }
             }
         }
+    }
+
+    public static void cleanCache() {
+        SHOW_BACK_IMAGE.clear();
+        SHOW_MIDDLE_IMAGE.clear();
+        SHOW_FRONT_IMAGE.clear();
     }
 
     public void clearAndDraw() {
@@ -417,5 +418,23 @@ public class AreaMapShow {
             }
         }
         return null;
+    }
+
+    public static void handle() {
+        for (TreeGameMap.BackgroundImageData backgroundImageData : SHOW_FRONT_IMAGE) {
+            if (backgroundImageData instanceof ImageObject imageObject) {
+                if (imageObject.getType() == ImageObjectType.FIXED_ANIMATION && imageObject.getBaseAnimationName() != null && !imageObject.getBaseAnimationName().isEmpty()) {
+                    int amIndex = imageObject.getAmIndex();
+                    //利用mir导出的图片缓存
+                    Image mirCacheImage = Configuration.useMirImageCache(imageObject.getBaseAnimationName().get(amIndex));
+                    imageObject.getImageView().setImage(mirCacheImage);
+                    ++amIndex;
+                    if(amIndex == imageObject.getBaseAnimationName().size()) {
+                        amIndex = 0;
+                    }
+                    imageObject.setAmIndex(amIndex);
+                }
+            }
+        }
     }
 }

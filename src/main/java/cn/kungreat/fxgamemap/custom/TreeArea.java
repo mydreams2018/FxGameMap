@@ -17,7 +17,6 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.BufferedReader;
 import java.io.File;

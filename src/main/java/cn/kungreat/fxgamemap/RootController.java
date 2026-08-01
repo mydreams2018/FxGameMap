@@ -4,8 +4,10 @@ import cn.kungreat.fxgamemap.custom.AreaMapShow;
 import cn.kungreat.fxgamemap.custom.TreeArea;
 import cn.kungreat.fxgamemap.custom.TreeGameMap;
 import cn.kungreat.fxgamemap.custom.TreeWorld;
+import cn.kungreat.fxgamemap.frame.DurationControl;
 import cn.kungreat.fxgamemap.util.PatternUtils;
 import cn.kungreat.fxgamemap.util.PropertyListener;
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -17,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -25,7 +28,7 @@ import java.net.URL;
 import java.util.*;
 
 @Getter
-public class RootController implements Initializable {
+public class RootController extends AnimationTimer implements Initializable {
 
     private static final Dialog<String> WORLD_DIALOG = BaseDialog.getDialog("世界地图", "请输入世界地图名称:", "是否需要添加世界地图层级"
             , BaseDialog.TEXT_WORLD, BaseDialog.APPLY_WORLD, BaseDialog.CANCEL_WORLD);
@@ -43,10 +46,13 @@ public class RootController implements Initializable {
             , null, ButtonType.CLOSE);
 
     private static final Dialog<String> SEGMENT_RESOURCE_IMAGES_DIALOG = BaseDialog.getSegmentResourceImagesDialog();
-
-    private static final Dialog<Boolean> RESOURCE_ANIMATION_DIALOG = BaseDialog.getResourceAnimationDialog();
-
     public static boolean showPointLocks = false;
+    private static final DurationControl durationControl = new DurationControl(100);
+    public static final DirectoryChooser DIRECTORY_CHOOSER = new DirectoryChooser();
+
+    static {
+        DIRECTORY_CHOOSER.setTitle("选择目录");
+    }
 
     @FXML
     private HBox topHBox;
@@ -236,22 +242,6 @@ public class RootController implements Initializable {
         });
     }
 
-    @FXML
-    public void addResourceAnimation() {
-        Optional<Boolean> optionalB = RESOURCE_ANIMATION_DIALOG.showAndWait();
-        if (optionalB.isPresent() && optionalB.get()) {
-            String tabName = BaseDialog.RESOURCE_ANIMATION_NAME.getText();
-            String tabPath = BaseDialog.RESOURCE_ANIMATION_PATH.getText();
-            if (!tabName.isBlank() && !tabPath.isBlank()) {
-                ResourceAnimation resourceAnimation = new ResourceAnimation(UUID.randomUUID().toString(), tabName, tabPath);
-                resourceAnimation.initTab();
-                tabPaneRight.getTabs().add(resourceAnimation.getTab());
-                RootApplication.RESOURCES.getResourceAnimations().add(resourceAnimation);
-                PropertyListener.changeIsSaved(false);
-            }
-        }
-    }
-
     public void addScrollPaneCenterEvent() {
         scrollPaneCenter.setOnKeyPressed(event -> {
             TreeGameMap.BackgroundImageData chooseCanvasImage = PropertyListener.getChooseCanvasImage();
@@ -276,7 +266,7 @@ public class RootController implements Initializable {
 
     private void canvasClearAndDraw() {
         TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
-         if (item != null && item.getValue() instanceof TreeArea treeArea) {
+        if (item != null && item.getValue() instanceof TreeArea treeArea) {
             treeArea.getAreaMapShow().clearAndDraw();
             PropertyListener.changeIsSaved(false);
         }
@@ -291,7 +281,7 @@ public class RootController implements Initializable {
     public void autoReadMirMap() {
         TreeItem<Object> item = treeView.getFocusModel().getFocusedItem();
         if (item != null && item.getValue() instanceof TreeArea treeArea) {
-            File file = ResourceAnimation.DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
+            File file = DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
             if (file != null && file.exists()) {
                 String[] backData = readFileData(new File(file, "back\\point.txt"));
                 String[] middleData = readFileData(new File(file, "middle\\point.txt"));
@@ -446,6 +436,14 @@ public class RootController implements Initializable {
             }
         } else {
             System.out.println("自动填充怪物模式不对");
+        }
+    }
+
+    @Override
+    public void handle(long now) {
+        //100ms
+        if (durationControl.changeOpacity()) {
+            AreaMapShow.handle();
         }
     }
 }

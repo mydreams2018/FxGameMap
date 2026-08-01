@@ -20,9 +20,6 @@ public class BaseDialog {
     public static final ButtonType APPLY_AREA = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType CANCEL_AREA = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-    public static final ButtonType APPLY_MAP = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
-    public static final ButtonType CANCEL_MAP = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
     public static final TextField TEXT_WORLD = BaseDialog.getTextField("请输入名称");
 
     public static final TextField TEXT_AREA = BaseDialog.getTextField("请输入名称");
@@ -51,11 +48,6 @@ public class BaseDialog {
     //区域的图片连接
     public static final ButtonType AREA_LINK_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType AREA_LINK_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-    //动画资源
-    public static final TextField RESOURCE_ANIMATION_NAME = BaseDialog.getTextField("请输入动画名称");
-    public static final TextField RESOURCE_ANIMATION_PATH = BaseDialog.getTextField("动画目录");
-    public static final ButtonType RESOURCE_ANIMATION_APPLY = new ButtonType("Apply", ButtonBar.ButtonData.OK_DONE);
-    public static final ButtonType RESOURCE_ANIMATION_CANCEL = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
     static {
         SRID_BTN_CHOOSE.setOnAction(event -> {
@@ -125,40 +117,6 @@ public class BaseDialog {
         ChoiceBox<String> choiceBox = new ChoiceBox<>(TreeArea.STRING_OBSERVABLE_LIST);
         dialog.setGraphic(choiceBox);
         dialog.getDialogPane().getButtonTypes().addAll(AREA_LINK_APPLY, AREA_LINK_CANCEL);
-        return dialog;
-    }
-
-    public static Dialog<Boolean> getResourceAnimationDialog() {
-        Dialog<Boolean> dialog = new Dialog<>();
-        dialog.setTitle("添加动画资源");
-        dialog.setHeaderText("请填写信息");
-        dialog.setContentText("是否添加");
-        dialog.setResizable(false);
-        VBox vBox = new VBox(10);
-        HBox hBox = new HBox(10);
-        Button chooseDirectory = new Button("选择动画存储目录");
-        RESOURCE_ANIMATION_PATH.setDisable(true);
-        chooseDirectory.setOnAction(event -> {
-            File file = ResourceAnimation.DIRECTORY_CHOOSER.showDialog(RootApplication.mainStage);
-            if (file != null && file.exists()) {
-                RESOURCE_ANIMATION_PATH.setText(file.toString());
-            }
-        });
-        hBox.getChildren().addAll(RESOURCE_ANIMATION_PATH, chooseDirectory);
-        vBox.getChildren().addAll(RESOURCE_ANIMATION_NAME, hBox);
-        dialog.setGraphic(vBox);
-        dialog.getDialogPane().getButtonTypes().addAll(RESOURCE_ANIMATION_APPLY, RESOURCE_ANIMATION_CANCEL);
-        //按钮事件
-        Button buttonOk = (Button) dialog.getDialogPane().lookupButton(RESOURCE_ANIMATION_APPLY);
-        Button buttonCancel = (Button) dialog.getDialogPane().lookupButton(RESOURCE_ANIMATION_CANCEL);
-        buttonOk.setOnAction(event -> dialog.setResult(true));
-        buttonCancel.setOnAction(event -> dialog.setResult(false));
-        //显示事件
-        dialog.setOnShowing(event -> {
-            dialog.setResult(false);
-            RESOURCE_ANIMATION_PATH.clear();
-            RESOURCE_ANIMATION_NAME.clear();
-        });
         return dialog;
     }
 }

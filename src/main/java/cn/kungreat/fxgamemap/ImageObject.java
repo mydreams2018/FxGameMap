@@ -41,6 +41,8 @@ public class ImageObject extends TreeGameMap.BackgroundImageData {
     private TextField baseAnimationNameText;
     @JsonIgnore
     private Label monsterAnimationLabel;
+    @JsonIgnore
+    private int amIndex;//显示实时动画效果用的
 
     private String id;
     private String title;

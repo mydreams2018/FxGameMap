@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class RootApplication extends Application {
 
     public static Stage mainStage;
@@ -61,6 +60,7 @@ public class RootApplication extends Application {
         PropertyListener.initIsSavedListener(stage);
         PropertyListener.initChooseResourceImageListener();
         RootController rootController = mainFXMLLoader.getController();
+        rootController.start();
         PropertyListener.initMainMenuHistoryListener(rootController.getMainMenuBar().getHistoryMenu());
         TreeGameMap.addImageObjectEvent();
         TreeArea.addChildrenPointDialogEvent();

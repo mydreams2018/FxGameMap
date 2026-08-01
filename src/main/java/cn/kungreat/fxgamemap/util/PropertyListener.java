@@ -146,7 +146,7 @@ public class PropertyListener {
         SWITCH_TREE_AREA.addListener((observable, oldValue, newValue) -> {
             TreeItem<Object> item = controller.getTreeView().getFocusModel().getFocusedItem();
             if (item != null && item.getValue() instanceof TreeArea treeArea) {
-                if(treeArea.getSwitchTypeName().equals("gridPane")){
+                if (treeArea.getSwitchTypeName().equals("gridPane")) {
                     AreaMapShow areaMapShow = treeArea.getAreaMapShow();
                     if (areaMapShow == null) {
                         areaMapShow = new AreaMapShow();
@@ -154,7 +154,8 @@ public class PropertyListener {
                     }
                     areaMapShow.initAreaMapShow(treeArea);
                     controller.getScrollPaneCenter().setContent(areaMapShow.getMapBorderPane());
-                }else {
+                } else {
+                    AreaMapShow.cleanCache();
                     treeArea.initGridPane();
                     controller.getScrollPaneCenter().setContent(treeArea.getGridPane());
                 }

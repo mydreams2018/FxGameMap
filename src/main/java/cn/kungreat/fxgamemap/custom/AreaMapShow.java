@@ -5,6 +5,8 @@ import cn.kungreat.fxgamemap.util.PropertyListener;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,6 +46,8 @@ public class AreaMapShow {
     private ScrollBar scrollBarX;
 
     private static final Image POINT_SHOW_IMAGE = new Image(RootApplication.class.getResourceAsStream("pointImage.png"));
+    private static TitledPane markTitledPane;
+    private static final String markRegex = "[0-9]";
 
     public void initAreaMapShow(TreeArea treeArea) {
         if (mainPane == null) {
@@ -60,9 +64,35 @@ public class AreaMapShow {
             treeAreaShow = treeArea;
             initView();
             mainPaneMouseEvent();
+            backGroundMarkChange();
         }
         treeArea.setSwitchTypeName("areaMapShow");
         clearAndDraw();
+    }
+
+    private void backGroundMarkChange() {
+        if (markTitledPane != null) {
+            return;
+        }
+        markTitledPane = new TitledPane();
+        markTitledPane.setText("修改层级");
+        TextField markTextField = new TextField();
+        markTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            Object userData = markTitledPane.getUserData();
+            if (userData instanceof TreeGameMap.BackgroundImageData backgroundImageData) {
+                if (newValue != null && newValue.matches(markRegex)) {
+                    backgroundImageData.setMirImageMark(Integer.parseInt(newValue));
+                    clearAndDraw();
+                }
+            }
+        });
+        markTitledPane.setContent(markTextField);
+    }
+
+    private static void markTitledPaneTarget(TreeGameMap.BackgroundImageData chooseBack) {
+        markTitledPane.setUserData(chooseBack);
+        TextField markTextField = (TextField) markTitledPane.getContent();
+        markTextField.setText(String.valueOf(chooseBack.getMirImageMark()));
     }
 
     private void mainPaneMouseEvent() {
@@ -176,7 +206,13 @@ public class AreaMapShow {
                             chooserObject = currentTreeGameMap.getNpcObject(locatorX, locatorY);
                         } else {
                             //背景图片
-                            PropertyListener.setChooseCanvasImage(currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight));
+                            TreeGameMap.BackgroundImageData chooseBack = currentTreeGameMap.getBackgroundImageData(currentGlobalStartX % areaWidth, currentGlobalStartY % areaHeight);
+                            if (chooseBack != null) {
+                                markTitledPaneTarget(chooseBack);
+                                controller.getRightTopScrollPaneAccordion().getPanes().clear();
+                                controller.getRightTopScrollPaneAccordion().getPanes().add(markTitledPane);
+                            }
+                            PropertyListener.setChooseCanvasImage(chooseBack);
                         }
                         if (chooserObject != null) {
                             chooserObject.initTitledPane();
@@ -429,7 +465,7 @@ public class AreaMapShow {
                     Image mirCacheImage = Configuration.useMirImageCache(imageObject.getBaseAnimationName().get(amIndex));
                     imageObject.getImageView().setImage(mirCacheImage);
                     ++amIndex;
-                    if(amIndex == imageObject.getBaseAnimationName().size()) {
+                    if (amIndex == imageObject.getBaseAnimationName().size()) {
                         amIndex = 0;
                     }
                     imageObject.setAmIndex(amIndex);

@@ -156,6 +156,7 @@ public class PropertyListener {
                     controller.getScrollPaneCenter().setContent(areaMapShow.getMapBorderPane());
                 } else {
                     AreaMapShow.cleanCache();
+                    controller.getRightTopScrollPaneAccordion().getPanes().clear();
                     treeArea.initGridPane();
                     controller.getScrollPaneCenter().setContent(treeArea.getGridPane());
                 }
